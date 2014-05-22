@@ -213,7 +213,8 @@ def find_content(project, mail):
     comment = None
 
     if pullurl or patchbuf:
-        name = clean_subject(mail.get('Subject'), [project.linkname])
+        (name, prefixes) = clean_subject(mail.get('Subject'),
+                                         [project.linkname])
         patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
                     date = mail_date(mail), headers = mail_headers(mail))
 
@@ -287,7 +288,6 @@ def clean_subject(subject, drop_prefixes = None):
     in the subject. If drop_prefixes is provided, remove those too,
     comparing case-insensitively."""
 
-
     subject = clean_header(subject)
 
     if drop_prefixes is None:
@@ -320,7 +320,7 @@ def clean_subject(subject, drop_prefixes = None):
     if prefixes:
         subject = '[%s] %s' % (','.join(prefixes), subject)
 
-    return subject
+    return (subject, prefixes)
 
 sig_re = re.compile('^(-- |_+)\n.*', re.S | re.M)
 def clean_content(str):
