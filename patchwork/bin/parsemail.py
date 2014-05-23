@@ -147,12 +147,18 @@ def find_pull_request(content):
         return match.group(1)
     return None
 
+
 def try_decode(payload, charset):
     try:
         payload = unicode(payload, charset)
     except UnicodeDecodeError:
         return None
     return payload
+
+class MailContent:
+    def __init__(self):
+        self.patch = None
+        self.comment = None
 
 def find_content(project, mail):
     patchbuf = None
@@ -192,7 +198,7 @@ def find_content(project, mail):
 
             # Could not find a valid decoded payload.  Fail.
             if payload is None:
-                return (None, None)
+                return None
 
         if subtype in ['x-patch', 'x-diff']:
             patchbuf = payload
@@ -209,32 +215,31 @@ def find_content(project, mail):
             if c is not None:
                 commentbuf += c.strip() + '\n'
 
-    patch = None
-    comment = None
+    ret = MailContent()
 
     if pullurl or patchbuf:
         (name, prefixes) = clean_subject(mail.get('Subject'),
                                          [project.linkname])
-        patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
+        ret.patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
                     date = mail_date(mail), headers = mail_headers(mail))
 
     if commentbuf:
         # If this is a new patch, we defer setting comment.patch until
         # patch has been saved by the caller
-        if patch:
-            comment = Comment(date = mail_date(mail),
+        if ret.patch:
+            ret.comment = Comment(date = mail_date(mail),
                     content = clean_content(commentbuf),
                     headers = mail_headers(mail))
 
         else:
             cpatch = find_patch_for_comment(project, mail)
             if not cpatch:
-                return (None, None)
-            comment = Comment(patch = cpatch, date = mail_date(mail),
+                return ret
+            ret.comment = Comment(patch = cpatch, date = mail_date(mail),
                     content = clean_content(commentbuf),
                     headers = mail_headers(mail))
 
-    return (patch, comment)
+    return ret
 
 def find_patch_for_comment(project, mail):
     # construct a list of possible reply message ids
@@ -371,7 +376,11 @@ def parse_mail(mail):
 
     (author, save_required) = find_author(mail)
 
-    (patch, comment) = find_content(project, mail)
+    content = find_content(project, mail)
+    if not content:
+        return 0
+    patch = content.patch
+    comment = content.comment
 
     if patch:
         # we delay the saving until we know we have a patch.
