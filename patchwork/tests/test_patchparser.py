@@ -34,7 +34,8 @@ class PatchTest(TestCase):
     project = defaults.project
 
 from patchwork.bin.parsemail import find_content, find_author, find_project, \
-                                    parse_mail, split_prefixes, clean_subject
+                                    parse_mail, split_prefixes, clean_subject, \
+                                    parse_series_marker
 
 class InlinePatchTest(PatchTest):
     patch_filename = '0001-add-line.patch'
@@ -618,6 +619,12 @@ class PrefixTest(TestCase):
         self.assertEquals(split_prefixes('PATCH '), ['PATCH'])
         self.assertEquals(split_prefixes('PATCH,RFC'), ['PATCH', 'RFC'])
         self.assertEquals(split_prefixes('PATCH 1/2'), ['PATCH', '1/2'])
+
+    def testSeriesMarkers(self):
+        self.assertEqual(parse_series_marker([]), (None, None))
+        self.assertEqual(parse_series_marker(['bar']), (None, None))
+        self.assertEqual(parse_series_marker(['bar', '1/2']), (1, 2))
+        self.assertEqual(parse_series_marker(['bar', '0/12']), (0, 12))
 
 class SubjectTest(TestCase):
 

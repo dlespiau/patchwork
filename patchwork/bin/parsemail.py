@@ -160,6 +160,18 @@ class MailContent:
         self.patch = None
         self.comment = None
 
+def parse_series_marker(subject_prefixes):
+    """If this patch is part a of multi-patches series, ie has x/n in its
+       subject, return (x, n). Otherwise, return (None, None)."""
+
+    regex = re.compile('^([0-9]+)/([0-9]+)$')
+    for prefix in subject_prefixes:
+        m = regex.match(prefix)
+        if not m:
+            continue
+        return (int(m.group(1)), int(m.group(2)))
+    return (None, None)
+
 def find_content(project, mail):
     patchbuf = None
     commentbuf = ''
