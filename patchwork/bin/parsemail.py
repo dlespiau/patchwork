@@ -160,6 +160,22 @@ class MailContent:
         self.patch = None
         self.comment = None
 
+def build_references_list(mail):
+    # construct a list of possible reply message ids
+    refs = []
+
+    if 'In-Reply-To' in mail:
+        refs.append(mail.get('In-Reply-To'))
+
+    if 'References' in mail:
+        rs = mail.get('References').split()
+        rs.reverse()
+        for r in rs:
+            if r not in refs:
+                refs.append(r)
+
+    return refs
+
 def parse_series_marker(subject_prefixes):
     """If this patch is part a of multi-patches series, ie has x/n in its
        subject, return (x, n). Otherwise, return (None, None)."""
@@ -244,7 +260,8 @@ def find_content(project, mail):
                     headers = mail_headers(mail))
 
         else:
-            cpatch = find_patch_for_comment(project, mail)
+            refs = build_references_list(mail)
+            cpatch = find_patch_for_comment(project, refs)
             if not cpatch:
                 return ret
             ret.comment = Comment(patch = cpatch, date = mail_date(mail),
@@ -253,19 +270,7 @@ def find_content(project, mail):
 
     return ret
 
-def find_patch_for_comment(project, mail):
-    # construct a list of possible reply message ids
-    refs = []
-    if 'In-Reply-To' in mail:
-        refs.append(mail.get('In-Reply-To'))
-
-    if 'References' in mail:
-        rs = mail.get('References').split()
-        rs.reverse()
-        for r in rs:
-            if r not in refs:
-                refs.append(r)
-
+def find_patch_for_comment(project, refs):
     for ref in refs:
         patch = None
 
