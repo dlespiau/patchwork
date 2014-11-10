@@ -410,6 +410,91 @@ class BundlePatch(models.Model):
         unique_together = [('bundle', 'patch')]
         ordering = ['order']
 
+SERIES_DEFAULT_NAME = "Series without cover letter"
+
+# This Model represents the "top level" Series, an object that doesn't change
+# with the various versions of patches sent to the mailing list.
+class Series(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=200, default=SERIES_DEFAULT_NAME)
+    submitter = models.ForeignKey(Person, related_name='submitters')
+    reviewer = models.ForeignKey(User, related_name='reviewers', null=True,
+                                 blank=True)
+    submitted = models.DateTimeField(default=datetime.datetime.now)
+    last_updated = models.DateTimeField(auto_now=True)
+    # Caches the latest version so we can display it without looking at the max
+    # of all SeriesRevision.version
+    version = models.IntegerField(default=1)
+    # This is the number of patches of the latest version.
+    n_patches = models.IntegerField(default=0)
+
+    def __unicode__(self):
+        return self.name
+
+    def revisions(self):
+        return SeriesRevision.objects.filter(series=self)
+
+    def latest_revision(self):
+        return self.revisions().reverse()[0]
+
+    def get_absolute_url(self):
+        return reverse('series', kwargs={ 'series': self.pk })
+
+    def dump(self):
+        print('')
+        print('===')
+        print('Series: %s' % self)
+        print('    version %d' % self.version)
+        for rev in self.revisions():
+            print('    rev %d:' % rev.version)
+            i = 1
+            for patch in rev.ordered_patches():
+                print('        patch %d:' % i)
+                print('            subject: %s' % patch.name)
+                print('            msgid  : %s' % patch.msgid)
+                i += 1
+
+# A 'revision' of a series. Resending a new version of a patch or a full new
+# iteration of a series will create a new revision.
+class SeriesRevision(models.Model):
+    series = models.ForeignKey(Series)
+    version = models.IntegerField(default=1)
+    root_msgid = models.CharField(max_length=255)
+    cover_letter = models.TextField(null = True, blank = True)
+    patches = models.ManyToManyField(Patch, through = 'SeriesRevisionPatch')
+
+    class Meta:
+        unique_together = [('series', 'version')]
+        ordering = ['version']
+
+    def ordered_patches(self):
+        return self.patches.order_by('seriesrevisionpatch__order')
+
+    def add_patch(self, patch, order):
+        # see if the patch is already in this revision
+        if SeriesRevisionPatch.objects.filter(revision=self,
+                                              patch=patch).count():
+            raise Exception("patch is already in revision")
+
+        sp = SeriesRevisionPatch.objects.create(revision=self, patch=patch,
+                                                order=order)
+        sp.save()
+
+    def __unicode__(self):
+        if hasattr(self, 'series'):
+            return self.series.name + " (rev " + str(self.version) + ")"
+        else:
+            return "New revision" + " (rev " + str(self.version) + ")"
+
+class SeriesRevisionPatch(models.Model):
+    patch = models.ForeignKey(Patch)
+    revision = models.ForeignKey(SeriesRevision)
+    order = models.IntegerField()
+
+    class Meta:
+        unique_together = [('revision', 'patch'), ('revision', 'order')]
+        ordering = ['order']
+
 class EmailConfirmation(models.Model):
     validity = datetime.timedelta(days = settings.CONFIRMATION_VALIDITY_DAYS)
     type = models.CharField(max_length = 20, choices = [
