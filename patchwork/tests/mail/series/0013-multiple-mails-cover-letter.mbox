@@ -1,0 +1,63 @@
+MIME-Version: 1.0
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AoQBAD+cclOD/NKxnGdsb2JhbABZg1W/AxmIYhYOAQEBAQEICwkJFCiCJgEBAQMBAQEkEwwKHg4DAQIGAQFABAQIAwEjAS8ZBYg8BQjGcxeOa4QqBJZygl6BPYVUg3qLPA
+X-IronPort-AV: E=Sophos;i="4.97,1047,1389772800"; 
+   d="scan'208";a="174440116"
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+From: Damien Lespiau <damien.lespiau@intel.com>
+To: <intel-gfx@lists.freedesktop.org>
+Date: Tue, 13 May 2014 23:32:23 +0100
+Message-ID: <1400020344-17248-4-git-send-email-damien.lespiau@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+References: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+Subject: [Intel-gfx] [PATCH 3/4] drm/i915: Introduce a for_each_crtc() macro
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;56075428;0;novirus
+X-MS-Exchange-Organization-AuthSource: ORSMSX101.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 929
+
+Signed-off-by: Damien Lespiau <damien.lespiau@intel.com>
+---
+ drivers/gpu/drm/i915/i915_drv.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+index edf7299..4006dfe 100644
+--- a/drivers/gpu/drm/i915/i915_drv.h
++++ b/drivers/gpu/drm/i915/i915_drv.h
+@@ -163,6 +163,9 @@ enum hpd_pin {
+ #define for_each_pipe(p) for ((p) = 0; (p) < INTEL_INFO(dev)->num_pipes; (p)++)
+ #define for_each_sprite(p, s) for ((s) = 0; (s) < INTEL_INFO(dev)->num_sprites[(p)]; (s)++)
+ 
++#define for_each_crtc(dev, crtc) \
++	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
++
+ #define for_each_intel_crtc(dev, intel_crtc) \
+ 	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list, base.head)
+ 
+-- 
+1.8.3.1
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx

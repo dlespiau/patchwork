@@ -1,0 +1,75 @@
+From: Chris Wilson <chris@chris-wilson.co.uk>
+To: <intel-gfx@lists.freedesktop.org>
+Date: Thu, 22 May 2014 09:44:40 +0100
+Message-ID: <1400748280-26449-1-git-send-email-chris@chris-wilson.co.uk>
+X-Mailer: git-send-email 2.0.0.rc2
+X-Authenticated-User: chris.alporthouse@surfanytime.net 
+Subject: [Intel-gfx] [PATCH] drm/i915: Hold CRTC lock whilst freezing the
+	planes
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;56075518;0;novirus
+X-MS-Exchange-Organization-AuthSource: FMSMSX107.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 1472
+
+Daniel keeps on ramping up the warning level of the DRM and our display
+core to make it complain whenever the locking rules are not followed.
+This caught
+
+commit 24576d23976746cb52e7700c4cadbf4bc1bc3472
+Author: Jesse Barnes <jbarnes@virtuousgeek.org>
+Date:   Tue Mar 26 09:25:45 2013 -0700
+
+    drm/i915: enable VT switchless resume v3
+
+introducing an unlocked access to the CRTC whilst disabling it for
+suspend.
+
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=78114
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Jesse Barnes <jbarnes@virtuousgeek.org>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+---
+ drivers/gpu/drm/i915/i915_drv.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 591762c26af4..8450569ff42c 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -532,8 +532,11 @@ static int i915_drm_freeze(struct drm_device *dev)
+ 		 * for _thaw.
+ 		 */
+ 		mutex_lock(&dev->mode_config.mutex);
+-		for_each_crtc(dev, crtc)
++		for_each_crtc(dev, crtc) {
++			mutex_lock(&crtc->mutex);
+ 			dev_priv->display.crtc_disable(crtc);
++			mutex_unlock(&crtc->mutex);
++		}
+ 		mutex_unlock(&dev->mode_config.mutex);
+ 
+ 		intel_modeset_suspend_hw(dev);
+-- 
+2.0.0.rc2
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx

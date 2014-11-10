@@ -1,0 +1,57 @@
+MIME-Version: 1.0
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+From: Damien Lespiau <damien.lespiau@intel.com>
+To: <intel-gfx@lists.freedesktop.org>
+Date: Tue, 13 May 2014 23:32:20 +0100
+Message-ID: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+Subject: [Intel-gfx] [PATCH 0/4] for_each_{intel_,}crtc v2
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;56075428;0;novirus
+X-MS-Exchange-Organization-AuthSource: FMSMSX106.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 1048
+
+With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
+a series introducing macros to iterate through the CRTCs instead of using
+list_for_each_entry() and mode_config.crtc_list, a tiny bit more readable and
+easier to recall.
+
+Damien Lespiau (4):
+  drm/i915: Introduce a for_each_intel_crtc() macro
+  drm/i915: Use for_each_intel_crtc() when iterating through intel_crtcs
+  drm/i915: Introduce a for_each_crtc() macro
+  drm/i915: Use for_each_crtc() when iterating through the CRTCs
+
+ drivers/gpu/drm/i915/i915_debugfs.c  |  4 +-
+ drivers/gpu/drm/i915/i915_drv.c      |  2 +-
+ drivers/gpu/drm/i915/i915_drv.h      |  6 +++
+ drivers/gpu/drm/i915/intel_display.c | 71 +++++++++++++++---------------------
+ drivers/gpu/drm/i915/intel_fbdev.c   |  6 +--
+ drivers/gpu/drm/i915/intel_pm.c      | 12 +++---
+ 6 files changed, 47 insertions(+), 54 deletions(-)
+
+-- 
+1.8.3.1
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx

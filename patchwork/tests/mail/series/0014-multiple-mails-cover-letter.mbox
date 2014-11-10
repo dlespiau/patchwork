@@ -1,0 +1,232 @@
+MIME-Version: 1.0
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AoQBAD+cclOD/NKxnGdsb2JhbABZg1W/ARuIYhYOAQEBAQEICwkJFCiCJgEBAQMBAQEkEwwKHg4DAQIGAQFABAQIAwEjAS8ZBYg8BQjGcxeTFQSWcoJegT2FVIN6iXyBQA
+X-IronPort-AV: E=Sophos;i="4.97,1047,1389772800"; 
+   d="scan'208";a="178985260"
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+From: Damien Lespiau <damien.lespiau@intel.com>
+To: <intel-gfx@lists.freedesktop.org>
+Date: Tue, 13 May 2014 23:32:24 +0100
+Message-ID: <1400020344-17248-5-git-send-email-damien.lespiau@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+References: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+Subject: [Intel-gfx] [PATCH 4/4] drm/i915: Use for_each_crtc() when
+	iterating through the CRTCs
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;56075428;0;novirus
+X-MS-Exchange-Organization-AuthSource: ORSMSX101.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 6722
+
+Patch done using the following semantic patch (thanks Daniel for the
+help!)
+
+  @@
+  iterator name list_for_each_entry;
+  iterator name for_each_crtc;
+  struct drm_crtc * crtc;
+  struct drm_device * dev;
+  @@
+  -list_for_each_entry(crtc,&dev->mode_config.crtc_list, head) {
+  +for_each_crtc(dev,crtc) {
+  	...
+  }
+
+Followed by a couple of fixups by hand (that spatch doesn't match the
+cases where list_for_each_entry() is not followed by a set of '{', '}',
+but I couldn't figure out a way to leave the '{' out of the iterator
+match).
+
+Signed-off-by: Damien Lespiau <damien.lespiau@intel.com>
+---
+ drivers/gpu/drm/i915/i915_drv.c      |  2 +-
+ drivers/gpu/drm/i915/intel_display.c | 18 +++++++++---------
+ drivers/gpu/drm/i915/intel_fbdev.c   |  6 +++---
+ drivers/gpu/drm/i915/intel_pm.c      |  6 +++---
+ 4 files changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_drv.c b/drivers/gpu/drm/i915/i915_drv.c
+index 6868bc0..b948c71 100644
+--- a/drivers/gpu/drm/i915/i915_drv.c
++++ b/drivers/gpu/drm/i915/i915_drv.c
+@@ -486,7 +486,7 @@ static int i915_drm_freeze(struct drm_device *dev)
+ 		 * for _thaw.
+ 		 */
+ 		mutex_lock(&dev->mode_config.mutex);
+-		list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
++		for_each_crtc(dev, crtc)
+ 			dev_priv->display.crtc_disable(crtc);
+ 		mutex_unlock(&dev->mode_config.mutex);
+ 
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 360369f..0f8f9bc 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -2312,7 +2312,7 @@ static void intel_find_plane_obj(struct intel_crtc *intel_crtc,
+ 	 * Failed to alloc the obj, check to see if we should share
+ 	 * an fb with another CRTC instead
+ 	 */
+-	list_for_each_entry(c, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, c) {
+ 		i = to_intel_crtc(c);
+ 
+ 		if (c == &intel_crtc->base)
+@@ -2540,7 +2540,7 @@ void intel_display_handle_reset(struct drm_device *dev)
+ 	 * pending_flip_queue really got woken up.
+ 	 */
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
+ 		enum plane plane = intel_crtc->plane;
+ 
+@@ -2548,7 +2548,7 @@ void intel_display_handle_reset(struct drm_device *dev)
+ 		intel_finish_page_flip_plane(dev, plane);
+ 	}
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
+ 
+ 		mutex_lock(&crtc->mutex);
+@@ -8301,7 +8301,7 @@ bool intel_get_load_detect_pipe(struct drm_connector *connector,
+ 	}
+ 
+ 	/* Find an unused one (if possible) */
+-	list_for_each_entry(possible_crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, possible_crtc) {
+ 		i++;
+ 		if (!(encoder->possible_crtcs & (1 << i)))
+ 			continue;
+@@ -8692,7 +8692,7 @@ void intel_mark_idle(struct drm_device *dev)
+ 	if (!i915.powersave)
+ 		goto out;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		if (!crtc->primary->fb)
+ 			continue;
+ 
+@@ -8715,7 +8715,7 @@ void intel_mark_fb_busy(struct drm_i915_gem_object *obj,
+ 	if (!i915.powersave)
+ 		return;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		if (!crtc->primary->fb)
+ 			continue;
+ 
+@@ -10339,7 +10339,7 @@ static int intel_set_config_save_state(struct drm_device *dev,
+ 	 * restored, not the drivers personal bookkeeping.
+ 	 */
+ 	count = 0;
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		config->save_crtc_enabled[count++] = crtc->enabled;
+ 	}
+ 
+@@ -12050,7 +12050,7 @@ void intel_modeset_gem_init(struct drm_device *dev)
+ 	 * for this.
+ 	 */
+ 	mutex_lock(&dev->struct_mutex);
+-	list_for_each_entry(c, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, c) {
+ 		if (!c->primary->fb)
+ 			continue;
+ 
+@@ -12096,7 +12096,7 @@ void intel_modeset_cleanup(struct drm_device *dev)
+ 
+ 	intel_unregister_dsm_handler();
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		/* Skip inactive CRTCs */
+ 		if (!crtc->primary->fb)
+ 			continue;
+diff --git a/drivers/gpu/drm/i915/intel_fbdev.c b/drivers/gpu/drm/i915/intel_fbdev.c
+index fce4a0d..634f0b0 100644
+--- a/drivers/gpu/drm/i915/intel_fbdev.c
++++ b/drivers/gpu/drm/i915/intel_fbdev.c
+@@ -488,7 +488,7 @@ static bool intel_fbdev_init_bios(struct drm_device *dev,
+ 		return false;
+ 
+ 	/* Find the largest fb */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		intel_crtc = to_intel_crtc(crtc);
+ 
+ 		if (!intel_crtc->active || !crtc->primary->fb) {
+@@ -512,7 +512,7 @@ static bool intel_fbdev_init_bios(struct drm_device *dev,
+ 	}
+ 
+ 	/* Now make sure all the pipes will fit into it */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		unsigned int cur_size;
+ 
+ 		intel_crtc = to_intel_crtc(crtc);
+@@ -577,7 +577,7 @@ static bool intel_fbdev_init_bios(struct drm_device *dev,
+ 	drm_framebuffer_reference(&ifbdev->fb->base);
+ 
+ 	/* Final pass to check if any active pipes don't have fbs */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		intel_crtc = to_intel_crtc(crtc);
+ 
+ 		if (!intel_crtc->active)
+diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
+index cc8bbd1..a1d9687 100644
+--- a/drivers/gpu/drm/i915/intel_pm.c
++++ b/drivers/gpu/drm/i915/intel_pm.c
+@@ -487,7 +487,7 @@ void intel_update_fbc(struct drm_device *dev)
+ 	 *   - new fb is too large to fit in compressed buffer
+ 	 *   - going to an unsupported config (interlace, pixel multiply, etc.)
+ 	 */
+-	list_for_each_entry(tmp_crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, tmp_crtc) {
+ 		if (intel_crtc_active(tmp_crtc) &&
+ 		    to_intel_crtc(tmp_crtc)->primary_enabled) {
+ 			if (crtc) {
+@@ -1010,7 +1010,7 @@ static struct drm_crtc *single_enabled_crtc(struct drm_device *dev)
+ {
+ 	struct drm_crtc *crtc, *enabled = NULL;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
++	for_each_crtc(dev, crtc) {
+ 		if (intel_crtc_active(crtc)) {
+ 			if (enabled)
+ 				return NULL;
+@@ -2747,7 +2747,7 @@ void ilk_wm_get_hw_state(struct drm_device *dev)
+ 	struct ilk_wm_values *hw = &dev_priv->wm.hw;
+ 	struct drm_crtc *crtc;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head)
++	for_each_crtc(dev, crtc)
+ 		ilk_pipe_wm_get_hw_state(crtc);
+ 
+ 	hw->wm_lp[0] = I915_READ(WM1_LP_ILK);
+-- 
+1.8.3.1
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx

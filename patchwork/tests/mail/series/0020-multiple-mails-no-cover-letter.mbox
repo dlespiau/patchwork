@@ -1,0 +1,103 @@
+MIME-Version: 1.0
+Received: from irsmsx102.ger.corp.intel.com [163.33.3.155]
+	by localhost.localdomain with IMAP (fetchmail-6.3.24)
+	for <damien@localhost> (single-drop); Wed, 14 Jan 2015 11:01:02 +0000 (GMT)
+Received: from irsmsx106.ger.corp.intel.com (163.33.3.31) by
+ IRSMSX108.ger.corp.intel.com (163.33.3.3) with Microsoft SMTP Server (TLS) id
+ 14.3.195.1; Wed, 14 Jan 2015 04:52:15 +0000
+Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
+ IRSMSX106.ger.corp.intel.com (163.33.3.31) with Microsoft SMTP Server (TLS)
+ id 14.3.195.1; Wed, 14 Jan 2015 04:52:14 +0000
+Received: from orsmsx101.amr.corp.intel.com (10.22.225.128) by
+ FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
+ id 14.3.195.1; Tue, 13 Jan 2015 20:52:12 -0800
+Received: from FMSMGA003.fm.intel.com (10.253.24.29) by
+ orsmsx101-1.jf.intel.com (10.22.225.128) with Microsoft SMTP Server id
+ 14.3.195.1; Tue, 13 Jan 2015 20:52:12 -0800
+Received: from fmsmga102.fm.intel.com ([10.1.193.69])  by
+ FMSMGA003-1.fm.intel.com with ESMTP; 13 Jan 2015 20:39:18 -0800
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AuoOAIP1tVSD/NKxm2dsb2JhbABbKIMwWII+R8JxIgqGD3MEA0MBAQEBAQEQAQEBAQEICQsJFC6EDgIEAQEJAwETERIKHg4DAQIGAggcAh4EBAICAgEBIwEfKQWIJwUInlCbeQEBb5QSIIEhjnWCUoFBBYlmiCGDKoNdlG5OAYJCAQEB
+X-IronPort-AV: E=Sophos;i="5.07,753,1413270000"; 
+   d="scan'208";a="1501564104"
+Received: from gabe.freedesktop.org ([131.252.210.177])  by mga11.intel.com
+ with ESMTP; 13 Jan 2015 20:51:38 -0800
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])	by
+ gabe.freedesktop.org (Postfix) with ESMTP id 581CE6E6FD;	Tue, 13 Jan 2015
+ 20:51:38 -0800 (PST)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from smtp145.dfw.emailsrvr.com (smtp145.dfw.emailsrvr.com
+ [67.192.241.145]) by gabe.freedesktop.org (Postfix) with ESMTP id 910396E6FD
+ for <intel-gfx@lists.freedesktop.org>; Tue, 13 Jan 2015 20:51:37 -0800 (PST)
+Received: from localhost (localhost.localdomain [127.0.0.1]) by
+ smtp23.relay.dfw1a.emailsrvr.com (SMTP Server) with ESMTP id 0FC6D380174;
+ Tue, 13 Jan 2015 23:51:37 -0500 (EST)
+X-Virus-Scanned: OK
+Received: by smtp23.relay.dfw1a.emailsrvr.com (Authenticated sender:
+ kenneth-AT-whitecape.org) with ESMTPSA id 7DD80380171;  Tue, 13 Jan 2015
+ 23:51:36 -0500 (EST)
+X-Sender-Id: kenneth@whitecape.org
+Received: from shale.shinigami (static-50-43-36-85.bvtn.or.frontiernet.net
+ [50.43.36.85]) (using TLSv1.2 with cipher AES128-SHA256) by 0.0.0.0:465
+ (trex/5.4.2); Wed, 14 Jan 2015 04:51:36 GMT
+From: Kenneth Graunke <kenneth@whitecape.org>
+To: <intel-gfx@lists.freedesktop.org>
+Date: Tue, 13 Jan 2015 12:46:51 -0800
+Message-ID: <1421182013-751-1-git-send-email-kenneth@whitecape.org>
+X-Mailer: git-send-email 2.2.1
+Subject: [Intel-gfx] [PATCH v2 1/3] drm/i915: Improve HiZ throughput on
+	Cherryview.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;56077857;0;novirus
+X-MS-Exchange-Organization-AuthSource: ORSMSX101.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 2359
+
+Rm91bmQgYnkgcmVhZGluZyB0aGUgSElaX0NISUNLRU4gZG9jdW1lbnRhdGlvbi4KCkltcHJvdmVz
+IHBlcmZvcm1hbmNlIGluIGEgSGlaIG1pY3JvYmVuY2htYXJrIGJ5IGFyb3VuZCA1MCUuCkltcHJv
+dmVzIHBlcmZvcm1hbmNlIGluIE9nbFpCdWZmZXIgYnkgYXJvdW5kIDE4JS4KClRoYW5rcyB0byBD
+aHJpcyBXaWxzb24gZm9yIGhlbHBpbmcgbWUgZmlndXJlIG91dCB3aGVyZSB0byBwdXQgdGhpcy4K
+ClNpZ25lZC1vZmYtYnk6IEtlbm5ldGggR3JhdW5rZSA8a2VubmV0aEB3aGl0ZWNhcGUub3JnPgpS
+ZXZpZXdlZC1ieTogVmlsbGUgU3lyasOkbMOkIDx2aWxsZS5zeXJqYWxhQGxpbnV4LmludGVsLmNv
+bT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X3JlZy5oICAgICAgICAgfCAzICsrKwog
+ZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcmluZ2J1ZmZlci5jIHwgMyArKysKIDIgZmlsZXMg
+Y2hhbmdlZCwgNiBpbnNlcnRpb25zKCspCgpUaGUgc2FtZSBhcyB2MSBidXQgcmVzZW50IHdpdGgg
+VmlsbGUncyBSLWIsIG1vc3RseSBzaW5jZSBpdCdzIGluIGEgc2VyaWVzCndpdGggdGhlIG5leHQg
+dHdvIHBhdGNoZXMsIHdoaWNoIGRpZCBjaGFuZ2UuCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2k5MTUvaTkxNV9yZWcuaCBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfcmVnLmgKaW5k
+ZXggMGYzMmZkMWEuLmEzOWJiMDMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5
+MTVfcmVnLmgKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9yZWcuaApAQCAtNTIwMiw2
+ICs1MjAyLDkgQEAgZW51bSBwdW5pdF9wb3dlcl93ZWxsIHsKICNkZWZpbmUgQ09NTU9OX1NMSUNF
+X0NISUNLRU4yCQkJMHg3MDE0CiAjIGRlZmluZSBHRU44X0NTQzJfU0JFX1ZVRV9DQUNIRV9DT05T
+RVJWQVRJVkUJKDE8PDApCiAKKyNkZWZpbmUgSElaX0NISUNLRU4JCQkJMHg3MDE4CisjIGRlZmlu
+ZSBDSFZfSFpfOFg4X01PREVfSU5fMVgJCQkoMTw8MTUpCisKICNkZWZpbmUgR0VON19MM1NRQ1JF
+RzEJCQkJMHhCMDEwCiAjZGVmaW5lICBWTFZfQjBfV0FfTDNTUUNSRUcxX1ZBTFVFCQkweDAwRDMw
+MDAwCiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3JpbmdidWZmZXIu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX3JpbmdidWZmZXIuYwppbmRleCAxMmEzNmYw
+Li5kYWJjMWQ4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9yaW5nYnVm
+ZmVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfcmluZ2J1ZmZlci5jCkBAIC04
+MzYsNiArODM2LDkgQEAgc3RhdGljIGludCBjaHZfaW5pdF93b3JrYXJvdW5kcyhzdHJ1Y3QgaW50
+ZWxfZW5naW5lX2NzICpyaW5nKQogCQkJICBIRENfRk9SQ0VfTk9OX0NPSEVSRU5UIHwKIAkJCSAg
+SERDX0RPTk9UX0ZFVENIX01FTV9XSEVOX01BU0tFRCk7CiAKKwkvKiBJbXByb3ZlIEhpWiB0aHJv
+dWdocHV0IG9uIENIVi4gKi8KKwlXQV9TRVRfQklUX01BU0tFRChISVpfQ0hJQ0tFTiwgQ0hWX0ha
+XzhYOF9NT0RFX0lOXzFYKTsKKwogCXJldHVybiAwOwogfQogCi0tIAoyLjIuMQoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcg
+bGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK

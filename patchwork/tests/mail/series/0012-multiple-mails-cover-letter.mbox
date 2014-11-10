@@ -1,0 +1,348 @@
+MIME-Version: 1.0
+Received: from irsmsx102.ger.corp.intel.com [163.33.3.155]
+	by localhost.localdomain with IMAP (fetchmail-6.3.24)
+	for <damien@localhost> (single-drop); Tue, 13 May 2014 23:36:21 +0100 (BST)
+Received: from fmsmsx153.amr.corp.intel.com (10.19.17.7) by
+ IRSMSX102.ger.corp.intel.com (163.33.3.155) with Microsoft SMTP Server (TLS)
+ id 14.3.123.3; Tue, 13 May 2014 23:34:14 +0100
+Received: from orsmsx102.amr.corp.intel.com (10.22.225.129) by
+ FMSMSX153.amr.corp.intel.com (10.19.17.7) with Microsoft SMTP Server (TLS) id
+ 14.3.123.3; Tue, 13 May 2014 15:34:12 -0700
+Received: from fmsmga001.fm.intel.com (10.253.24.23) by
+ ORSMSX102-1.jf.intel.com (10.22.225.129) with Microsoft SMTP Server id
+ 14.3.123.3; Tue, 13 May 2014 15:34:04 -0700
+Received: from fmsmga102.fm.intel.com ([10.1.193.69])  by
+ fmsmga001-1.fm.intel.com with ESMTP; 13 May 2014 15:32:33 -0700
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: AoQBAPacclOD/NKxnGdsb2JhbABZg1W/BBiIYhYOAQEBAQEICwkJFCiCJgEBAQMBAQEkEwwKHg4DAQIGAQFABAQIAwEjAS8ZBYg8BQjGdBeOAIUVBJZygl6BPYVUg3qJfIFA
+X-IronPort-AV: E=Sophos;i="4.97,1047,1389772800"; 
+   d="scan'208";a="1432965152"
+Received: from gabe.freedesktop.org ([131.252.210.177])  by mga11.intel.com
+ with ESMTP; 13 May 2014 15:32:31 -0700
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])	by
+ gabe.freedesktop.org (Postfix) with ESMTP id C57A88A389;	Tue, 13 May 2014
+ 15:32:30 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20]) by
+ gabe.freedesktop.org (Postfix) with ESMTP id 2B61A8A2A7 for
+ <intel-gfx@lists.freedesktop.org>; Tue, 13 May 2014 15:32:29 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18]) by
+ orsmga101.jf.intel.com with ESMTP; 13 May 2014 15:32:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="4.97,1047,1389772800"; d="scan'208";a="511178343"
+Received: from unknown (HELO strange.amr.corp.intel.com) ([10.255.12.176]) by
+ orsmga001.jf.intel.com with ESMTP; 13 May 2014 15:32:27 -0700
+From: Damien Lespiau <damien.lespiau@intel.com>
+To: <intel-gfx@lists.freedesktop.org>
+Date: Tue, 13 May 2014 23:32:22 +0100
+Message-ID: <1400020344-17248-3-git-send-email-damien.lespiau@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+References: <1400020344-17248-1-git-send-email-damien.lespiau@intel.com>
+Subject: [Intel-gfx] [PATCH 2/4] drm/i915: Use for_each_intel_crtc() when
+	iterating through intel_crtcs
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.15
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;56075428;0;novirus
+X-MS-Exchange-Organization-AuthSource: ORSMSX102.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 10651
+
+Generated using the semantic patch:
+
+  @@
+  iterator name list_for_each_entry;
+  iterator name for_each_intel_crtc;
+  struct intel_crtc * crtc;
+  struct drm_device * dev;
+  @@
+  -list_for_each_entry(crtc,&dev->mode_config.crtc_list,...) {
+  +for_each_intel_crtc(dev,crtc) {
+	...
+  }
+
+Followed by a couple of fixups by hand (that spatch doesn't match the
+cases where list_for_each_entry() is not followed by a set of '{', '}',
+but I couldn't figure out a way to leave the '{' out of the iterator
+match).
+
+Signed-off-by: Damien Lespiau <damien.lespiau@intel.com>
+---
+ drivers/gpu/drm/i915/i915_debugfs.c  |  4 +--
+ drivers/gpu/drm/i915/intel_display.c | 53 ++++++++++++++----------------------
+ drivers/gpu/drm/i915/intel_pm.c      |  6 ++--
+ 3 files changed, 25 insertions(+), 38 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index 7bd169a..6764ac8 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -514,7 +514,7 @@ static int i915_gem_pageflip_info(struct seq_file *m, void *data)
+ 	unsigned long flags;
+ 	struct intel_crtc *crtc;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		const char pipe = pipe_name(crtc->pipe);
+ 		const char plane = plane_name(crtc->plane);
+ 		struct intel_unpin_work *work;
+@@ -2345,7 +2345,7 @@ static int i915_display_info(struct seq_file *m, void *unused)
+ 	drm_modeset_lock_all(dev);
+ 	seq_printf(m, "CRTC info\n");
+ 	seq_printf(m, "---------\n");
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		bool active;
+ 		int x, y;
+ 
+diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+index 9eb312f..360369f 100644
+--- a/drivers/gpu/drm/i915/intel_display.c
++++ b/drivers/gpu/drm/i915/intel_display.c
+@@ -3261,7 +3261,7 @@ bool intel_has_pending_fb_unpin(struct drm_device *dev)
+ 	 * cannot claim and pin a new fb without at least acquring the
+ 	 * struct_mutex and so serialising with us.
+ 	 */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		if (atomic_read(&crtc->unpin_work_count) == 0)
+ 			continue;
+ 
+@@ -3995,7 +3995,7 @@ static void haswell_mode_set_planes_workaround(struct intel_crtc *crtc)
+ 
+ 	/* We want to get the other_active_crtc only if there's only 1 other
+ 	 * active crtc. */
+-	list_for_each_entry(crtc_it, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc_it) {
+ 		if (!crtc_it->active || crtc_it == crtc)
+ 			continue;
+ 
+@@ -4316,7 +4316,7 @@ static void modeset_update_crtc_power_domains(struct drm_device *dev)
+ 	 * First get all needed power domains, then put all unneeded, to avoid
+ 	 * any unnecessary toggling of the power wells.
+ 	 */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		enum intel_display_power_domain domain;
+ 
+ 		if (!crtc->base.enabled)
+@@ -4328,7 +4328,7 @@ static void modeset_update_crtc_power_domains(struct drm_device *dev)
+ 			intel_display_power_get(dev_priv, domain);
+ 	}
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		enum intel_display_power_domain domain;
+ 
+ 		for_each_power_domain(domain, crtc->enabled_power_domains)
+@@ -4462,8 +4462,7 @@ static int intel_mode_max_pixclk(struct drm_i915_private *dev_priv)
+ 	struct intel_crtc *intel_crtc;
+ 	int max_pixclk = 0;
+ 
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, intel_crtc) {
+ 		if (intel_crtc->new_enabled)
+ 			max_pixclk = max(max_pixclk,
+ 					 intel_crtc->new_config->adjusted_mode.crtc_clock);
+@@ -4484,8 +4483,7 @@ static void valleyview_modeset_global_pipes(struct drm_device *dev,
+ 		return;
+ 
+ 	/* disable/enable all currently active pipes while we change cdclk */
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list,
+-			    base.head)
++	for_each_intel_crtc(dev, intel_crtc)
+ 		if (intel_crtc->base.enabled)
+ 			*prepare_pipes |= (1 << intel_crtc->pipe);
+ }
+@@ -7128,7 +7126,7 @@ static void assert_can_disable_lcpll(struct drm_i915_private *dev_priv)
+ 	struct intel_ddi_plls *plls = &dev_priv->ddi_plls;
+ 	struct intel_crtc *crtc;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head)
++	for_each_intel_crtc(dev, crtc)
+ 		WARN(crtc->active, "CRTC for pipe %c enabled\n",
+ 		     pipe_name(crtc->pipe));
+ 
+@@ -9301,8 +9299,7 @@ static void intel_modeset_update_staged_output_state(struct drm_device *dev)
+ 			to_intel_crtc(encoder->base.crtc);
+ 	}
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		crtc->new_enabled = crtc->base.enabled;
+ 
+ 		if (crtc->new_enabled)
+@@ -9333,8 +9330,7 @@ static void intel_modeset_commit_output_state(struct drm_device *dev)
+ 		encoder->base.crtc = &encoder->new_crtc->base;
+ 	}
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		crtc->base.enabled = crtc->new_enabled;
+ 	}
+ }
+@@ -9688,8 +9684,7 @@ intel_modeset_affected_pipes(struct drm_crtc *crtc, unsigned *modeset_pipes,
+ 	}
+ 
+ 	/* Check for pipes that will be enabled/disabled ... */
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, intel_crtc) {
+ 		if (intel_crtc->base.enabled == intel_crtc->new_enabled)
+ 			continue;
+ 
+@@ -9762,8 +9757,7 @@ intel_modeset_update_state(struct drm_device *dev, unsigned prepare_pipes)
+ 	intel_modeset_commit_output_state(dev);
+ 
+ 	/* Double check state. */
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, intel_crtc) {
+ 		WARN_ON(intel_crtc->base.enabled != intel_crtc_in_use(&intel_crtc->base));
+ 		WARN_ON(intel_crtc->new_config &&
+ 			intel_crtc->new_config != &intel_crtc->config);
+@@ -10041,8 +10035,7 @@ check_crtc_state(struct drm_device *dev)
+ 	struct intel_encoder *encoder;
+ 	struct intel_crtc_config pipe_config;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		bool enabled = false;
+ 		bool active = false;
+ 
+@@ -10131,8 +10124,7 @@ check_shared_dpll_state(struct drm_device *dev)
+ 		     "pll on state mismatch (expected %i, found %i)\n",
+ 		     pll->on, active);
+ 
+-		list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-				    base.head) {
++		for_each_intel_crtc(dev, crtc) {
+ 			if (crtc->base.enabled && intel_crtc_to_shared_dpll(crtc) == pll)
+ 				enabled_crtcs++;
+ 			if (crtc->active && intel_crtc_to_shared_dpll(crtc) == pll)
+@@ -10373,7 +10365,7 @@ static void intel_set_config_restore_state(struct drm_device *dev,
+ 	int count;
+ 
+ 	count = 0;
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		crtc->new_enabled = config->save_crtc_enabled[count++];
+ 
+ 		if (crtc->new_enabled)
+@@ -10563,8 +10555,7 @@ intel_modeset_stage_output_state(struct drm_device *dev,
+ 	}
+ 	/* Now we've also updated encoder->new_crtc for all encoders. */
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		crtc->new_enabled = false;
+ 
+ 		list_for_each_entry(encoder,
+@@ -10777,7 +10768,7 @@ static void ibx_pch_dpll_disable(struct drm_i915_private *dev_priv,
+ 	struct intel_crtc *crtc;
+ 
+ 	/* Make sure no transcoder isn't still depending on us. */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		if (intel_crtc_to_shared_dpll(crtc) == pll)
+ 			assert_pch_transcoder_disabled(dev_priv, crtc->pipe);
+ 	}
+@@ -11630,8 +11621,7 @@ void intel_modeset_init(struct drm_device *dev)
+ 	intel_modeset_setup_hw_state(dev, false);
+ 	mutex_unlock(&dev->mode_config.mutex);
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		if (!crtc->active)
+ 			continue;
+ 
+@@ -11894,8 +11884,7 @@ static void intel_modeset_readout_hw_state(struct drm_device *dev)
+ 	struct intel_connector *connector;
+ 	int i;
+ 
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		memset(&crtc->config, 0, sizeof(crtc->config));
+ 
+ 		crtc->config.quirks |= PIPE_CONFIG_QUIRK_INHERITED_MODE;
+@@ -11920,8 +11909,7 @@ static void intel_modeset_readout_hw_state(struct drm_device *dev)
+ 
+ 		pll->on = pll->get_hw_state(dev_priv, pll, &pll->hw_state);
+ 		pll->active = 0;
+-		list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-				    base.head) {
++		for_each_intel_crtc(dev, crtc) {
+ 			if (crtc->active && intel_crtc_to_shared_dpll(crtc) == pll)
+ 				pll->active++;
+ 		}
+@@ -11986,8 +11974,7 @@ void intel_modeset_setup_hw_state(struct drm_device *dev,
+ 	 * Note that this could go away if we move to using crtc_config
+ 	 * checking everywhere.
+ 	 */
+-	list_for_each_entry(crtc, &dev->mode_config.crtc_list,
+-			    base.head) {
++	for_each_intel_crtc(dev, crtc) {
+ 		if (crtc->active && i915.fastboot) {
+ 			intel_mode_from_pipe_config(&crtc->base.mode, &crtc->config);
+ 			DRM_DEBUG_KMS("[CRTC:%d] found active mode: ",
+diff --git a/drivers/gpu/drm/i915/intel_pm.c b/drivers/gpu/drm/i915/intel_pm.c
+index 1e66a56..cc8bbd1 100644
+--- a/drivers/gpu/drm/i915/intel_pm.c
++++ b/drivers/gpu/drm/i915/intel_pm.c
+@@ -2170,7 +2170,7 @@ static void ilk_compute_wm_config(struct drm_device *dev,
+ 	struct intel_crtc *intel_crtc;
+ 
+ 	/* Compute the currently _active_ config */
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, intel_crtc) {
+ 		const struct intel_pipe_wm *wm = &intel_crtc->wm.active;
+ 
+ 		if (!wm->pipe_enabled)
+@@ -2254,7 +2254,7 @@ static void ilk_merge_wm_level(struct drm_device *dev,
+ 
+ 	ret_wm->enable = true;
+ 
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, intel_crtc) {
+ 		const struct intel_pipe_wm *active = &intel_crtc->wm.active;
+ 		const struct intel_wm_level *wm = &active->wm[level];
+ 
+@@ -2400,7 +2400,7 @@ static void ilk_compute_wm_results(struct drm_device *dev,
+ 	}
+ 
+ 	/* LP0 register values */
+-	list_for_each_entry(intel_crtc, &dev->mode_config.crtc_list, base.head) {
++	for_each_intel_crtc(dev, intel_crtc) {
+ 		enum pipe pipe = intel_crtc->pipe;
+ 		const struct intel_wm_level *r =
+ 			&intel_crtc->wm.active.wm[0];
+-- 
+1.8.3.1
+
+_______________________________________________
+Intel-gfx mailing list
+Intel-gfx@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/intel-gfx
