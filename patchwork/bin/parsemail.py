@@ -31,8 +31,8 @@ from email.utils import parsedate_tz, mktime_tz
 import logging
 
 from patchwork.parser import parse_patch
-from patchwork.models import Patch, Project, Person, Comment, State, \
-        get_default_initial_patch_state
+from patchwork.models import Patch, Project, Person, Comment, State, Series, \
+        SeriesRevision, get_default_initial_patch_state, SERIES_DEFAULT_NAME
 import django
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -159,6 +159,9 @@ class MailContent:
     def __init__(self):
         self.patch = None
         self.comment = None
+        self.series = None
+        self.revision = None
+        self.patch_order = 1    # place of the patch in the series
 
 def build_references_list(mail):
     # construct a list of possible reply message ids
@@ -245,9 +248,36 @@ def find_content(project, mail):
 
     ret = MailContent()
 
+    (name, prefixes) = clean_subject(mail.get('Subject'), [project.linkname])
+    (x, n) = parse_series_marker(prefixes)
+    refs = build_references_list(mail)
+    is_root = refs == []
+    is_cover_letter = is_root and x == 0
+
+    if is_cover_letter or patchbuf:
+        msgid = mail.get('Message-Id').strip()
+
+        # Series get a generic name when they don't start by a cover letter or
+        # when they haven't received the root message yet. Except when it's
+        # only 1 patch, then the series takes the patch subject as name.
+        series_name = None
+        if is_cover_letter or n is None:
+            series_name = strip_prefixes(name)
+
+        (ret.series, ret.revision) = find_series_for_mail(project, series_name,
+                                                          msgid, refs)
+        ret.series.n_patches = n or 1
+
+        date = mail_date(mail)
+        if not ret.series.submitted or date < ret.series.submitted:
+            ret.series.submitted = date
+
+    if is_cover_letter:
+        ret.revision.cover_letter = clean_content(commentbuf)
+        return ret
+
     if pullurl or patchbuf:
-        (name, prefixes) = clean_subject(mail.get('Subject'),
-                                         [project.linkname])
+        ret.patch_order = x or 1
         ret.patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
                     date = mail_date(mail), headers = mail_headers(mail))
 
@@ -260,7 +290,6 @@ def find_content(project, mail):
                     headers = mail_headers(mail))
 
         else:
-            refs = build_references_list(mail)
             cpatch = find_patch_for_comment(project, refs)
             if not cpatch:
                 return ret
@@ -268,7 +297,34 @@ def find_content(project, mail):
                     content = clean_content(commentbuf),
                     headers = mail_headers(mail))
 
+    # make sure we always have a valid (series,revision) tuple if we have a
+    # patch. We don't consider pull requests a series.
+    if ret.patch and not pullurl and (not ret.series or not ret.revision):
+        raise Exception("Could not find series for: %s" % name)
+
     return ret
+
+# The complexity here is because patches can be received out of order:
+# If we receive a patch, part of series, before the root message, we create a
+# placeholder series that will be updated once we receive the root message.
+def find_series_for_mail(project, name, msgid, refs):
+    if refs == []:
+        root_msgid = msgid
+    else:
+        root_msgid = refs[-1]
+
+    try:
+        revision = SeriesRevision.objects.get(root_msgid = root_msgid)
+        series = revision.series
+        if name:
+            series.name = name
+    except SeriesRevision.DoesNotExist:
+        if not name:
+            name = SERIES_DEFAULT_NAME
+        series = Series(name=name)
+        revision = SeriesRevision(root_msgid = root_msgid)
+
+    return (series, revision)
 
 def find_patch_for_comment(project, refs):
     for ref in refs:
@@ -344,6 +400,10 @@ def clean_subject(subject, drop_prefixes = None):
 
     return (subject, prefixes)
 
+prefixes_re = re.compile('^\[[^\]]*\]\s*')
+def strip_prefixes(subject):
+    return prefixes_re.sub('', subject)
+
 sig_re = re.compile('^(-- |_+)\n.*', re.S | re.M)
 def clean_content(str):
     """ Try to remove signature (-- ) and list footer (_____) cruft """
@@ -398,6 +458,20 @@ def parse_mail(mail):
         return 0
     patch = content.patch
     comment = content.comment
+    series = content.series
+    revision = content.revision
+
+    if series:
+        if save_required:
+            author.save()
+            save_required = False
+        series.project = project
+        series.submitter = author
+        series.save()
+
+    if revision:
+        revision.series = series
+        revision.save()
 
     if patch:
         # we delay the saving until we know we have a patch.
@@ -411,6 +485,8 @@ def parse_mail(mail):
         patch.delegate = get_delegate(
                 mail.get('X-Patchwork-Delegate', '').strip())
         patch.save()
+        if revision:
+            revision.add_patch(patch, content.patch_order)
 
     if comment:
         if save_required:
