@@ -39,11 +39,14 @@ class Person(models.Model):
     user = models.ForeignKey(User, null = True, blank = True,
             on_delete = models.SET_NULL)
 
-    def __unicode__(self):
+    def display_name(self):
         if self.name:
             return self.name
         else:
             return self.email
+
+    def __unicode__(self):
+        return self.display_name()
 
     def link_to_user(self, user):
         self.name = user.profile.name()

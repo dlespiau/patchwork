@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'patchwork',
+    'rest_framework',
 ]
 
 # HTTP
@@ -96,6 +97,12 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(ROOT_DIR, 'htdocs'),
 ]
+
+#
+# REST framework
+
+REST_FRAMEWORK = {
+}
 
 
 #
