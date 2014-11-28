@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load person %}
+
+{% block title %}{{project.name}}{% endblock %}
+{% block heading %}{{project.name}}{% endblock %}
+{% block headers %}
+<script language="JavaScript" type="text/javascript">
+$(function () {
+    pw.setup_series_list('#serieslist');
+});
+</script>
+{% endblock %}
+{% block breadcrumb %}{{ project.name }} series{% endblock %}
+
+{% block body %}
+<h2>Incoming Series</h2>
+
+{% include "patchwork/series-list-table.html" %}
+
+{% endblock %}

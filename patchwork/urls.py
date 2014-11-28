@@ -22,6 +22,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from rest_framework_nested import routers
+from patchwork.views.series import SeriesListView
 import patchwork.views.api as api
 
 # API
@@ -54,7 +55,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
 
     # API
-    (r'^api/1.0/$', api.API.as_view()),
+    url(r'^api/1.0/$', api.API.as_view(), name='api-root'),
     (r'^api/1.0/', include(project_router.urls)),
     (r'^api/1.0/', include(series_list_router.urls)),
     (r'^api/1.0/', include(series_router.urls)),
@@ -68,6 +69,9 @@ urlpatterns = patterns('',
     url(r'^project/(?P<project_id>[^/]+)/patches/$',
         'patchwork.views.patch.list', name='patches_list'),
     (r'^project/(?P<project_id>[^/]+)/$', 'patchwork.views.project.project'),
+
+    # series views
+    (r'^project/(?P<project>[^/]+)/series/$', SeriesListView.as_view()),
 
     # patch views
     (r'^patch/(?P<patch_id>\d+)/$', 'patchwork.views.patch.patch'),
