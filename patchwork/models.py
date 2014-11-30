@@ -41,7 +41,7 @@ class Person(models.Model):
 
     def __unicode__(self):
         if self.name:
-            return u'%s <%s>' % (self.name, self.email)
+            return self.name
         else:
             return self.email
 
