@@ -151,7 +151,7 @@ table#patchlist > tbody > tr > td.tag-T {
     background-color: #b4cfec;
 }
 
-a.colinactive, a.colactive {
+a.colinactive, a.colactive, a.dynatable-sort-header {
 	color: black;
 	text-decoration: none;
 }
