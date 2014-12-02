@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% load person %}
+
+{% block title %}{{project.name}}{% endblock %}
+{% block heading %}{{project.name}}{% endblock %}
+{% block headers %}
+<script language="JavaScript" type="text/javascript">
+$(function () {
+    pw.setup_series({ patches: 'series-patchlist' });
+});
+</script>
+{% endblock %}
+{% block breadcrumb %}
+<a href="{% url 'series_list' project=project.linkname %}">{{ project.linkname }} series</a> &#8594; {{ series.name }}
+{% endblock %}
+
+{% block body %}
+<h2>{{ series.name }}</h2>
+
+<div class="core-info">
+  <span>Submitted by {{ series.submitter|personify:project }} on {{ series.submitted }}</span>
+</div>
+
+<h2>Details</h2>
+
+<table class="patchmeta">
+  <tr>
+    <th>Reviewer</th>
+{% if series.reviewer %}
+    <td>{{ series.reviewer }}</td>
+{% else %}
+    <td><em class="text-muted">None</em></td>
+{% endif %}
+  </tr>
+  <tr>
+    <th>Submitted</th>
+    <td>{{ series.submitted }}</td>
+  </tr>
+  <tr>
+    <th>Last Updated</th>
+    <td>{{ series.last_updated }}</td>
+  </tr>
+  <tr>
+    <th>Revision</th>
+    <td>{{ series.version }}</td>
+  </tr>
+</table>
+
+{% if cover_letter %}
+<h2>Cover Letter</h2>
+
+<div class="comment">
+  <pre class="content">
+{{ cover_letter }}
+  </pre>
+</div>
+
+{% endif %}
+<h2>Patches</h2>
+
+<div>
+
+  <ul class="nav nav-tabs" data-tabs="tabs" role="tablist">
+{% for revision in revisions %}
+    <li role="presentation"{% if forloop.last %} class="active"{%endif%}>
+      <a data-toggle="tab" href="#rev{{ revision.version }}">rev {{ revision.version }}</a>
+    </li>
+{% endfor %}
+  </ul>
+
+  <div class="tab-content">
+{% for revision in revisions %}
+    <div role="tabpanel" id="rev{{ revision.version }}"
+         class="tab-pane fade{% if forloop.last %} in active{% endif %}">
+      <table class="table table-hover table-condensed pw-list" id="series-patchlist">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Submitter</th>
+            <th>State</th>
+          </tr>
+        </thead>
+        <tbody>
+      {% for patch in revision.patch_list %}
+          <tr>
+            <td></td>
+            <td><a href="{% url 'patchwork.views.patch.patch' patch_id=patch.id %}"
+              >{{ patch.name|default:"[no subject]"|truncatechars:100 }}</a></td>
+            <td>{{ patch.submitter|personify:project }}</td>
+            <td>{{ patch.state }}</td>
+          <tr>
+      {% endfor %}
+        </tbody>
+      </table>
+    </div>
+{% endfor %}
+  </div>
+
+</div>
+
+{% endblock %}

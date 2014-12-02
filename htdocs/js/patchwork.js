@@ -52,6 +52,10 @@ var pw = (function() {
         'Updated': 'last_updated'
     };
 
+    function series_writer(record) {
+        return '<a href="/series/' + record.id + '/">' + record[this.id] + '</a>';
+    }
+
     function date_writer(record) {
         return record[this.id].substr(0, 10);
     }
@@ -97,6 +101,7 @@ var pw = (function() {
                 paginationGap: [1,1,1,1],
             },
             writers: {
+                'name': series_writer,
                 'submitted': date_writer,
                 'last_updated': date_writer,
                 'reviewer.name': name_writer,
@@ -144,6 +149,33 @@ var pw = (function() {
         });
 
         table.stickyTableHeaders();
+    };
+
+    exports.setup_series = function(config) {
+        var column_num, column_name;
+
+        column_num = $('#' + config.patches + ' tbody tr td:first-child');
+        column_name = $('#' + config.patches + ' tbody tr td:nth-child(2) a');
+
+        for (var i = 0; i < column_num.length; i++) {
+            var name = $(column_name[i]).html();
+            var s = name.split(']');
+
+            if (s.length == 1) {
+                $(column_num[i]).html('1');
+            } else {
+                var matches = s[0].match(/(\d+)\/(\d+)/);
+
+                $(column_name[i]).html(s.slice(1).join(']'));
+
+                if (!matches) {
+                    $(column_num[i]).html('1');
+                    continue;
+                }
+
+                $(column_num[i]).html(matches[1]);
+            }
+        }
     };
 
     return exports;
