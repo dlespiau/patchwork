@@ -80,6 +80,11 @@ class Project(models.Model):
     class Meta:
         ordering = ['linkname']
 
+def user_name(user):
+    if user.first_name or user.last_name:
+        names = filter(bool, [user.first_name, user.last_name])
+        return u' '.join(names)
+    return user.username
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique = True, related_name='profile')
@@ -94,10 +99,7 @@ class UserProfile(models.Model):
             help_text = 'Number of patches to display per page')
 
     def name(self):
-        if self.user.first_name or self.user.last_name:
-            names = filter(bool, [self.user.first_name, self.user.last_name])
-            return u' '.join(names)
-        return self.user.username
+        return user_name(self.user)
 
     def contributor_projects(self):
         submitters = Person.objects.filter(user = self.user)
