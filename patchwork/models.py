@@ -20,6 +20,7 @@
 from django.db import models
 from django.db.models import Q
 import django.dispatch
+from django.contrib import auth
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
@@ -85,6 +86,8 @@ def user_name(user):
         names = filter(bool, [user.first_name, user.last_name])
         return u' '.join(names)
     return user.username
+
+auth.models.User.add_to_class('name', user_name)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique = True, related_name='profile')
