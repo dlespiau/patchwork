@@ -147,6 +147,8 @@ urlpatterns = patterns('',
 
     # submitter autocomplete
     (r'^submitter/$', 'patchwork.views.submitter_complete'),
+    # user autocomplete
+    (r'^complete_user/$', 'patchwork.views.user_complete'),
 
     # email setup
     (r'^mail/$', 'patchwork.views.mail.settings'),

@@ -19,7 +19,8 @@
 
 import json
 
-from patchwork.models import Patch, Project, Person, EmailConfirmation
+from patchwork.models import Patch, Project, Person, EmailConfirmation, User, \
+                             user_name
 from django.shortcuts import render_to_response, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from patchwork.requestcontext import PatchworkRequestContext
@@ -109,6 +110,35 @@ def submitter_complete(request):
         item['pk'] = submitter.id
         item['name'] = submitter.name
         item['email'] = submitter.email
+        data.append(item)
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+def user_complete(request):
+    search = request.GET.get('q', '')
+    limit = request.GET.get('l', None)
+
+    if len(search) < 3:
+        return HttpResponse(content_type="application/json")
+
+    queryset = User.objects.filter(Q(username__icontains = search) |
+                                   Q(first_name__icontains = search) |
+                                   Q(last_name__icontains = search))
+    if limit is not None:
+        try:
+            limit = int(limit)
+        except ValueError:
+            limit = None
+
+    if limit is not None and limit > 0:
+            queryset = queryset[:limit]
+
+    data = []
+    for user in queryset:
+        item = {}
+        item['pk'] = user.id
+        item['name'] = user_name(user)
+        item['email'] = user.email
         data.append(item)
 
     return HttpResponse(json.dumps(data), content_type="application/json")
