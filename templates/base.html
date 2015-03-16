@@ -56,6 +56,7 @@
        {% block heading %}{% endblock %}</span>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse">
+{% block alternate_list %}{% endblock %}
      <ul class="nav navbar-nav navbar-right">
 {% if project %}
      <li><a href="{% url 'patchwork.views.project.project' project_id=project.linkname %}"
