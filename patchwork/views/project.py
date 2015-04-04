@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-from patchwork.models import Patch, Project
+from patchwork.models import Patch, Project, Series
 from django.shortcuts import render_to_response, get_object_or_404
 from django.contrib.auth.models import User
 from patchwork.requestcontext import PatchworkRequestContext
@@ -34,5 +34,6 @@ def project(request, project_id):
             archived = False).count()
     context['n_archived_patches'] = Patch.objects.filter(project = project,
             archived = True).count()
+    context['n_series'] = Series.objects.filter(project = project).count()
 
     return render_to_response('patchwork/project.html', context)
