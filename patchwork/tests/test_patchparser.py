@@ -529,20 +529,10 @@ class DelegateRequestTest(TestCase):
         self.p1.delete()
         self.user.delete()
 
-class InitialPatchStateTest(TestCase):
+class MailFromPatchTest(TestCase):
     fixtures = ['default_states']
     patch_filename = '0001-add-line.patch'
     msgid = '<1@example.com>'
-    invalid_state_name = "Nonexistent Test State"
-
-    def setUp(self):
-        self.patch = read_patch(self.patch_filename)
-        self.user = create_user()
-        self.p1 = Project(linkname = 'test-project-1', name = 'Project 1',
-                listid = '1.example.com', listemail='1@example.com')
-        self.p1.save()
-        self.default_state = get_default_initial_patch_state()
-        self.nondefault_state = State.objects.get(name="Accepted")
 
     def get_email(self):
         email = create_email(self.patch)
@@ -550,6 +540,25 @@ class InitialPatchStateTest(TestCase):
         email['List-ID'] = '<' + self.p1.listid + '>'
         email['Message-Id'] = self.msgid
         return email
+
+    def setUp(self):
+        self.patch = read_patch(self.patch_filename)
+        self.user = create_user()
+        self.p1 = Project(linkname = 'test-project-1', name = 'Project 1',
+                listid = '1.example.com', listemail='1@example.com')
+        self.p1.save()
+
+    def tearDown(self):
+        self.p1.delete()
+        self.user.delete()
+
+class InitialPatchStateTest(MailFromPatchTest):
+    invalid_state_name = "Nonexistent Test State"
+
+    def setUp(self):
+        super(InitialPatchStateTest, self).setUp()
+        self.default_state = get_default_initial_patch_state()
+        self.nondefault_state = State.objects.get(name="Accepted")
 
     def _assertState(self, state):
         query = Patch.objects.filter(project=self.p1)
@@ -585,10 +594,6 @@ class InitialPatchStateTest(TestCase):
         email['X-Patchwork-State'] = self.invalid_state_name
         parse_mail(email)
         self._assertState(self.default_state)
-
-    def tearDown(self):
-        self.p1.delete()
-        self.user.delete()
 
 class ParseInitialTagsTest(PatchTest):
     patch_filename = '0001-add-line.patch'
