@@ -19,6 +19,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import argparse
 import codecs
 import datetime
 from email import message_from_file
@@ -44,6 +45,16 @@ from patchwork.models import (Patch, Project, Person, Comment, State, Series,
     SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state,
     series_revision_complete, SERIES_DEFAULT_NAME)
 from patchwork.parser import parse_patch
+
+LOGGER = logging.getLogger(__name__)
+
+VERBOSITY_LEVELS = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL
+}
 
 list_id_headers = ['List-ID', 'X-Mailing-List', 'X-list']
 whitespace_re = re.compile(r'\s+')
@@ -667,21 +678,25 @@ def parse_mail(mail):
 
     # some basic sanity checks
     if 'From' not in mail:
+        LOGGER.debug("Ignoring mail due to missing 'From'")
         return 0
 
     if 'Subject' not in mail:
+        LOGGER.debug("Ignoring mail due to missing 'Subject'")
         return 0
 
     if 'Message-Id' not in mail:
+        LOGGER.debug("Ignoring mail due to missing 'Message-Id'")
         return 0
 
     hint = mail.get('X-Patchwork-Hint', '').lower()
     if hint == 'ignore':
+        LOGGER.debug("Ignoring mail due to 'ignore' hint")
         return 0
 
     project = find_project(mail)
     if project is None:
-        print "no project found"
+        LOGGER.error('Failed to find a project for mail')
         return 0
 
     msgid = mail.get('Message-Id').strip()
@@ -785,8 +800,22 @@ def lock():
 def main(args):
     django.setup()
     logger = setup_error_handler()
-    mail = message_from_file(sys.stdin)
+    parser = argparse.ArgumentParser()
     parse_lock = None
+
+    def list_logging_levels():
+        """Give a summary of all available logging levels."""
+        return sorted(VERBOSITY_LEVELS.keys(),
+                      key=lambda x: VERBOSITY_LEVELS[x])
+
+    parser.add_argument('--verbosity', choices=list_logging_levels(),
+                        help='logging level', default='info')
+
+    args = vars(parser.parse_args())
+
+    logging.basicConfig(level=VERBOSITY_LEVELS[args['verbosity']])
+
+    mail = message_from_file(sys.stdin)
     try:
         parse_lock = lock()
         return parse_mail(mail)
