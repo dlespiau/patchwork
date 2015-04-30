@@ -480,6 +480,33 @@ class SeriesRevision(models.Model):
                                                 order=order)
         sp.save()
 
+    def duplicate_meta(self):
+        new = SeriesRevision.objects.get(pk=self.pk)
+        new.pk = None
+        new.cover_letter = None
+        new.version = self.version + 1
+        new.save()
+
+        series = new.series
+        series.version = new.version
+        series.save()
+
+        return new
+
+    def duplicate(self, exclude_patches=()):
+        """Create a new revision based on 'self', incrementing the version
+           and populating the new revision with all 'self' patches.
+           exclude_patch (a list of 'order's) can be used to exclude
+           patches from the operation"""
+        new = self.duplicate_meta()
+        order = 0
+        for p in self.ordered_patches():
+            order += 1
+            if order in exclude_patches:
+                continue
+            new.add_patch(p, order)
+        return new
+
     def __unicode__(self):
         if hasattr(self, 'series'):
             return self.series.name + " (rev " + str(self.version) + ")"

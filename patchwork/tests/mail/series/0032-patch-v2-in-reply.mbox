@@ -1,0 +1,97 @@
+MIME-Version: 1.0
+Received: from irsmsx102.ger.corp.intel.com [163.33.3.155]
+	by localhost.localdomain with IMAP (fetchmail-6.3.24)
+	for <damien@localhost> (single-drop); Thu, 02 Apr 2015 14:24:02 +0100 (BST)
+Received: from fmsmsx106.amr.corp.intel.com (10.18.124.204) by
+ IRSMSX154.ger.corp.intel.com (163.33.192.96) with Microsoft SMTP Server (TLS)
+ id 14.3.224.2; Thu, 2 Apr 2015 14:23:08 +0100
+Received: from fmsmga002.fm.intel.com (10.253.24.26) by
+ FMSMSX106-1.cps.intel.com (10.18.124.204) with Microsoft SMTP Server id
+ 14.3.224.2; Thu, 2 Apr 2015 06:23:07 -0700
+Received: from orsmga103.jf.intel.com ([10.7.208.35])  by
+ fmsmga002-1.fm.intel.com with ESMTP; 02 Apr 2015 06:22:57 -0700
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: A0D9AQBUQh1VnLHS/INcg1pcgxXCISIKhhGBJ0wBAQEBAQESAQEBAQEICwkJFC5BAYNcAQEBAQIBAQEBIAQNEgoeCwMDAQIGAQEKFQMCAgUZBAQCAgIBAQsCFgEfEAYLAgYCAQEBiCIIBQi1PpgxAQEBBwEBAQEBARyBIYoIh2iBRQEEiyGJPoNkgieBV5cJZwGCQgEBAQ
+X-IPAS-Result: A0D9AQBUQh1VnLHS/INcg1pcgxXCISIKhhGBJ0wBAQEBAQESAQEBAQEICwkJFC5BAYNcAQEBAQIBAQEBIAQNEgoeCwMDAQIGAQEKFQMCAgUZBAQCAgIBAQsCFgEfEAYLAgYCAQEBiCIIBQi1PpgxAQEBBwEBAQEBARyBIYoIh2iBRQEEiyGJPoNkgieBV5cJZwGCQgEBAQ
+X-IronPort-AV: E=Sophos;i="5.11,511,1422950400"; 
+   d="scan'208";a="229625714"
+Received: from gabe.freedesktop.org ([131.252.210.177])  by mga03.intel.com
+ with ESMTP; 02 Apr 2015 06:22:49 -0700
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])	by
+ gabe.freedesktop.org (Postfix) with ESMTP id 6C95C6E2DA;	Thu,  2 Apr 2015
+ 06:22:47 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115]) by
+ gabe.freedesktop.org (Postfix) with ESMTP id 5BE566E2DA for
+ <intel-gfx@lists.freedesktop.org>; Thu,  2 Apr 2015 06:22:46 -0700 (PDT)
+Received: from orsmga002.jf.intel.com ([10.7.209.21]) by
+ fmsmga103.fm.intel.com with ESMTP; 02 Apr 2015 06:22:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.11,511,1422950400"; d="scan'208";a="707918902"
+Received: from deepu.iind.intel.com (HELO [10.223.82.144]) ([10.223.82.144])
+ by orsmga002.jf.intel.com with ESMTP; 02 Apr 2015 06:22:44 -0700
+Message-ID: <551D41EA.20307@linux.intel.com>
+Date: Thu, 2 Apr 2015 18:49:38 +0530
+From: Deepak S <deepak.s@linux.intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64;
+ rv:31.0) Gecko/20100101 Thunderbird/31.5.0
+To: Daniel Vetter <daniel@ffwll.ch>
+References: <1427726038-19718-1-git-send-email-deepak.s@linux.intel.com>
+ <20150330154334.GC6354@phenom.ffwll.local>
+In-Reply-To: <20150330154334.GC6354@phenom.ffwll.local>
+CC: <intel-gfx@lists.freedesktop.org>
+Subject: Re: [Intel-gfx] [PATCH] drm/i915: Clean-up idr table if context
+ create fails.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;57084743;0;novirus
+X-MS-Exchange-Organization-AuthSource: FMSMSX106.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 2282
+
+CgpPbiBNb25kYXkgMzAgTWFyY2ggMjAxNSAwOToxMyBQTSwgRGFuaWVsIFZldHRlciB3cm90ZToK
+PiBPbiBNb24sIE1hciAzMCwgMjAxNSBhdCAwODowMzo1OFBNICswNTMwLCBkZWVwYWsuc0BsaW51
+eC5pbnRlbC5jb20gd3JvdGU6Cj4+IEZyb206IERlZXBhayBTIDxkZWVwYWsuc0BsaW51eC5pbnRl
+bC5jb20+Cj4+Cj4+IENsZWFudXAgaWRyIHRhYmxlIGlmIGFueSBlcnJvciBoYXBwZW5zIGFmdGVy
+IF9fY3JlYXRlX2h3X2NvbnRleHQoKSBpbgo+PiBpOTE1X2dlbV9jcmVhdGVfY29udGV4dCgpCj4+
+Cj4+IFNpZ25lZC1vZmYtYnk6IERlZXBhayBTIDxkZWVwYWsuc0BsaW51eC5pbnRlbC5jb20+Cj4+
+IC0tLQo+PiAgIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NvbnRleHQuYyB8IDIgKysK
+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspCj4+Cj4+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dlbV9jb250ZXh0LmMgYi9kcml2ZXJzL2dwdS9kcm0v
+aTkxNS9pOTE1X2dlbV9jb250ZXh0LmMKPj4gaW5kZXggZjNlODRjNC4uNjliZWJlNSAxMDA2NDQK
+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2k5MTUvaTkxNV9nZW1fY29udGV4dC5jCj4+ICsrKyBi
+L2RyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NvbnRleHQuYwo+PiBAQCAtMjg3LDYgKzI4
+Nyw4IEBAIGVycl91bnBpbjoKPj4gICAJaWYgKGlzX2dsb2JhbF9kZWZhdWx0X2N0eCAmJiBjdHgt
+PmxlZ2FjeV9od19jdHgucmNzX3N0YXRlKQo+PiAgIAkJaTkxNV9nZW1fb2JqZWN0X2dndHRfdW5w
+aW4oY3R4LT5sZWdhY3lfaHdfY3R4LnJjc19zdGF0ZSk7Cj4+ICAgZXJyX2Rlc3Ryb3k6Cj4+ICsJ
+aWYgKGN0eC0+ZmlsZV9wcml2KQo+PiArCQlpZHJfcmVtb3ZlKCZjdHgtPmZpbGVfcHJpdi0+Y29u
+dGV4dF9pZHIsIGN0eC0+dXNlcl9oYW5kbGUpOwo+IFRoZSBjb21tb24gYXBwcm9hY2ggaXMgdG8g
+YWRkIGEgbmV3IGVycl9pZHI6IGxhYmVsIGF0IHRoZSBvcCBvZiB0aGUgdW53aW5kCj4gY29kZSBh
+bmQgbWFrZSB0aGUgY2FsbCB0byBpZHJfcmVtb3ZlIHVuY29uZGl0aW9uYWwuCj4KPiBUaGFua3Ms
+IERhbmllbAoKVGhhbmtzIERhbmllbCBmb3IgcmV2aWV3LgpJIGRvIG5vdCB0aGluayB3ZSBjYW4g
+aGF2ZSBhIHVuY29uZGl0aW9uYWwgaWRyIHJlbW92ZSBzaW5jZSBmb3IgZ2xvYmFsIGN0eAppOTE1
+X2dlbV9jcmVhdGVfY29udGV4dCBjYWxsZWQgd2l0aCBmaWxlX3ByaXY9TlVMTD8KCi0gVGhhbmtz
+LCBEZWVwYWsKCj4+ICAgCWk5MTVfZ2VtX2NvbnRleHRfdW5yZWZlcmVuY2UoY3R4KTsKPj4gICAJ
+cmV0dXJuIEVSUl9QVFIocmV0KTsKPj4gICB9Cj4+IC0tIAo+PiAxLjkuMQo+Pgo+PiBfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwo+PiBJbnRlbC1nZnggbWFp
+bGluZyBsaXN0Cj4+IEludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4gaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2ludGVsLWdmeAoKX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcg
+bGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK

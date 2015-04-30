@@ -1,0 +1,119 @@
+MIME-Version: 1.0
+Received: from irsmsx102.ger.corp.intel.com [163.33.3.155]
+	by localhost.localdomain with IMAP (fetchmail-6.3.24)
+	for <damien@localhost> (single-drop); Mon, 30 Mar 2015 16:45:01 +0100 (BST)
+Received: from fmsmsx102.amr.corp.intel.com (10.18.124.200) by
+ irsmsx110.ger.corp.intel.com (163.33.3.25) with Microsoft SMTP Server (TLS)
+ id 14.3.224.2; Mon, 30 Mar 2015 16:42:10 +0100
+Received: from orsmsx104.amr.corp.intel.com (10.22.225.131) by
+ FMSMSX102.amr.corp.intel.com (10.18.124.200) with Microsoft SMTP Server (TLS)
+ id 14.3.224.2; Mon, 30 Mar 2015 08:42:08 -0700
+Received: from fmsmga001.fm.intel.com (10.253.24.23) by
+ ORSMSX104-1.jf.intel.com (10.22.225.131) with Microsoft SMTP Server id
+ 14.3.224.2; Mon, 30 Mar 2015 08:42:08 -0700
+Received: from fmsmga102.fm.intel.com ([10.1.193.69])  by
+ fmsmga001-1.fm.intel.com with ESMTP; 30 Mar 2015 08:41:51 -0700
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: A0BgAACwbRlVnLHS/INcgmR0XIMTwX4iCoYRgRxMAQEBAQEBEQEBAQEBBg0JCRQuhBQBAQEBAgEBAQEPEQQNDAEBBAoeCwECAgEBAgYBAQoVAwICBRkEBAICAgEBCwUTAQwBBQEMKQUdiAUIAQQIpWI+MYpBcIRiAQWTYAEBAQEBBQEBAQEBAQEVBgqBF4oIhRWCUi+BFopHiguDXYIlAYFWkRU1hSdtAYJCAQEB
+X-IPAS-Result: A0BgAACwbRlVnLHS/INcgmR0XIMTwX4iCoYRgRxMAQEBAQEBEQEBAQEBBg0JCRQuhBQBAQEBAgEBAQEPEQQNDAEBBAoeCwECAgEBAgYBAQoVAwICBRkEBAICAgEBCwUTAQwBBQEMKQUdiAUIAQQIpWI+MYpBcIRiAQWTYAEBAQEBBQEBAQEBAQEVBgqBF4oIhRWCUi+BFopHiguDXYIlAYFWkRU1hSdtAYJCAQEB
+X-IronPort-AV: E=Sophos;i="5.11,494,1422950400"; 
+   d="scan'208";a="16679446"
+Received: from gabe.freedesktop.org ([131.252.210.177])  by mga11.intel.com
+ with ESMTP; 30 Mar 2015 08:41:49 -0700
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])	by
+ gabe.freedesktop.org (Postfix) with ESMTP id 99D4F6E5DC;	Mon, 30 Mar 2015
+ 08:41:48 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mail-wi0-f179.google.com (mail-wi0-f179.google.com
+ [209.85.212.179]) by gabe.freedesktop.org (Postfix) with ESMTP id 6D05E6E5DC
+ for <intel-gfx@lists.freedesktop.org>; Mon, 30 Mar 2015 08:41:46 -0700 (PDT)
+Received: by wiaa2 with SMTP id a2so135549739wia.0 for
+ <intel-gfx@lists.freedesktop.org>; Mon, 30 Mar 2015 08:41:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ffwll.ch; s=google;
+ h=sender:date:from:to:cc:subject:message-id:references:mime-version
+ :content-type:content-disposition:in-reply-to:user-agent;
+ bh=bB+I4BIlHegpwvIgpLGPCsfmix4mD6SJlc6U2Sw/yI4=;
+ b=GnERTqkaYVSG60P0CRwvezRFSRsvbTt/JLUU9zkRaPMWxFglnGbrRfcz1Q/7OgEOso
+ oVcpOdQZEd+NBdLNqom+EVmhVuwqM63nsOtm2LFEGEqIyth6Yx9SM/lNNrg1Xp/rgkct
+ SNpaa2Jotvv/yeX/YVOUDsG+SHNJigrzooAok=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=1e100.net; s=20130820;
+ h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+ :references:mime-version:content-type:content-disposition
+ :in-reply-to:user-agent;
+ bh=bB+I4BIlHegpwvIgpLGPCsfmix4mD6SJlc6U2Sw/yI4=;
+ b=ejyaacHc8SCc1gZpSkzYxOFJ/lHzl7mSkNFQGIpSPFbHxnGcu8WB8Yvlwbl5XGHqwp
+ uMOgsUAN5Iygl4T1iXy/ewtxJYxPnP87HCw2UPzQQ5xnad8ZLAMW7yMvi1eeDdnmnalE
+ ynYr0bnH2UF9tlpT0PbO84uCimvO4VtK/o11I1NJrQ+k4ljuBnXjOC+H54zfU8ssi14f
+ 0BvSirNOi+kGCw7A9GG0Eb514Cp1r++lH3msSf1Ie1Lwscpg1AhN8rhhN1B3/ZEw7ukG
+ N3ameta9Q24ttep+HwDuE7WwuGV1TDgIChfnXMTV2zbi4bfpjp1JySMtj2hSonmJh4Rr
+ +l6g==
+X-Gm-Message-State: ALoCoQnSOPzAmR3240+8OkdjArn1sKol7K6e3QbH6IWrFT8WN1Vlos6zE7bM8axw9b3nazMchJKr
+X-Received: by 10.180.109.169 with SMTP id ht9mr24024360wib.86.1427730105724; 
+ Mon, 30 Mar 2015 08:41:45 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:56c6:0:22cf:30ff:fe4c:37d6]) by
+ mx.google.com with ESMTPSA id n6sm16276260wjy.8.2015.03.30.08.41.44
+ (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128); Mon, 30
+ Mar 2015 08:41:45 -0700 (PDT)
+Date: Mon, 30 Mar 2015 17:43:34 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: <deepak.s@linux.intel.com>
+Message-ID: <20150330154334.GC6354@phenom.ffwll.local>
+References: <1427726038-19718-1-git-send-email-deepak.s@linux.intel.com>
+Content-Disposition: inline
+In-Reply-To: <1427726038-19718-1-git-send-email-deepak.s@linux.intel.com>
+X-Operating-System: Linux phenom 4.0.0-rc3+ 
+User-Agent: Mutt/1.5.23 (2014-03-12)
+CC: <intel-gfx@lists.freedesktop.org>
+Subject: Re: [Intel-gfx] [PATCH] drm/i915: Clean-up idr table if context
+ create fails.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing & development
+ <intel-gfx.lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org>
+Return-Path: intel-gfx-bounces@lists.freedesktop.org
+X-MS-Exchange-Organization-AVStamp-Mailbox: NAI;57084713;0;novirus
+X-MS-Exchange-Organization-AuthSource: ORSMSX104.amr.corp.intel.com
+X-MS-Exchange-Organization-AuthAs: Anonymous
+Content-Length: 2019
+
+T24gTW9uLCBNYXIgMzAsIDIwMTUgYXQgMDg6MDM6NThQTSArMDUzMCwgZGVlcGFrLnNAbGludXgu
+aW50ZWwuY29tIHdyb3RlOgo+IEZyb206IERlZXBhayBTIDxkZWVwYWsuc0BsaW51eC5pbnRlbC5j
+b20+Cj4gCj4gQ2xlYW51cCBpZHIgdGFibGUgaWYgYW55IGVycm9yIGhhcHBlbnMgYWZ0ZXIgX19j
+cmVhdGVfaHdfY29udGV4dCgpIGluCj4gaTkxNV9nZW1fY3JlYXRlX2NvbnRleHQoKQo+IAo+IFNp
+Z25lZC1vZmYtYnk6IERlZXBhayBTIDxkZWVwYWsuc0BsaW51eC5pbnRlbC5jb20+Cj4gLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NvbnRleHQuYyB8IDIgKysKPiAgMSBmaWxl
+IGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
+cm0vaTkxNS9pOTE1X2dlbV9jb250ZXh0LmMgYi9kcml2ZXJzL2dwdS9kcm0vaTkxNS9pOTE1X2dl
+bV9jb250ZXh0LmMKPiBpbmRleCBmM2U4NGM0Li42OWJlYmU1IDEwMDY0NAo+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9pOTE1L2k5MTVfZ2VtX2NvbnRleHQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9pOTE1L2k5MTVfZ2VtX2NvbnRleHQuYwo+IEBAIC0yODcsNiArMjg3LDggQEAgZXJyX3VucGlu
+Ogo+ICAJaWYgKGlzX2dsb2JhbF9kZWZhdWx0X2N0eCAmJiBjdHgtPmxlZ2FjeV9od19jdHgucmNz
+X3N0YXRlKQo+ICAJCWk5MTVfZ2VtX29iamVjdF9nZ3R0X3VucGluKGN0eC0+bGVnYWN5X2h3X2N0
+eC5yY3Nfc3RhdGUpOwo+ICBlcnJfZGVzdHJveToKPiArCWlmIChjdHgtPmZpbGVfcHJpdikKPiAr
+CQlpZHJfcmVtb3ZlKCZjdHgtPmZpbGVfcHJpdi0+Y29udGV4dF9pZHIsIGN0eC0+dXNlcl9oYW5k
+bGUpOwoKVGhlIGNvbW1vbiBhcHByb2FjaCBpcyB0byBhZGQgYSBuZXcgZXJyX2lkcjogbGFiZWwg
+YXQgdGhlIG9wIG9mIHRoZSB1bndpbmQKY29kZSBhbmQgbWFrZSB0aGUgY2FsbCB0byBpZHJfcmVt
+b3ZlIHVuY29uZGl0aW9uYWwuCgpUaGFua3MsIERhbmllbAoKPiAgCWk5MTVfZ2VtX2NvbnRleHRf
+dW5yZWZlcmVuY2UoY3R4KTsKPiAgCXJldHVybiBFUlJfUFRSKHJldCk7Cj4gIH0KPiAtLSAKPiAx
+LjkuMQo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Cj4gSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdAo+IEludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKPiBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwt
+Z2Z4CgotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRp
+b24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9pbnRlbC1nZngK

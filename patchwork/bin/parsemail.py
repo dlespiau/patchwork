@@ -27,15 +27,18 @@ import operator
 import codecs
 from email import message_from_file
 from email.header import Header, decode_header
+from email.parser import HeaderParser
 from email.utils import parsedate_tz, mktime_tz
 import logging
 
 from patchwork.parser import parse_patch
 from patchwork.models import Patch, Project, Person, Comment, State, Series, \
-        SeriesRevision, get_default_initial_patch_state, SERIES_DEFAULT_NAME
+        SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state, \
+        SERIES_DEFAULT_NAME, get_default_initial_patch_state
 import django
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.exceptions import MultipleObjectsReturned
 from django.utils.log import AdminEmailHandler
 
 list_id_headers = ['List-ID', 'X-Mailing-List', 'X-list']
@@ -163,21 +166,83 @@ class MailContent:
         self.revision = None
         self.patch_order = 1    # place of the patch in the series
 
-def build_references_list(mail):
-    # construct a list of possible reply message ids
+def build_references_from_headers(in_reply_to, references):
     refs = []
 
-    if 'In-Reply-To' in mail:
-        refs.append(mail.get('In-Reply-To'))
+    if in_reply_to:
+        refs.append(in_reply_to)
 
-    if 'References' in mail:
-        rs = mail.get('References').split()
+    if references:
+        rs = references.split()
         rs.reverse()
         for r in rs:
             if r not in refs:
                 refs.append(r)
 
     return refs
+
+def get_object_by_msgid(cls, msgid):
+    try:
+        return cls.objects.get(msgid=msgid)
+    except cls.DoesNotExist:
+        return None
+    except MultipleObjectsReturned:
+        # it's theoritically possible to have the same message id for 2
+        # patches or comments, take the more recent object then, why
+        # not.
+        return cls.objects.filter(msgid=msgid).order_by('-date')[0]
+
+def find_header_in_text(headers, name):
+    parser = HeaderParser()
+    headers = parser.parsestr(headers)
+    return headers[name]
+
+def build_references_from_db(msgid):
+    # msgid belongs to either a patch or a comment
+    object = get_object_by_msgid(Patch, msgid)
+    if not object:
+        object = get_object_by_msgid(Comment, msgid)
+
+    if not object:
+        # cover letters are thread roots, but don't have a corresponding
+        # Comment object as the cover letter is stored in Series.
+        return []
+
+    in_reply_to = find_header_in_text(object.headers, 'In-Reply-To')
+    references = find_header_in_text(object.headers, 'References')
+    refs = build_references_from_headers(in_reply_to, references)
+
+    if not refs:
+        return []
+
+    # note that we recurse on the highest ancestor found, not necessarily the
+    # immediate parent (depends: if the mail found in the DB is from a
+    # actually MUA which filled in the 'References:' header or if it is a
+    # git send-email mail, with only 'In-References-To: defined
+    ancestor_msgid = refs[-1]
+    return refs + build_references_from_db(ancestor_msgid)
+
+def build_references_from_mail(mail):
+    return build_references_from_headers(mail.get('In-Reply-To', None),
+                                         mail.get('References', None))
+
+def build_references_list(mail):
+    """Construct the list of msgids from 'mail' to the root of the thread"""
+
+    # parse the information from the mail headers
+    refs = build_references_from_mail(mail)
+
+    if not refs:
+        return refs
+
+    # Emails aren't required to have the full list of their parents in
+    # References:. So we need to use the db to reach the root message.
+    #
+    # git send-email emails with --in-reply-to are the ultimate occurrence of
+    # this behaviour as they just have the but just the direct parent in
+    # References.
+    parent_msgid = refs[-1]
+    return refs + build_references_from_db(parent_msgid)
 
 def parse_series_marker(subject_prefixes):
     """If this patch is part a of multi-patches series, ie has x/n in its
@@ -253,8 +318,15 @@ def find_content(project, mail):
     refs = build_references_list(mail)
     is_root = refs == []
     is_cover_letter = is_root and x == 0
+    is_patch = patchbuf is not None
 
-    if is_cover_letter or patchbuf:
+    if pullurl or is_patch:
+        ret.patch_order = x or 1
+        ret.patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
+                    date = mail_date(mail), headers = mail_headers(mail))
+
+    # Create/update the Series and SeriesRevision objects
+    if is_cover_letter or is_patch:
         msgid = mail.get('Message-Id').strip()
 
         # Series get a generic name when they don't start by a cover letter or
@@ -264,8 +336,9 @@ def find_content(project, mail):
         if is_cover_letter or n is None:
             series_name = strip_prefixes(name)
 
-        (ret.series, ret.revision) = find_series_for_mail(project, series_name,
-                                                          msgid, refs)
+        (ret.series, ret.revision, ret.patch_order) = \
+            find_series_for_mail(project, series_name, msgid, is_patch,
+                                 ret.patch_order, refs)
         ret.series.n_patches = n or 1
 
         date = mail_date(mail)
@@ -275,11 +348,6 @@ def find_content(project, mail):
     if is_cover_letter:
         ret.revision.cover_letter = clean_content(commentbuf)
         return ret
-
-    if pullurl or patchbuf:
-        ret.patch_order = x or 1
-        ret.patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
-                    date = mail_date(mail), headers = mail_headers(mail))
 
     if commentbuf:
         # If this is a new patch, we defer setting comment.patch until
@@ -304,27 +372,90 @@ def find_content(project, mail):
 
     return ret
 
-# The complexity here is because patches can be received out of order:
-# If we receive a patch, part of series, before the root message, we create a
-# placeholder series that will be updated once we receive the root message.
-def find_series_for_mail(project, name, msgid, refs):
+def find_previous_patch(revision, order, refs):
+    if not refs:
+        return None
+
+    # if one of the parents was a patch, this is an update. Well, almost. We
+    # also need to make sure we don't match a patch from a series without a
+    # cover letter (see comment below).
+    parent_patch = None
+    for ref in refs:
+        try:
+            patch = Patch.objects.get(msgid=ref)
+            parent_patch = patch
+            break
+        except Patch.DoesNotExist:
+            continue
+
+    if not parent_patch:
+        return None
+
+    # A multiple patch series, sent without a cover letter (we don't cover the
+    # case where patch i + 1 is sent as reply to patch i) will look like:
+    # - root message (patch 1/n)
+    #   - reply 1 (patch 2/n)
+    #   - reply 2 (patch 3/n)
+    #   - ...
+    #   - reply n-1 (patch n/n)
+    # We don't want to consider reply 1 to n-1 as new revisions of patch 1/n.
+    #
+    # However, we still want to be able to send a "PATCH v2 1/n" as a reply to
+    # the root message.
+    if revision.root_msgid != parent_patch.msgid or order == 1:
+        return parent_patch
+
+    return None
+
+def find_patch_order(revisions, previous_patch):
+    # cycle through revisions starting by the more recent one and find
+    # the revision where previous_patch is
+    order = None
+    for revision in revisions:
+        try:
+            order = SeriesRevisionPatch.objects.get(revision=revision,
+                    patch=previous_patch).order
+            break
+        except SeriesRevisionPatch.DoesNotExist:
+            continue
+    assert order is not None
+    return order
+
+# The complexity here is because:
+#   - patches can be received out of order: If we receive a patch, part of
+#     series, before the root message, we create a placeholder series that will
+#     be updated once we receive the root message.
+#   - we need to create new revisions when the mail is actually a new version
+#     of a previous patch
+def find_series_for_mail(project, name, msgid, is_patch, order, refs):
     if refs == []:
         root_msgid = msgid
     else:
         root_msgid = refs[-1]
 
     try:
-        revision = SeriesRevision.objects.get(root_msgid = root_msgid)
+        # grab the latest revision for this mail thread
+        revisions = SeriesRevision.objects.filter(series__project=project,
+                                                  root_msgid=root_msgid) \
+                                                 .reverse()
+        revision = revisions[0]
         series = revision.series
         if name:
             series.name = name
-    except SeriesRevision.DoesNotExist:
+        if is_patch:
+            previous_patch = find_previous_patch(revision, order, refs)
+            if previous_patch:
+                order = find_patch_order(revisions, previous_patch)
+                revision = revision.duplicate(exclude_patches=(order,))
+                # series has been updated, grab the new instance
+                series = revision.series
+    except IndexError:
         if not name:
             name = SERIES_DEFAULT_NAME
         series = Series(name=name)
         revision = SeriesRevision(root_msgid = root_msgid)
 
-    return (series, revision)
+    return (series, revision, order)
 
 def find_patch_for_comment(project, refs):
     for ref in refs:
