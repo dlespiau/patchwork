@@ -1,5 +1,6 @@
 # Patchwork - automated patch tracking system
 # Copyright (C) 2008 Jeremy Kerr <jk@ozlabs.org>
+# Copyright (C) 2015 Intel Corporation
 #
 # This file is part of the Patchwork package.
 #
@@ -564,6 +565,43 @@ class EventLog(models.Model):
 
     class Meta:
         ordering = ['-event_time']
+
+class Test(models.Model):
+    project = models.ForeignKey(Project)
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        unique_together = [('project', 'name')]
+
+    def __unicode__(self):
+        return self.name
+
+class TestResult(models.Model):
+    STATE_PENDING = 0
+    STATE_SUCCESS = 1
+    STATE_WARNING = 2
+    STATE_FAILURE = 3
+    STATE_CHOICES = (
+        (STATE_PENDING, 'pending'),
+        (STATE_SUCCESS, 'success'),
+        (STATE_WARNING, 'warning'),
+        (STATE_FAILURE, 'failure'),
+    )
+
+    test = models.ForeignKey(Test)
+    revision = models.ForeignKey(SeriesRevision, blank=True, null=True)
+    patch = models.ForeignKey(Patch, blank=True, null=True)
+    user = models.ForeignKey(User)
+    date = models.DateTimeField(default=datetime.datetime.now)
+    state = models.SmallIntegerField(choices=STATE_CHOICES)
+    url = models.URLField(blank=True, null=True)
+    summary = models.TextField(blank=True, null=True)
+
+    class Meta:
+        unique_together = [('test', 'revision'), ('test', 'patch')]
+
+    def __unicode__(self):
+        return self.get_state_display()
 
 class EmailConfirmation(models.Model):
     validity = datetime.timedelta(days = settings.CONFIRMATION_VALIDITY_DAYS)

@@ -20,8 +20,9 @@
 from django.contrib import admin
 
 from patchwork.models import (
-    Project, Person, UserProfile, State, Patch, Comment, Bundle, Tag)
-
+    Project, Person, UserProfile, State, Patch, Comment, Bundle, Tag, Test,
+    TestResult
+)
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'linkname', 'listid', 'listemail')
@@ -72,6 +73,20 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ('patch__name', 'submitter__name', 'submitter__email')
     date_hierarchy = 'date'
 admin.site.register(Comment, CommentAdmin)
+
+
+class TestAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(Test, TestAdmin)
+
+
+class TestResultAdmin(admin.ModelAdmin):
+    list_display = ('test', 'revision', 'patch', 'user', 'state', 'url',
+                    'summary')
+    search_fields = ('test__name', 'patch__name', 'revision__series__name',
+                     'test__project__name')
+    date_hierarchy = 'date'
+admin.site.register(TestResult, TestResultAdmin)
 
 
 class BundleAdmin(admin.ModelAdmin):
