@@ -136,6 +136,21 @@ table#patchlist > thead {
     background-color: white;
 }
 
+table#patchlist > tbody > tr > td.tag-A {
+    text-align: center;
+    background-color: #ffe771;
+}
+
+table#patchlist > tbody > tr > td.tag-R {
+    text-align: center;
+    background-color: #c3fd98;
+}
+
+table#patchlist > tbody > tr > td.tag-T {
+    text-align: center;
+    background-color: #b4cfec;
+}
+
 a.colinactive, a.colactive {
 	color: black;
 	text-decoration: none;

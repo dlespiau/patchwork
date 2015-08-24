@@ -24,13 +24,10 @@ register = template.Library()
 
 
 @register.filter(name='patch_tags')
-def patch_tags(patch):
-    counts = []
-    titles = []
-    for tag in patch.project.tags:
-        count = getattr(patch, tag.attr_name)
-        titles.append('%d %s' % (count, tag.name))
-        counts.append(str(count))
-    return mark_safe('<span title="%s">%s</span>' % (
-        ' / '.join(titles),
-        ' '.join(counts)))
+def patch_tags(patch, tag):
+    count = getattr(patch, tag.attr_name)
+    count_str = str(count) if count else ''
+    class_str = "tag-%s" % tag.abbrev if count else ''
+    title = '%d %s' % (count, tag.name)
+    return mark_safe('<td class="%s"><span title="%s">%s</span></td>' %
+                     (class_str, title, count_str))

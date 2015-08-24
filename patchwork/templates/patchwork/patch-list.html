@@ -69,11 +69,11 @@ $(document).ready(function() {
     {% endifequal %}
    </th>
 
+{% for tag in project.tags %}
    <th>
-    <span
-     title="{% for tag in project.tags %}{{tag.name}}{% if not forloop.last %} / {% endif %}{% endfor %}"
-     >{% for tag in project.tags %}{{tag.abbrev}}{% if not forloop.last %}/{% endif %}{% endfor %}</span>
+    <span title="{{tag.name}}">{{tag.abbrev}}</span>
    </th>
+{% endfor %}
 
    <th>
     {% ifequal order.name "date" %}
@@ -153,7 +153,9 @@ $(document).ready(function() {
     {% endif %}
    <td><a href="{% url 'patchwork.views.patch.patch' patch_id=patch.id %}"
      >{{ patch.name|default:"[no subject]"|truncatechars:100 }}</a></td>
-   <td style="white-space: nowrap;">{{ patch|patch_tags }}</td>
+{% for tag in project.tags %}
+   {{ patch|patch_tags:tag }}
+{% endfor %}
    <td>{{ patch.date|date:"Y-m-d" }}</td>
    <td>{{ patch.submitter|personify:project }}</td>
    <td>{{ patch.delegate.username }}</td>
