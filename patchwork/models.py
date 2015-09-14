@@ -540,6 +540,18 @@ class SeriesRevisionPatch(models.Model):
         unique_together = [('revision', 'patch'), ('revision', 'order')]
         ordering = ['order']
 
+class Event(models.Model):
+    name = models.CharField(max_length=20)
+
+class EventLog(models.Model):
+    event = models.ForeignKey(Event)
+    event_time = models.DateTimeField(auto_now=True)
+    series = models.ForeignKey(Series)
+    user = models.ForeignKey(User, null=True)
+
+    class Meta:
+        ordering = ['-event_time']
+
 class EmailConfirmation(models.Model):
     validity = datetime.timedelta(days = settings.CONFIRMATION_VALIDITY_DAYS)
     type = models.CharField(max_length = 20, choices = [
