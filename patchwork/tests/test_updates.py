@@ -23,7 +23,7 @@ from patchwork.models import Patch, Person, State
 from patchwork.tests.utils import defaults, create_maintainer
 
 class MultipleUpdateTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
 
     def setUp(self):
         defaults.project.save()

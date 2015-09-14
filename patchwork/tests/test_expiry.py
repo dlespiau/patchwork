@@ -26,7 +26,7 @@ from patchwork.tests.utils import create_user, defaults
 from patchwork.utils import do_expiry
 
 class TestRegistrationExpiry(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
 
     def register(self, date):
         user = create_user()

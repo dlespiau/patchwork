@@ -26,7 +26,7 @@ from django.test import TestCase
 from django.test.client import Client
 
 class UTF8PatchViewTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
     patch_filename = '0002-utf-8.patch'
     patch_encoding = 'utf-8'
 
@@ -64,7 +64,7 @@ class UTF8PatchViewTest(TestCase):
         defaults.project.delete()
 
 class UTF8HeaderPatchViewTest(UTF8PatchViewTest):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
     patch_filename = '0002-utf-8.patch'
     patch_encoding = 'utf-8'
     patch_author_name = u'P\xe4tch Author'

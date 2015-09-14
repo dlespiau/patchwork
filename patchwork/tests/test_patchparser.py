@@ -29,7 +29,7 @@ from patchwork.tests.utils import read_patch, read_mail, create_email, \
 from email.mime.text import MIMEText
 
 class PatchTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
     default_sender = defaults.sender
     default_subject = defaults.subject
     project = defaults.project
@@ -262,7 +262,7 @@ class MultipleProjectPatchTest(TestCase):
     """ Test that patches sent to multiple patchwork projects are
         handled correctly """
 
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
     test_comment = 'Test Comment'
     patch_filename = '0001-add-line.patch'
     msgid = '<1@example.com>'
@@ -484,7 +484,7 @@ class NoNewlineAtEndOfFilePatchTest(MBoxPatchTest):
         self.assertEqual(2, patch.content.count('\ No newline at end of file'))
 
 class DelegateRequestTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
     patch_filename = '0001-add-line.patch'
     msgid = '<1@example.com>'
     invalid_delegate_email = "nobody"
@@ -530,7 +530,7 @@ class DelegateRequestTest(TestCase):
         self.user.delete()
 
 class MailFromPatchTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
     patch_filename = '0001-add-line.patch'
     msgid = '<1@example.com>'
 
@@ -638,7 +638,7 @@ class ParseInitialTagsTest(PatchTest):
     test_comment = ('test comment\n\n' +
         'Tested-by: Test User <test@example.com>\n' +
         'Reviewed-by: Test User <test@example.com>\n')
-    fixtures = ['default_tags', 'default_states']
+    fixtures = ['default_tags', 'default_states', 'default_events']
 
     def setUp(self):
         project = defaults.project

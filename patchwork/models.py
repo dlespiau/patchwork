@@ -632,3 +632,11 @@ def _patch_change_callback(sender, instance, **kwargs):
     notification.save()
 
 models.signals.pre_save.connect(_patch_change_callback, sender = Patch)
+
+def _on_revision_complete(sender, revision, **kwargs):
+    new_revision = Event.objects.get(name='series-new-revision')
+    log = EventLog(event=new_revision, series=revision.series,
+                   user=revision.series.submitter.user)
+    log.save()
+
+series_revision_complete.connect(_on_revision_complete)

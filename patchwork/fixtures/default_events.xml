@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+  <object pk="1" model="patchwork.event">
+    <field type="CharField" name="name">series-new-revision</field>
+  </object>
+</django-objects>

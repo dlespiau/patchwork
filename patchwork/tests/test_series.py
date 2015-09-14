@@ -21,7 +21,7 @@ import os
 
 from django.test import TestCase
 from patchwork.models import Patch, Series, SeriesRevision, Project, \
-                             SERIES_DEFAULT_NAME
+                             SERIES_DEFAULT_NAME, EventLog, User, Person
 from patchwork.tests.utils import read_mail
 from patchwork.tests.utils import defaults, read_mail, TestSeries
 
@@ -29,7 +29,7 @@ from patchwork.bin.parsemail import parse_mail, build_references_list, \
                                     clean_series_name
 
 class SeriesTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
 
     def setUp(self):
         self.assertTrue(self.project is not None)
@@ -75,6 +75,11 @@ class SeriesTest(TestCase):
         patches = Patch.objects.all()
         self.assertEquals(patches.count(), self.n_patches)
 
+        # We are inserting a single series, so the logs should only have one
+        # entry
+        logs = EventLog.objects.all()
+        self.assertEquals(logs.count(), 1)
+
 class GeneratedSeriesTest(SeriesTest):
     project = defaults.project
 
@@ -119,6 +124,7 @@ class SingleMailSeries(IntelGfxTest):
     root_msgid = '<1400748280-26449-1-git-send-email-chris@chris-wilson.co.uk>'
     cover_letter = None
 
+class Series0010(SingleMailSeries):
     def testInsertion(self):
         """A single patch is a series of 1 patch"""
 
@@ -203,7 +209,7 @@ class MultipleMailNoCoverLetterSeries(Series0020):
         self.commonInsertionChecks()
 
 class ReferencesListTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
 
     def testSingleMail(self):
         series = TestSeries(1, has_cover_letter=False)
@@ -384,7 +390,7 @@ class SinglePatchUpdateTest(GeneratedSeriesTest):
         self._test_internal(3, 3, has_cover_letter=False)
 
 class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
 
     def testSinglePatchUpdatesNotSerialized(self):
         """ + patch v1
@@ -528,3 +534,40 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
 
     def testNewSeriesIgnoreCase(self):
         self._test_internal(3, ('Awesome series', 'awesome series (V4)'))
+
+#
+# series-new-revision event tests
+#
+
+class EventLogTest(SingleMailSeries):
+    def setUp(self):
+        # Create a 'chris' User and Person
+        mail = 'chris@chris-wilson.co.uk'
+        self.user = User.objects.create_user('chris', mail, 'securepass')
+        person = Person(email=mail)
+        person.link_to_user(self.user)
+        person.save()
+
+        super(EventLogTest, self).setUp()
+
+    def testNewSeriesSeries(self):
+        entry = EventLog.objects.all()[0]
+        series = Series.objects.all()[0]
+        self.assertEquals(entry.series, series)
+
+    def testNewSeriesUser(self):
+        entry = EventLog.objects.all()[0]
+        self.assertEquals(self.user, entry.user)
+
+class MultipleMailCoverLetterSeriesIncomplete(Series0010):
+    mails = (
+        '0010-multiple-mails-cover-letter.mbox',
+        '0011-multiple-mails-cover-letter.mbox',
+        '0012-multiple-mails-cover-letter.mbox',
+        '0014-multiple-mails-cover-letter.mbox',
+    )
+
+class EventLogIncompleteTest(MultipleMailCoverLetterSeriesIncomplete):
+    def testNoNewSeriesIfIncomplete(self):
+        logs = EventLog.objects.all()
+        self.assertEquals(logs.count(), 0)

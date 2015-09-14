@@ -28,7 +28,7 @@ from patchwork.tests.utils import defaults
 @unittest.skipUnless(settings.ENABLE_XMLRPC,
         "requires xmlrpc interface (use the ENABLE_XMLRPC setting)")
 class XMLRPCTest(LiveServerTestCase):
-    fixtures = ['default_states']
+    fixtures = ['default_states', 'default_events']
 
     def setUp(self):
         self.url = (self.live_server_url +
