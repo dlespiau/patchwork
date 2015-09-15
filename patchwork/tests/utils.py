@@ -20,6 +20,7 @@
 import os
 import codecs
 from patchwork.models import Project, Person
+from patchwork.bin.parsemail import parse_mail
 from django.contrib.auth.models import User
 from django.forms.fields import EmailField
 
@@ -47,6 +48,11 @@ class defaults(object):
 
     subject = 'Test Subject'
 
+    series_name = 'Test Series'
+
+    series_cover_letter = """This is the test series cover letter.
+I hope you'll like it."""
+
     patch_name = 'Test Patch'
 
     patch = """--- /dev/null	2011-01-01 00:00:00.000000000 +0800
@@ -54,6 +60,8 @@ class defaults(object):
 @@ -0,0 +1 @@
 +a
 """
+
+    review = """This is a great addition!"""
 
 error_strings = {
     'email': 'Enter a valid email address.',
@@ -111,7 +119,8 @@ def read_mail(filename, project = None):
     return mail
 
 def create_email(content, subject = None, sender = None, multipart = False,
-        project = None, content_encoding = None):
+        project = None, content_encoding = None, in_reply_to = None,
+        references = None):
     if subject is None:
         subject = defaults.subject
     if sender is None:
@@ -134,5 +143,80 @@ def create_email(content, subject = None, sender = None, multipart = False,
     msg['Subject'] = subject
     msg['From'] = sender
     msg['List-Id'] = project.listid
+    if in_reply_to and references:
+        msg['References'] = ' '.join([m.get('Message-Id') for m in references])
+        msg['In-Reply-To'] = in_reply_to
+    elif references:
+        msg['References'] = references
+        msg['In-Reply-To'] = references.split()[-1]
+    elif in_reply_to:
+        msg['References'] = in_reply_to
+        msg['In-Reply-To'] = in_reply_to
 
     return msg
+
+class TestSeries(object):
+    def __init__(self, n_patches, has_cover_letter=True):
+        if n_patches < 1:
+            raise ValueError
+        self.n_patches = n_patches
+        self.has_cover_letter = has_cover_letter
+
+    def create_cover_letter(self):
+        return create_email(defaults.series_cover_letter,
+                            subject='[PATCH 0/%d] %s' % (self.n_patches,
+                                                         defaults.series_name))
+
+    # in_reply_to: a mail instance
+    def create_patch(self, n=0, in_reply_to=None, references=None,
+                     subject_prefix='PATCH'):
+        in_reply_to_str = None
+        if in_reply_to:
+            in_reply_to_str = in_reply_to.get('Message-Id')
+
+        if n != 0:
+            subject='[%s %d/%d] %s' % (subject_prefix, n,
+                                       self.n_patches,
+                                       defaults.patch_name)
+        else:
+            subject='[%s] %s' % (subject_prefix, defaults.patch_name)
+
+        mail = create_email(defaults.patch, subject=subject,
+                            in_reply_to=in_reply_to_str, references=references)
+        mail['X-Mailer'] = 'git-send-email 2.1.0'
+        return mail
+
+    def create_reply(self, mail, references=None):
+        if not references:
+            references = mail.get('References') + ' ' + mail.get('Message-Id')
+        return create_email(defaults.review,
+                            subject='Re: ' + mail.get('Subject'),
+                            references=references)
+
+    def create_mails(self):
+        mails = []
+        root_msg = None
+
+        # cover letter
+        if self.has_cover_letter:
+            cover_letter = self.create_cover_letter()
+            mails.append(cover_letter)
+            root_msg = cover_letter
+
+        # insert the first patch
+        patch = self.create_patch(1, root_msg)
+        mails.append(patch)
+        if not root_msg:
+            root_msg = patch
+
+        # and the remaining patches
+        for i in range(2, self.n_patches + 1):
+            mails.append(self.create_patch(i, root_msg))
+
+        return mails
+
+    def insert(self, mails=[]):
+        if not mails:
+            mails = self.create_mails()
+        for mail in mails:
+            parse_mail(mail)
