@@ -19,7 +19,7 @@ developed with the kernel workflow in mind, the aim is to be flexible
 enough to suit the majority of community projects.
 
 Download
-========
+--------
 
 The latest version of Patchwork is available with git. To download:
 
@@ -31,10 +31,10 @@ Patchwork is distributed under the `GNU General Public
 License <http://www.gnu.org/licenses/gpl-2.0.html>`__.
 
 Design
-======
+------
 
 patchwork should supplement mailing lists, not replace them
------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Patchwork isn't intended to replace a community mailing list; that's why
 you can't comment on a patch in patchwork. If this were the case, then
@@ -47,13 +47,13 @@ on-list commenting, by providing a "send a reply to the list" feature
 for logged-in users.
 
 Don't pollute the project's changelogs with patchwork poop
-----------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A project's changelogs are valuable - we don't want to add
 patchwork-specific metadata.
 
 patchwork users shouldn't require a specific version control system
--------------------------------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Not everyone uses git for kernel development, and not everyone uses git
 for patchwork-tracked projects.
@@ -63,14 +63,14 @@ pwclient command-line client for patchwork, or directly to the XML RPC
 interface.
 
 Getting Started
-===============
+---------------
 
 You should check out the `installation <installation.md>`__ and
 `development <development.md>`__ guides for information on how to get to
 work with patchwork.
 
 Support
-=======
+-------
 
 All questions and contributions should be sent to the `patchwork mailing
 list <https://ozlabs.org/mailman/listinfo/patchwork>`__.
