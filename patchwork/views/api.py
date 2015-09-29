@@ -17,16 +17,18 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog
 from rest_framework import views, viewsets, mixins, generics, filters, permissions
 from rest_framework.decorators import api_view, renderer_classes, \
-                                      permission_classes
+                                      permission_classes, detail_route
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
                                   RevisionSerializer, PatchSerializer, \
                                   EventLogSerializer
+from patchwork.views import patch_to_mbox
 
 
 API_REVISION = 1
@@ -102,6 +104,15 @@ class SeriesViewSet(mixins.ListModelMixin,
     permission_classes = (MaintainerPermission, )
     queryset = Series.objects.all()
 
+def series_mbox(revision):
+    patches = revision.ordered_patches()
+    data = '\n'.join([patch_to_mbox(x).as_string(True) for x in patches])
+    response = HttpResponse(content_type="text/plain")
+    response.write(data)
+    response['Content-Disposition'] = 'attachment; filename=' + \
+        revision.series.filename()
+    return response
+
 class RevisionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = SeriesRevision.objects.all()
@@ -118,6 +129,12 @@ class RevisionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
         serializer = RevisionSerializer(rev,
                                         context=self.get_serializer_context())
         return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    def mbox(self, request, series_pk=None, pk=None):
+        rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
+        return series_mbox(rev)
+
 
 class PatchViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
