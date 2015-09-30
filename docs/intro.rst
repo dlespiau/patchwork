@@ -65,9 +65,8 @@ interface.
 Getting Started
 ---------------
 
-You should check out the `installation <installation.md>`__ and
-`development <development.md>`__ guides for information on how to get to
-work with patchwork.
+You should check out the :ref:`installation` and :ref:`development`
+guides for information on how to get to work with patchwork.
 
 Support
 -------
