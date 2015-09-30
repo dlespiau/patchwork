@@ -302,7 +302,7 @@ directly). Something like this in /etc/aliases is suitable for postfix:
 
 ::
 
-    patchwork: "|/srv/patchwork/apps/patchwork/bin/parsemail.sh"
+    patchwork: "|/srv/patchwork/patchwork/bin/parsemail.sh"
 
 You may need to customise the ``parsemail.sh`` script if you haven't
 installed patchwork in ``/srv/patchwork``.
@@ -311,7 +311,7 @@ Test that you can deliver a patch to this script:
 
 ::
 
-    sudo -u nobody /srv/patchwork/apps/patchwork/bin/parsemail.sh < mail
+    sudo -u nobody /srv/patchwork/patchwork/bin/parsemail.sh < mail
 
 Set up the patchwork cron script
 --------------------------------
