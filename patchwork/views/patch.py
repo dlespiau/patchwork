@@ -21,7 +21,7 @@
 from patchwork.models import Patch, Project, Bundle
 from patchwork.forms import PatchForm, CreateBundleForm
 from patchwork.requestcontext import PatchworkRequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseForbidden
 from patchwork.views import generic_list, patch_to_mbox
 
@@ -105,3 +105,7 @@ def list(request, project_id):
     context = generic_list(request, project, 'patchwork.views.patch.list',
             view_args = {'project_id': project.linkname})
     return render_to_response('patchwork/list.html', context)
+
+def msgid(request, msgid):
+    patch = get_object_or_404(Patch, msgid='<' + msgid + '>')
+    return redirect(patch)

@@ -35,6 +35,7 @@ urlpatterns = patterns('',
     (r'^patch/(?P<patch_id>\d+)/$', 'patchwork.views.patch.patch'),
     (r'^patch/(?P<patch_id>\d+)/raw/$', 'patchwork.views.patch.content'),
     (r'^patch/(?P<patch_id>\d+)/mbox/$', 'patchwork.views.patch.mbox'),
+    (r'^patch/msgid/(?P<msgid>[^/]+)/$', 'patchwork.views.patch.msgid'),
 
     # logged-in user stuff
     (r'^user/$', 'patchwork.views.user.profile'),
