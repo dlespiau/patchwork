@@ -64,7 +64,6 @@ environment there is no need to to install requirements again.
 
 ::
 
-    (django-1.8)$ ./manage.py --version 1.8
     (django-1.8)$ ./manage.py runserver
 
 Once finished, you can kill the server (``Ctrl`` + ``C``) and exit the
