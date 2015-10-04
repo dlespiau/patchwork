@@ -63,7 +63,7 @@ environment there is no need to to install requirements again.
    runserver
 
 Once finished, you can kill the server (``Ctrl`` + ``C``) and exit the
-the virtual environment:
+virtual environment:
 
 ::
 
