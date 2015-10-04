@@ -25,14 +25,17 @@ patchwork and run it from there.
 
 ::
 
-       $ virtualenv django-1.8
+    $ virtualenv django-1.8
 
 This will create a virtual env called 'django-1.8' in eponymous
 directory.
 
 3. Activate a virtual environment
 
-   $ source django-1.8/bin/activate (django-1.8)$
+::
+
+    $ source django-1.8/bin/activate
+    (django-1.8)$
 
 The shell prompt is preprended with the virtual env name.
 
@@ -44,7 +47,7 @@ dependencies per interesting configuration.
 
 ::
 
-       (django-1.8)$ pip install -r docs/requirements-dev.txt
+    (django-1.8)$ pip install -r docs/requirements-dev.txt
 
 You will also need to install a version of Django - we don't install
 this by default to allow development against multiple versions of
@@ -52,15 +55,17 @@ Django. This can be installed like so (assuming Django 1.8):
 
 ::
 
-       (django-1.8)$ pip install 'django<1.9,>=1.8'
+    (django-1.8)$ pip install 'django<1.9,>=1.8'
 
 Of course, this is a one-time step: once installed in the virtual
 environment there is no need to to install requirements again.
 
 5. Run the development server
 
-   (django-1.8)$ ./manage.py --version 1.8 (django-1.8)$ ./manage.py
-   runserver
+::
+
+    (django-1.8)$ ./manage.py --version 1.8
+    (django-1.8)$ ./manage.py runserver
 
 Once finished, you can kill the server (``Ctrl`` + ``C``) and exit the
 virtual environment:
