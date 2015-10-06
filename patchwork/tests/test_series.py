@@ -25,7 +25,8 @@ from patchwork.models import Patch, Series, SeriesRevision, Project, \
 from patchwork.tests.utils import read_mail
 from patchwork.tests.utils import defaults, read_mail, TestSeries
 
-from patchwork.bin.parsemail import parse_mail, build_references_list
+from patchwork.bin.parsemail import parse_mail, build_references_list, \
+                                    clean_series_name
 
 class SeriesTest(TestCase):
     fixtures = ['default_states']
@@ -457,3 +458,73 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
         self.assertEqual(len(patches), 2)
         self.assertEqual(patches[0].name, '[1/2] ' + defaults.patch_name)
         self.assertEqual(patches[1].name, '[v2] ' + defaults.patch_name)
+
+#
+# New version of a full series (separate mail thread)
+#
+
+class FullSeriesUpdateTest(GeneratedSeriesTest):
+
+    def check_revision(self, series, revision, mails):
+        n_patches = len(mails)
+        if self.has_cover_letter:
+            n_patches -= 1
+
+        self.assertEquals(revision.series_id, series.id)
+        self.assertEquals(revision.root_msgid, mails[0].get('Message-Id'))
+        self.assertEquals(revision.patches.count(), n_patches)
+
+        i = 1 if self.has_cover_letter else 0
+        for patch in revision.ordered_patches():
+            patch_mail = mails[i]
+            self.assertEquals(patch.msgid, patch_mail.get('Message-Id'))
+            i += 1
+
+    def check(self, series1_mails, series2_mails):
+        self.assertEquals(Series.objects.count(), 1)
+        series = Series.objects.all()[0]
+        self.assertEquals(series.version, 2)
+
+        revisions = SeriesRevision.objects.all()
+        self.assertEquals(revisions.count(), 2)
+
+        self.check_revision(series, revisions[0], series1_mails)
+        self.check_revision(series, revisions[1], series2_mails)
+
+    def _set_cover_letter_subject(self, mail, n_patches, subject):
+        del mail['Subject']
+        mail['Subject'] = '[PATCH 0/%d] %s' % (n_patches, subject)
+
+    def _test_internal(self, n_patches, subjects):
+
+        (series1, series1_mails) = self._create_series(n_patches)
+        self._set_cover_letter_subject(series1_mails[0], n_patches, subjects[0])
+        self.series_name = subjects[0]
+        series1.insert(series1_mails)
+        self.commonInsertionChecks()
+
+        (series2,series2_mails) = self._create_series(n_patches)
+        self._set_cover_letter_subject(series2_mails[0], n_patches, subjects[1])
+        series2.insert(series2_mails)
+
+        self.check(series1_mails, series2_mails)
+
+    def testCleanSeriesName(self):
+        cases = (
+            ('Awesome series', 'Awesome series'),
+            ('Awesome series', 'Awesome series v2'),
+            ('Awesome series', 'Awesome series V2'),
+            ('Awesome series', 'Awesome series, v3'),
+            ('Awesome series', 'Awesome series (v4)'),
+            ('Awesome series', 'Awesome series (take 5)'),
+            ('Awesome series', 'Awesome series (Take 5)'),
+            ('Awesome series', 'Awesome series, take 6'),
+        )
+        for case in cases:
+            self.assertEquals(clean_series_name(case[1]), case[0])
+
+    def testNewSeries(self):
+        self._test_internal(3, ('Awesome series', 'Awesome series (v4)'))
+
+    def testNewSeriesIgnoreCase(self):
+        self._test_internal(3, ('Awesome series', 'awesome series (V4)'))

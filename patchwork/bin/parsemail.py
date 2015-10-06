@@ -34,8 +34,11 @@ import logging
 from patchwork.parser import parse_patch
 from patchwork.models import Patch, Project, Person, Comment, State, Series, \
         SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state, \
-        SERIES_DEFAULT_NAME, get_default_initial_patch_state
+        get_default_initial_patch_state, series_revision_complete, \
+        SERIES_DEFAULT_NAME
 import django
+from django import dispatch
+from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned
@@ -559,6 +562,43 @@ def get_delegate(delegate_email):
             pass
     return None
 
+series_name_re = re.compile('[, \(]*(v|take)[\) 0-9]+$', re.I)
+def clean_series_name(str):
+    """Try to remove 'v2' and 'take 28' markers in cover letters subjects"""
+    str = series_name_re.sub('', str)
+    return str.strip()
+
+def on_revision_complete(sender, revision, **kwargs):
+    # Brand new series (revision.version == 1) may be updates to a Series
+    # previously posted. Hook the SeriesRevision to the previous series then.
+    if revision.version != 1:
+        return
+
+    new_series = revision.series
+    if new_series.name == SERIES_DEFAULT_NAME:
+        return
+
+    name = clean_series_name(new_series.name)
+    previous_series = Series.objects.filter(Q(project=new_series.project),
+                                            Q(name__iexact=name) &
+                                            ~Q(pk=new_series.pk))
+    if len(previous_series) != 1:
+        return
+
+
+    previous_series = previous_series[0]
+    new_revision = previous_series.latest_revision().duplicate_meta()
+    new_revision.root_msgid = revision.root_msgid
+    new_revision.cover_letter = revision.cover_letter
+    new_revision.save()
+    i = 1
+    for patch in revision.ordered_patches():
+        new_revision.add_patch(patch, i)
+        i += 1
+
+    revision.delete()
+    new_series.delete()
+
 def parse_mail(mail):
 
     # some basic sanity checks
@@ -591,6 +631,8 @@ def parse_mail(mail):
     comment = content.comment
     series = content.series
     revision = content.revision
+
+    series_revision_complete.connect(on_revision_complete)
 
     if series:
         if save_required:
@@ -628,6 +670,8 @@ def parse_mail(mail):
         comment.submitter = author
         comment.msgid = msgid
         comment.save()
+
+    series_revision_complete.disconnect(on_revision_complete)
 
     return 0
 
