@@ -13,5 +13,6 @@ Contents:
 
    intro
    installation
+   manual
    development
 
