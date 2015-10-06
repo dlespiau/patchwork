@@ -19,6 +19,7 @@
 
 from django.db import models
 from django.db.models import Q
+import django.dispatch
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
@@ -454,6 +455,10 @@ class Series(models.Model):
                 print('            msgid  : %s' % patch.msgid)
                 i += 1
 
+# Signal one can listen to to know when a revision is complete (ie. has all of
+# its patches)
+series_revision_complete = django.dispatch.Signal(providing_args=["revision"])
+
 # A 'revision' of a series. Resending a new version of a patch or a full new
 # iteration of a series will create a new revision.
 class SeriesRevision(models.Model):
@@ -479,6 +484,10 @@ class SeriesRevision(models.Model):
         sp = SeriesRevisionPatch.objects.create(revision=self, patch=patch,
                                                 order=order)
         sp.save()
+
+        revision_complete = self.patches.count() == self.series.n_patches
+        if revision_complete:
+            series_revision_complete.send(sender=self.__class__, revision=self)
 
     def duplicate_meta(self):
         new = SeriesRevision.objects.get(pk=self.pk)
