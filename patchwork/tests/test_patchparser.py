@@ -595,6 +595,44 @@ class InitialPatchStateTest(MailFromPatchTest):
         parse_mail(email)
         self._assertState(self.default_state)
 
+class GitSendEmailTest(MailFromPatchTest):
+    def _assertNPatches(self, n):
+        self.assertEquals(Patch.objects.count(), n)
+
+    def testSettingOffGitSendEmail(self):
+        """git_send_email_only is false (default value) and email has been sent
+           with git send-email"""
+        email = self.get_email()
+        email['X-Mailer'] = 'git-send-email 1.8.3.1'
+        parse_mail(email)
+        self._assertNPatches(1)
+
+    def testSettingOffNoGitSendEmail(self):
+        """git_send_email_only is false (default value) and email has not been
+           sent with git send-email"""
+        email = self.get_email()
+        parse_mail(email)
+        self._assertNPatches(1)
+
+    def testSettingOnGitSendEmail(self):
+        """git_send_email_only is true and email has been sent with
+           git send-email"""
+        self.p1.git_send_email_only = True
+        self.p1.save()
+        email = self.get_email()
+        email['X-Mailer'] = 'git-send-email 1.8.3.1'
+        parse_mail(email)
+        self._assertNPatches(1)
+
+    def testSettingOnNoGitSendEmail(self):
+        """git_send_email_only is true and email has been not sent with
+           git send-email"""
+        self.p1.git_send_email_only = True
+        self.p1.save()
+        email = self.get_email()
+        parse_mail(email)
+        self._assertNPatches(0)
+
 class ParseInitialTagsTest(PatchTest):
     patch_filename = '0001-add-line.patch'
     test_comment = ('test comment\n\n' +

@@ -322,8 +322,11 @@ def find_content(project, mail):
     is_root = refs == []
     is_cover_letter = is_root and x == 0
     is_patch = patchbuf is not None
+    is_git_send_email = mail.get('X-Mailer', '').startswith('git-send-email ')
 
-    if pullurl or is_patch:
+    drop_patch = project.git_send_email_only and not is_git_send_email
+
+    if pullurl or (is_patch and not drop_patch):
         ret.patch_order = x or 1
         ret.patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
                     date = mail_date(mail), headers = mail_headers(mail))

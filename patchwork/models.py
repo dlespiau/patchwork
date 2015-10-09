@@ -61,6 +61,7 @@ class Project(models.Model):
     webscm_url = models.CharField(max_length=2000, blank=True)
     send_notifications = models.BooleanField(default=False)
     use_tags = models.BooleanField(default=True)
+    git_send_email_only = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.name
