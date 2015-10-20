@@ -25,12 +25,15 @@ import datetime
 import time
 import operator
 import codecs
+import weakref
 from email import message_from_file
 from email.header import Header, decode_header
 from email.parser import HeaderParser
 from email.utils import parsedate_tz, mktime_tz
 import logging
 
+from patchwork import lock as lockmod
+from patchwork.lock import release
 from patchwork.parser import parse_patch
 from patchwork.models import Patch, Project, Person, Comment, State, Series, \
         SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state, \
@@ -702,11 +705,26 @@ def setup_error_handler():
 
     return logger
 
+_lockref = None
+def lock():
+    global _lockref
+
+    l = _lockref and _lockref()
+    if l is not None and l.held:
+        l.lock()
+        return l
+
+    l = lockmod.lock("/tmp/patchwork.parsemail.lock", timeout=30)
+    _lockref = weakref.ref(l)
+    return l
+
 def main(args):
     django.setup()
     logger = setup_error_handler()
     mail = message_from_file(sys.stdin)
+    parse_lock = None
     try:
+        parse_lock = lock()
         return parse_mail(mail)
     except:
         if logger:
@@ -714,6 +732,8 @@ def main(args):
                 'mail': mail.as_string(),
             })
         raise
+    finally:
+        release(parse_lock)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
