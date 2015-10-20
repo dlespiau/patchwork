@@ -354,8 +354,59 @@ Patches
                 "content": "<diff content>"
             }
 
+Events
+~~~~~~
+
+.. http:get:: /api/1.0/projects/(string: linkname)/events/
+.. http:get:: /api/1.0/projects/(int: project_id)/events/
+
+    List of events for this project.
+
+    .. sourcecode:: http
+
+        GET /api/1.0/patches/120/ HTTP/1.1
+        Accept: application/json
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+        Vary: Accept
+        Allow: GET, HEAD, OPTIONS
+
+        {
+            "count": 23,
+            "next": "http://127.0.0.1:8000/api/1.0/events/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "name": "series-new-revision",
+                    "event_time": "2015-10-20T19:49:49.494",
+                    "series": 23,
+                    "user": null
+                },
+                {
+                    "name": "series-new-revision",
+                    "event_time": "2015-10-20T19:49:43.895",
+                    "series": 22,
+                    "user": null
+                }
+            ]
+        }
+
+At the moment, only one event is listed:
+
+- **series-new-revision**: This event corresponds to patchwork receiving a
+  full new revision of a series, should it be the initial submission of
+  subsequent updates. The difference can be made by looking at the version of
+  the series.
+
 API Revisions
 ~~~~~~~~~~~~~
+
+**Revision 1**
+
+- Add /projects/${linkname}/events/ entry point.
 
 **Revision 0**
 

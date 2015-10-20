@@ -33,6 +33,10 @@ project_router.register('projects', api.ProjectViewSet)
 series_list_router = routers.NestedSimpleRouter(project_router, 'projects',
                                                 lookup='project')
 series_list_router.register(r'series', api.SeriesListViewSet)
+# /projects/$project/events/
+event_router = routers.NestedSimpleRouter(project_router, 'projects',
+                                          lookup='project')
+event_router.register(r'events', api.EventLogViewSet)
 # /series/$id/
 series_router = routers.SimpleRouter()
 series_router.register(r'series', api.SeriesViewSet)
@@ -56,6 +60,7 @@ urlpatterns = patterns('',
     (r'^api/1.0/', include(series_router.urls)),
     (r'^api/1.0/', include(revisions_router.urls)),
     (r'^api/1.0/', include(patches_router.urls)),
+    (r'^api/1.0/', include(event_router.urls)),
 
     # project view:
     (r'^$', 'patchwork.views.projects'),

@@ -19,7 +19,7 @@
 
 from django.contrib.auth.models import User
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
-                             State
+                             State, EventLog
 from rest_framework import serializers
 from enum import Enum
 
@@ -131,3 +131,9 @@ class RevisionSerializer(PatchworkModelSerializer):
         expand_serializers = {
             'patches': PatchSerializer,
         }
+
+class EventLogSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='event.name', read_only=True)
+    class Meta:
+        model = EventLog
+        fields = ('name', 'event_time', 'series', 'user')

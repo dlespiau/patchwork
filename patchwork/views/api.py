@@ -17,7 +17,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from patchwork.models import Project, Series, SeriesRevision, Patch
+from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog
 from rest_framework import views, viewsets, mixins, generics, filters, permissions
 from rest_framework.decorators import api_view, renderer_classes, \
                                       permission_classes
@@ -25,10 +25,11 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
-                                  RevisionSerializer, PatchSerializer
+                                  RevisionSerializer, PatchSerializer, \
+                                  EventLogSerializer
 
 
-API_REVISION = 0
+API_REVISION = 1
 
 class MaintainerPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -125,3 +126,19 @@ class PatchViewSet(mixins.ListModelMixin,
     permission_classes = (MaintainerPermission, )
     queryset = Patch.objects.all()
     serializer_class = PatchSerializer
+
+class EventLogViewSet(mixins.ListModelMixin,
+                      ListMixin,
+                      viewsets.GenericViewSet):
+    permission_classes = (MaintainerPermission, )
+    queryset = EventLog.objects.all()
+    serializer_class = EventLogSerializer
+
+    def get_queryset(self):
+
+        pk = self.kwargs['project_pk']
+        if is_integer(pk):
+            queryset = self.queryset.filter(series__project__pk=pk)
+        else:
+            queryset = self.queryset.filter(series__project__linkname=pk)
+        return queryset
