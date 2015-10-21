@@ -14,6 +14,6 @@ Contents:
    intro
    installation
    manual
-   api
+   rest
    development
 

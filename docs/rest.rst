@@ -1,11 +1,8 @@
-APIs
-===========
-
 REST API
---------
+========
 
 API metadata
-~~~~~~~~~~~~
+------------
 
 .. http:get:: /api/1.0/
 
@@ -32,7 +29,7 @@ API metadata
 
 
 Projects
-~~~~~~~~
+--------
 
 A project is merely one of the projects defined for this patchwork instance.
 
@@ -104,7 +101,7 @@ A project is merely one of the projects defined for this patchwork instance.
         }
 
 Events
-~~~~~~
+------
 
 .. http:get:: /api/1.0/projects/(string: linkname)/events/
 .. http:get:: /api/1.0/projects/(int: project_id)/events/
@@ -155,7 +152,7 @@ At the moment, only one event is listed:
   all patches.
 
 Series
-~~~~~~
+------
 
 A series object represents a lists of patches sent to the mailing-list through
 ``git-send-email``. It also includes all subsequent patches that are sent to
@@ -336,7 +333,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
         }
 
 Patches
-~~~~~~~
+-------
 
 .. http:get:: /api/1.0/patches/
 
@@ -406,7 +403,7 @@ Patches
             }
 
 API Revisions
-~~~~~~~~~~~~~
+-------------
 
 **Revision 1**
 
