@@ -364,7 +364,7 @@ Events
 
     .. sourcecode:: http
 
-        GET /api/1.0/patches/120/ HTTP/1.1
+        GET /api/1.0/projects/intel-gfx/events/ HTTP/1.1
         Accept: application/json
 
     .. sourcecode:: http
