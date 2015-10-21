@@ -150,6 +150,10 @@ At the moment, only one event is listed:
   subsequent updates. The difference can be made by looking at the version of
   the series.
 
+  This event only appears when patchwork has received the full set of mails
+  belonging to the same series, so the series object is guaranteed to contain
+  all patches.
+
 Series
 ~~~~~~
 
