@@ -132,7 +132,7 @@ class RevisionSerializer(PatchworkModelSerializer):
             'patches': PatchSerializer,
         }
 
-class EventLogSerializer(serializers.ModelSerializer):
+class EventLogSerializer(PatchworkModelSerializer):
     name = serializers.CharField(source='event.name', read_only=True)
     class Meta:
         model = EventLog
