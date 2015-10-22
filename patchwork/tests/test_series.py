@@ -124,7 +124,7 @@ class SingleMailSeries(IntelGfxTest):
     root_msgid = '<1400748280-26449-1-git-send-email-chris@chris-wilson.co.uk>'
     cover_letter = None
 
-class Series0010(SingleMailSeries):
+class Series0001(SingleMailSeries):
     def testInsertion(self):
         """A single patch is a series of 1 patch"""
 
