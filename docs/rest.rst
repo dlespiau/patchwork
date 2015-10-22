@@ -332,6 +332,17 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
             ]
         }
 
+.. http:get:: /api/1.0/series/(int: series_id)/revisions/(int: version)/mbox/
+
+    Retrieve an mbox file that will contain all patches of this revision, in
+    order in which to apply them. This mbox file can be directly piped into
+    ``git am``.
+
+::
+
+    $ curl -s http://patchwork.freedesktop.org/api/1.0/series/42/revisions/2/mbox/ | git am -3
+
+
 Patches
 -------
 
@@ -402,8 +413,22 @@ Patches
                 "content": "<diff content>"
             }
 
+.. http:get:: /api/1.0/patches/(int: patch_id)/mbox/
+
+    Retrieve an mbox file. This mbox file can be directly piped into ``git am``.
+
+::
+
+    $ curl -s http://patchwork.freedesktop.org/api/1.0/patches/42/mbox/ | git am -3
+
 API Revisions
 -------------
+
+**Revision 2**
+
+- Add mbox entry points for both patches and seriesL
+  - /patches/${id}/mbox/
+  - /series/${id}/revisions/${version}/mbox/
 
 **Revision 1**
 
