@@ -29,6 +29,7 @@ from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
                                   RevisionSerializer, PatchSerializer, \
                                   EventLogSerializer
 from patchwork.views import patch_to_mbox
+from patchwork.views.patch import mbox as patch_mbox
 
 
 API_REVISION = 1
@@ -143,6 +144,10 @@ class PatchViewSet(mixins.ListModelMixin,
     permission_classes = (MaintainerPermission, )
     queryset = Patch.objects.all()
     serializer_class = PatchSerializer
+
+    @detail_route(methods=['get'])
+    def mbox(self, request, pk=None):
+        return patch_mbox(request, pk)
 
 class EventLogViewSet(mixins.ListModelMixin,
                       ListMixin,

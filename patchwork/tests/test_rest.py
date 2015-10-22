@@ -19,7 +19,7 @@
 
 from django.test import Client
 import patchwork.tests.test_series as test_series
-from patchwork.models import Series
+from patchwork.models import Series, Patch
 
 import hashlib
 import re
@@ -27,16 +27,13 @@ import re
 
 class SeriesRevisionMboxTest(test_series.Series0010):
 
-    def testSeriesRevisionMbox(self):
-        pk = Series.objects.all()[0].pk
-
-        c = Client()
-        response = c.get("/api/1.0/series/%s/revisions/1/mbox/" % pk)
+    def check_mbox(self, api_url, filename, md5sum):
+        response = self.client.get(api_url)
         self.assertEqual(response.status_code, 200)
 
-        filename = re.search("filename=([\w\.\-_]+)",
-                             response["Content-Disposition"]).group(1)
-        self.assertEqual(filename, 'for_each_-intel_-crtc-v2.mbox')
+        s = re.search("filename=([\w\.\-_]+)",
+                      response["Content-Disposition"]).group(1)
+        self.assertEqual(s, filename)
 
         # With MySQL, primary keys keep growing and so the actual patch ids
         # will depend on the previous tests run. Make sure to canonicalize
@@ -45,5 +42,18 @@ class SeriesRevisionMboxTest(test_series.Series0010):
                          response.content, flags=re.M)
         content_hash = hashlib.md5()
         content_hash.update(content)
-        self.assertEqual(content_hash.hexdigest(),
+        self.assertEqual(content_hash.hexdigest(), md5sum)
+
+    def testSeriesRevisionMbox(self):
+        pk = Series.objects.all()[0].pk
+
+        self.check_mbox("/api/1.0/series/%s/revisions/1/mbox/" % pk,
+                        'for_each_-intel_-crtc-v2.mbox',
                         '42e2b2c9eeccf912c998be41683f50d7')
+
+    def testPatchMbox(self):
+        pk = Patch.objects.all()[2].pk
+
+        self.check_mbox("/api/1.0/patches/%s/mbox/" % pk,
+                        '3-4-drm-i915-Introduce-a-for_each_crtc-macro.patch',
+                        'b951af09618c6360516f16ed97a30753')
