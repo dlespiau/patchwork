@@ -137,3 +137,7 @@ class EventLogSerializer(PatchworkModelSerializer):
     class Meta:
         model = EventLog
         fields = ('name', 'event_time', 'series', 'user')
+        expand_serializers = {
+            'series': SeriesSerializer,
+            'user': UserSerializer,
+        }
