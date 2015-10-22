@@ -247,6 +247,11 @@ class PatchManager(models.Manager):
     def with_tag_counts(self, project):
         return self.get_queryset().with_tag_counts(project)
 
+def filename(name, ext):
+    fname_re = re.compile('[^-_A-Za-z0-9\.]+')
+    str = fname_re.sub('-', name)
+    return str.strip('-') + ext
+
 class Patch(models.Model):
     project = models.ForeignKey(Project)
     msgid = models.CharField(max_length=255)
@@ -318,9 +323,7 @@ class Patch(models.Model):
         return self.project.is_editable(user)
 
     def filename(self):
-        fname_re = re.compile('[^-_A-Za-z0-9\.]+')
-        str = fname_re.sub('-', self.name)
-        return str.strip('-') + '.patch'
+        return filename(self.name, '.patch')
 
     @models.permalink
     def get_absolute_url(self):
@@ -463,6 +466,9 @@ class Series(models.Model):
                 print('            subject: %s' % patch.name)
                 print('            msgid  : %s' % patch.msgid)
                 i += 1
+
+    def filename(self):
+        return filename(self.name, '.mbox')
 
 # Signal one can listen to to know when a revision is complete (ie. has all of
 # its patches)
