@@ -1,0 +1,349 @@
+#!/usr/bin/env python
+#
+# git-pw - git subcommand to integrate with patchwork
+#
+# Copyright (C) 2015  Intel Corporation
+#
+# Some snippets and ideas are taken from git-bz and git-phab, both licensed
+# under the GPLv2+.
+#
+# Copyright (C) 2008  Owen Taylor
+# Copyright (C) 2015  Xavier Claessens <xavier.claessens@collabora.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, If not, see
+# http://www.gnu.org/licenses/.
+#
+# Authors:
+#
+#   Damien Lespiau <damien.lespiau@intel.com>
+#
+# Requirements:
+#
+#   - On Fedora:
+#
+#     $ sudo dnf install python-GitPython python-requests
+#
+#   - Using pip:
+#
+#     $ cat git-pw/requirements.txt
+#     GitPython
+#     requests
+#     $ pip install -r requirements.txt
+#
+# Setup (example):
+#
+#   git config patchwork.default.url https://patchwork.freedesktop.org
+#   git config patchwork.default.project intel-gfx
+
+import argparse
+import os
+import subprocess
+import sys
+
+import git
+import requests
+
+
+def die(message):
+    print >>sys.stderr, 'fatal: ' + message
+    sys.exit(1)
+
+
+class HttpError(Exception):
+    def __init__(self, status_code):
+        self.status_code = status_code
+
+
+class Command(object):
+    meta = {
+        'apply': {
+            'need_git_repo': True,
+            'need_project' : False,
+        },
+        'apply-patch': {
+            'need_git_repo': True,
+            'need_project' : False,
+        }
+    }
+    aliases = {
+        'as': 'apply',
+        'ap': 'apply-patch',
+    }
+
+    def __getattr__(self, name):
+        return self.meta[self.canonical_name()][name]
+
+    def canonical_name(self):
+        if self.name in self.aliases:
+            return self.aliases[self.name]
+        return self.name
+
+    def method_name(self):
+        return self.canonical_name().replace('-', '_')
+
+
+class RestObject(object):
+
+    def __init__(self, patchwork):
+        self.pw = patchwork
+
+    def get(self, url='/'):
+        return self.pw.get(self.url(url))
+
+    def absolute_url(self, url='/'):
+        return self.pw.api_base + self.url(url)
+
+class Revision(RestObject):
+
+    def __init__(self, series, rev):
+        super(Revision, self).__init__(series.pw)
+        self.series = series
+        self._rev = rev
+
+    def url(self, url='/'):
+        return '/series/%d/revisions/%d%s' % (self.series.id, self.rev, url)
+
+    @property
+    def rev(self):
+        if self._rev:
+            return self._rev
+        self._rev = self.series.get('/')['version']
+        return self._rev
+
+
+class Series(RestObject):
+
+    def __init__(self, patchwork, series_id):
+        super(Series, self).__init__(patchwork)
+        self.id = series_id
+
+    def url(self, url='/'):
+        return '/series/' + str(self.id) + url
+
+    def get_revision(self, rev):
+        return Revision(self, rev)
+
+
+class Patch(RestObject):
+
+    def __init__(self, patchwork, patch_id):
+        super(Patch, self).__init__(patchwork)
+        self.id = patch_id
+
+    def url(self, url='/'):
+        return '/patches/' + str(self.id) + url
+
+
+class Patchwork(object):
+
+    def __init__(self, web_root, project):
+        if not web_root.endswith('/'):
+            web_root += '/'
+        self.api_base = web_root + 'api/1.0'
+        self.web_root = web_root
+        self.project = project
+        self.json_cache = {}
+
+    def get(self, url):
+        absolute_url = self.api_base + url
+        if absolute_url in self.json_cache:
+            return self.json_cache[absolute_url]
+
+        r = requests.get(absolute_url)
+        if r.status_code is not 200:
+            raise HttpError(r.status_code)
+
+        json = r.json()
+        self.json_cache[absolute_url] = json
+        return json
+
+    def setup(self):
+        try:
+            self.api = self.get('/')
+        except HttpError:
+            die("%s doesn't seem to be a patchwork instance." % self.web_root)
+
+    def get_series(self, series_id):
+        return Series(self, series_id)
+
+    def get_patch(self, patch_id):
+        return Patch(self, patch_id)
+
+
+class GitPatchwork(object):
+
+    def __init__(self):
+        self.cmd = Command()
+
+    def setup(self):
+        try:
+            self.repo = git.Repo(os.getcwd(), search_parent_directories=True)
+        except git.exc.InvalidGitRepositoryError as e:
+            if self.cmd.need_git_repo:
+                die('Not a git repository.')
+
+        config = self.repo.config_reader()
+
+        # Select which configuration we are going to use. In order:
+        #   - config given on the command line
+        #   - config specified in the patchwork.defaultconfig variable
+        #   - 'default'
+        default_config = None
+        try:
+            default_config = config.get('patchwork', 'defaultconfig')
+        except:
+            pass
+
+        if not self.cmd.config and default_config:
+            self.cmd.config = default_config
+
+        if not self.cmd.config:
+            self.cmd.config = 'default'
+
+        # Grab that config 'url' and 'project' fields. 'project' is actually
+        # optional, not all commands need one and we allow not setting it.
+        try:
+            web_root = config.get('patchwork "%s"' % self.cmd.config, 'url')
+        except:
+            die("git-pw isn't configured.\n\n"
+                "Please set up the patchwork url and project, e.g.:\n\n"
+                "   git config patchwork.default.url https://patchwork.freedesktop.org\n"
+                "   git config patchwork.default.project intel-gfx\n")
+
+        project = None
+        try:
+            project = config.get('patchwork "%s"' % self.cmd.config, 'project')
+        except:
+            pass
+
+        if not project and self.cmd.need_project:
+            die('No project configured.\n\n'
+                "Please set up the patchwork project, e.g.:\n\n"
+                "   git config patchwork.default.project intel-gfx\n")
+
+        self.pw = Patchwork(web_root, project)
+        self.pw.setup()
+
+    def am(self, mailbox_url):
+        p = subprocess.Popen('curl -s -S %s | git am -3' % mailbox_url,
+                             stdout=subprocess.PIPE,
+                             stderr=sys.stdout.fileno(),
+                             shell=True)
+        lines = iter(p.stdout.readline, b"")
+        for line in lines:
+            sys.stdout.write(line)
+        p.wait()
+        return p.returncode
+
+    def do_apply(self):
+        series = self.pw.get_series(self.cmd.series_id)
+        revision = series.get_revision(self.cmd.revision)
+
+        data = series.get()
+        if self.cmd.revision and (self.cmd.revision < 1 or
+                                  self.cmd.revision > data['version']):
+            die("Invalid revision: %d.\n"
+                "Series %d has %d revision(s) (from 1 to %d)" %
+                (self.cmd.revision, series.id, data['version'],
+                 data['version']))
+
+        print('Applying series: %s (rev %d)' % (data['name'], data['version']))
+
+        try:
+            return self.am(revision.absolute_url('/mbox/'))
+        except HttpError as e:
+            if e.status_code != 404:
+                raise
+            die('No series with id %d.' % self.cmd.series_id)
+
+    def do_apply_patch(self):
+        patch = self.pw.get_patch(self.cmd.patch_id)
+
+        try:
+            return self.am(patch.absolute_url('/mbox/'))
+        except HttpError as e:
+            if e.status_code != 404:
+                raise
+            die('No patch with id %d.' % self.cmd.series_id)
+
+    def run(self):
+        self.setup()
+        method = 'do_' + self.cmd.method_name()
+        ret = getattr(self, method)()
+        ret = 0 if ret is None else ret
+        return ret
+
+
+class AliasedSubParsersAction(argparse._SubParsersAction):
+    '''Aliases for argparse positional arguments.'''
+
+    class _AliasedPseudoAction(argparse.Action):
+        def __init__(self, name, aliases, help):
+            dest = name
+            if aliases:
+                dest += ' (%s)' % ','.join(aliases)
+            sup = super(AliasedSubParsersAction._AliasedPseudoAction, self)
+            sup.__init__(option_strings=[], dest=dest, help=help)
+
+    def add_parser(self, name, **kwargs):
+        if 'aliases' in kwargs:
+            aliases = kwargs['aliases']
+            del kwargs['aliases']
+        else:
+            aliases = []
+
+        parser = super(AliasedSubParsersAction, self).add_parser(name, **kwargs)
+
+        # Make the aliases work.
+        for alias in aliases:
+            self._name_parser_map[alias] = parser
+        # Make the help text reflect them, first removing old help entry.
+        if 'help' in kwargs:
+            help = kwargs.pop('help')
+            self._choices_actions.pop()
+            pseudo_action = self._AliasedPseudoAction(name, aliases, help)
+            self._choices_actions.append(pseudo_action)
+
+        return parser
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.register('action', 'parsers', AliasedSubParsersAction)
+
+    # arguments common to all commands
+    parser.add_argument('--config', '-c', metavar='config',
+        type=str, help="configuration to use, 'default' is omitted")
+
+    subparsers = parser.add_subparsers(dest='name', metavar='command')
+
+    # apply
+    apply_series_parser = subparsers.add_parser('apply', aliases=('as',),
+        help='apply a series to the current branch')
+    apply_series_parser.add_argument('--revision', '-r', metavar='revision',
+        type=int, help='the revision to apply, latest if omitted')
+    apply_series_parser.add_argument('series_id', metavar='series_id',
+        type=int, help='the series id to apply')
+
+    # apply-patch
+    apply_pach_parser = subparsers.add_parser('apply-patch', aliases=('ap',),
+        help='apply a patch to the current branch')
+    apply_pach_parser.add_argument('patch_id', metavar='patch_id',
+        type=int, help='the patch id to apply')
+
+    git_pw = GitPatchwork()
+    parser.parse_args(namespace=git_pw.cmd)
+    ret = git_pw.run()
+    sys.exit(ret)

@@ -144,3 +144,84 @@ cover letter subjects as new revisions:
   |                                 | - Awesome feature (take 5) |
   |                                 | - Awesome feature, take 6  |
   +---------------------------------+----------------------------+
+
+|git-pw|
+--------
+
+|git-pw| (or :command:`git pw`) is a command line tool that bridges git and
+patchwork.
+
+
+Installation
+~~~~~~~~~~~~
+
+Requirements
+............
+
+|git-pw| uses GitPython and requests, so those dependencies need to be
+installed. Using the distribution packages should work.
+
+On Fedora:
+
+::
+
+    $ sudo dnf install python-GitPython python-requests
+
+It's also possible to use |pip|. :file:`git-pw/requirements.txt` in the
+patchwork git repository_ has the list of required packages:
+
+::
+
+     $ cat git-pw/requirements.txt
+     GitPython
+     requests
+     $ pip install -r requirements.txt
+
+
+Getting |git-pw|
+................
+
+|git-pw| can be directly downloaded from patchwork's `git repository`__ and put
+it anywhere in your ``PATH``.
+
+Because this tool is still very young and to easily get the latest version I
+would suggest cloning patchwork's repository_ and use a symlink. This way,
+|git-pw| can be updated with a single :command:`git pull` command. From
+patchwork's checkout:
+
+::
+
+    $ ln -s $PWD/git-pw/git-pw ~/.local/bin/
+
+.. __: https://github.com/dlespiau/patchwork/blob/master/git-pw/git-pw
+
+Setup
+~~~~~
+
+|git-pw| configuration is stored in git config files and so can be set per
+git repository. Two pieces of information are needed to get started: the URL
+of the patchwork instance and the project this git repository maps to.
+
+For example, the following sets |git-pw| up for the intel-gfx project on
+freedesktop.org:
+
+::
+
+    $ git config patchwork.default.url https://patchwork.freedesktop.org
+    $ git config patchwork.default.project intel-gfx
+
+|git-pw| is ready to go! Applying a series known to patchwork to the current
+git tree is now a single command away:
+
+::
+
+    $ git pw apply 122
+    Applying series: DP refactoring v2 (rev 1)
+    Applying: drm/i915: Don't pass *DP around to link training functions
+    Applying: drm/i915: Split write of pattern to DP reg from intel_dp_set_link_train
+    Applying: drm/i915 Call get_adjust_train() from clock recovery and channel eq
+    Applying: drm/i915: Move register write into intel_dp_set_signal_levels()
+    Applying: drm/i915: Move generic link training code to a separate file
+    ...
+
+.. include:: symbols

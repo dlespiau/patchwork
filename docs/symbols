@@ -1,0 +1,4 @@
+.. |pip| replace:: :command:`pip`
+.. |git-pw| replace:: :command:`git-pw`
+.. _repository: https://github.com/dlespiau/patchwork
+
