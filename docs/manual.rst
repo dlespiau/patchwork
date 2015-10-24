@@ -7,7 +7,7 @@ Submitting patches
 Initial Submission
 ~~~~~~~~~~~~~~~~~~
 
-Patches are normally submitted with ``git send-email`` to a mailing
+Patches are normally submitted with :command:`git send-email` to a mailing
 list. For instance, if we branched from ``master``, have three patches to
 submit, we can use:
 
