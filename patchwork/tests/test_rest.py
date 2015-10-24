@@ -25,12 +25,35 @@ import hashlib
 import re
 
 
-class SeriesRevisionMboxTest(test_series.Series0010):
+entry_points = [
+    '/',
+    '/projects/',
+    '/projects/%(project_linkname)s/',
+    '/projects/%(project_id)s/',
+    '/projects/%(project_linkname)s/events/',
+    '/projects/%(project_id)s/events/',
+    '/projects/%(project_linkname)s/series/',
+    '/projects/%(project_id)s/series/',
+    '/series/',
+    '/series/%(series_id)s/',
+    '/series/%(series_id)s/revisions/',
+    '/series/%(series_id)s/revisions/%(revision_version)s/',
+    '/series/%(series_id)s/revisions/%(revision_version)s/mbox/',
+    '/patches/',
+    '/patches/%(patch_id)s/',
+    '/patches/%(patch_id)s/mbox/',
+]
+
+
+class APITest(test_series.Series0010):
+
+    def setUp(self):
+        super(APITest, self).setUp()
+        self.series = Series.objects.all()[0]
+        self.patch = Patch.objects.all()[2]
 
     def check_mbox(self, api_url, filename, md5sum):
         response = self.client.get(api_url)
-        self.assertEqual(response.status_code, 200)
-
         s = re.search("filename=([\w\.\-_]+)",
                       response["Content-Disposition"]).group(1)
         self.assertEqual(s, filename)
@@ -44,16 +67,23 @@ class SeriesRevisionMboxTest(test_series.Series0010):
         content_hash.update(content)
         self.assertEqual(content_hash.hexdigest(), md5sum)
 
-    def testSeriesRevisionMbox(self):
-        pk = Series.objects.all()[0].pk
+    def testEntryPointPresence(self):
+        for entry_point in entry_points:
+            r = self.client.get('/api/1.0' + entry_point % {
+                'project_id': self.project.pk,
+                'project_linkname': self.project.linkname,
+                'series_id': self.series.pk,
+                'revision_version': 1,
+                'patch_id': self.patch.pk,
+            })
+            self.assertEqual(r.status_code, 200)
 
-        self.check_mbox("/api/1.0/series/%s/revisions/1/mbox/" % pk,
+    def testSeriesMbox(self):
+        self.check_mbox("/api/1.0/series/%s/revisions/1/mbox/" % self.series.pk,
                         'for_each_-intel_-crtc-v2.mbox',
                         '42e2b2c9eeccf912c998be41683f50d7')
 
     def testPatchMbox(self):
-        pk = Patch.objects.all()[2].pk
-
-        self.check_mbox("/api/1.0/patches/%s/mbox/" % pk,
+        self.check_mbox("/api/1.0/patches/%s/mbox/" % self.patch.pk,
                         '3-4-drm-i915-Introduce-a-for_each_crtc-macro.patch',
                         'b951af09618c6360516f16ed97a30753')
