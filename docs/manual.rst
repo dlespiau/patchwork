@@ -1,8 +1,11 @@
 User Manual
 ===========
 
-Initial Submission
+Submitting patches
 ------------------
+
+Initial Submission
+~~~~~~~~~~~~~~~~~~
 
 Patches are normally submitted with ``git send-email`` to a mailing
 list. For instance, if we branched from ``master``, have three patches to
@@ -36,7 +39,7 @@ that case, Patchwork will use the subject of the patch as the series
 title.
 
 New Versions
-------------
+~~~~~~~~~~~~
 
 Sometimes, maybe even more often than hoped, one needs to resend a few
 patches or even entire series to address review comments.
@@ -52,7 +55,7 @@ A Series object in patchwork tracks all the changes on top of the
 initial submission.
 
 New Patch
-~~~~~~~~~
+.........
 
 To send a v2 of a patch part of a bigger series, one would do something
 similar to:
@@ -79,7 +82,7 @@ Patch work will create a new *revision* of the series, updating patch
 #2 to the new version of that patch.
 
 New Series
-~~~~~~~~~~
+..........
 
 When something is really wrong or when, to address the review, most
 patches of a series need to be revised, re-sending individual emails can
