@@ -126,7 +126,6 @@ class RevisionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def retrieve(self, request, series_pk=None, pk=None):
         rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
-        print(self.get_serializer_context())
         serializer = RevisionSerializer(rev,
                                         context=self.get_serializer_context())
         return Response(serializer.data)
