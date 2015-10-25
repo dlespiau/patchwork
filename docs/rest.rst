@@ -229,7 +229,7 @@ Series
 ~~~~~~
 
 A series object represents a lists of patches sent to the mailing-list through
-``git-send-email``. It also includes all subsequent patches that are sent to
+|git send-email|. It also includes all subsequent patches that are sent to
 address review comments, both single patch and full new series.
 
 A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
