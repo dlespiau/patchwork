@@ -12,7 +12,7 @@ and patches.
     usually through |git send-email|. Series can evolve over time and gain new
     revisions as the work matures through reviews, testing and new iterations.
 
-    More about series and revisions can be found in :ref:`submitting-patches`
+    More about series and revisions can be found in :ref:`submitting-patches`.
 
 **revision**
     A collection of patches.
