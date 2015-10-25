@@ -26,24 +26,56 @@ import hashlib
 import re
 
 
-entry_points = [
-    '/',
-    '/projects/',
-    '/projects/%(project_linkname)s/',
-    '/projects/%(project_id)s/',
-    '/projects/%(project_linkname)s/events/',
-    '/projects/%(project_id)s/events/',
-    '/projects/%(project_linkname)s/series/',
-    '/projects/%(project_id)s/series/',
-    '/series/',
-    '/series/%(series_id)s/',
-    '/series/%(series_id)s/revisions/',
-    '/series/%(series_id)s/revisions/%(revision_version)s/',
-    '/series/%(series_id)s/revisions/%(revision_version)s/mbox/',
-    '/patches/',
-    '/patches/%(patch_id)s/',
-    '/patches/%(patch_id)s/mbox/',
-]
+entry_points = {
+    '/': {
+        'flags': (),
+    },
+    '/projects/': {
+        'flags': ('is_list',),
+    },
+    '/projects/%(project_linkname)s/': {
+        'flags': (),
+    },
+    '/projects/%(project_id)s/': {
+        'flags': (),
+    },
+    '/projects/%(project_linkname)s/events/': {
+        'flags': ('is_list',),
+    },
+    '/projects/%(project_id)s/events/': {
+        'flags': ('is_list',),
+    },
+    '/projects/%(project_linkname)s/series/': {
+        'flags': ('is_list',),
+    },
+    '/projects/%(project_id)s/series/': {
+        'flags': ('is_list', ),
+    },
+    '/series/': {
+        'flags': ('is_list',),
+    },
+    '/series/%(series_id)s/': {
+        'flags': (),
+    },
+    '/series/%(series_id)s/revisions/': {
+        'flags': ('is_list',),
+    },
+    '/series/%(series_id)s/revisions/%(revision_version)s/': {
+        'flags': (),
+    },
+    '/series/%(series_id)s/revisions/%(revision_version)s/mbox/': {
+        'flags': ('not_json',),
+    },
+    '/patches/': {
+        'flags': ('is_list',),
+    },
+    '/patches/%(patch_id)s/': {
+        'flags': (),
+    },
+    '/patches/%(patch_id)s/mbox/': {
+        'flags': ('not_json',),
+    },
+}
 
 
 class APITest(test_series.Series0010):
@@ -85,6 +117,23 @@ class APITest(test_series.Series0010):
         for entry_point in entry_points:
             r = self.get(entry_point)
             self.assertEqual(r.status_code, 200)
+
+    def testList(self):
+        for entry_point in entry_points:
+            meta = entry_points[entry_point]
+            if 'not_json' in meta['flags']:
+                continue
+
+            json = self.get_json(entry_point)
+
+            if 'is_list' not in meta['flags']:
+                self.assertTrue('count' not in json)
+                continue
+
+            self.assertTrue('count' in json)
+            self.assertTrue('next' in json)
+            self.assertTrue('previous' in json)
+            self.assertTrue('results' in json)
 
     def testSeriesMbox(self):
         self.check_mbox("/api/1.0/series/%s/revisions/1/mbox/" % self.series.pk,

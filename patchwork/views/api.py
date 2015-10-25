@@ -114,13 +114,13 @@ def series_mbox(revision):
         revision.series.filename()
     return response
 
-class RevisionViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class RevisionViewSet(mixins.ListModelMixin, ListMixin,
+                      viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = SeriesRevision.objects.all()
     serializer_class = RevisionSerializer
 
     def get_queryset(self):
-
         series_pk = self.kwargs['series_pk']
         return self.queryset.filter(series=series_pk)
 

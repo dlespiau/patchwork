@@ -21,6 +21,43 @@ and patches.
     The usual collection of changes expressed as a diff_. With |git|, a patch
     also contains full commit metadata.
 
+API Patterns
+------------
+
+All the API entry points share common patterns to offer a coherent whole and
+limit surprises when using the API.
+
+Lists
+~~~~~
+
+Various entry points expose lists of objects. They all follow the same
+structure:
+
+.. code-block:: json
+
+    {
+        "count": 25,
+        "next": "http://patchwork.example.com/api/1.0/series/?page=2",
+        "previous": null,
+        "results": [
+            {
+                "object": 0
+            },
+            {
+                "object": 1
+            },
+            {
+            },
+            {
+                "object": 19
+            },
+        ]
+    }
+
+Lists are paginated with 20 elements per page by default. ``count`` is the
+total number of objects while ``next`` and ``previous`` will hold URLs to the
+next and previous pages. It's possible to change the number of elements per
+page with the ``perpage`` GET parameter, with a limit of 100 elements per page.
 
 API Reference
 -------------
@@ -470,6 +507,10 @@ API Revisions
 
 - Add a ``parameters`` field to events and include the revision number to the
   ``series-new-revision`` event.
+- Change /series/${id}/revisions/ to follow the same list system as other
+  entry points. This is technically an API change, but the impact is limited
+  at this early point. Hopefully noone will ever find out.
+- Document how lists of objects work.
 
 **Revision 1**
 
