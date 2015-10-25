@@ -19,6 +19,7 @@
 
 from django import template
 from django.utils.safestring import mark_safe
+from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 
@@ -31,3 +32,9 @@ def patch_tags(patch, tag):
     title = '%d %s' % (count, tag.name)
     return mark_safe('<td class="%s"><span title="%s">%s</span></td>' %
                      (class_str, title, count_str))
+
+
+@register.filter
+@stringfilter
+def msgid(patch):
+    return patch.strip('<>')
