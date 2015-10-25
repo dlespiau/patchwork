@@ -1,5 +1,7 @@
+.. |git| replace:: :command:`git`
 .. |git-pw| replace:: :command:`git-pw`
 .. |git send-email| replace:: :command:`git send-email`
 .. |pip| replace:: :command:`pip`
 
+.. _diff: https://en.wikipedia.org/wiki/Diff_utility
 .. _repository: https://github.com/dlespiau/patchwork

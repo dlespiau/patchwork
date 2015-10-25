@@ -1,6 +1,8 @@
 User Manual
 ===========
 
+.. _submitting-patches:
+
 Submitting patches
 ------------------
 

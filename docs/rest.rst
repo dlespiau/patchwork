@@ -1,6 +1,27 @@
 REST API
 ========
 
+Patchwork exposes a REST API to allow other systems and scripts to interact
+with it. The basic service it offers is exposing a mailing-list used for
+sending patches and review comments as high level objects: series, revisions
+and patches.
+
+**series**
+    A collection of revisions. Series objects are created, along with an
+    initial revision, when a set of patches are sent to a mailing-list,
+    usually through |git send-email|. Series can evolve over time and gain new
+    revisions as the work matures through reviews, testing and new iterations.
+
+    More about series and revisions can be found in :ref:`submitting-patches`
+
+**revision**
+    A collection of patches.
+
+**patch**
+    The usual collection of changes expressed as a diff_. With |git|, a patch
+    also contains full commit metadata.
+
+
 API metadata
 ------------
 
@@ -438,3 +459,5 @@ API Revisions
 
 - Initial revision. Basic objects exposed: api root, projects, series,
   revisions and patches.
+
+.. include:: symbols
