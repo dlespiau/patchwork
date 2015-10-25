@@ -1,4 +1,5 @@
-.. |pip| replace:: :command:`pip`
 .. |git-pw| replace:: :command:`git-pw`
-.. _repository: https://github.com/dlespiau/patchwork
+.. |git send-email| replace:: :command:`git send-email`
+.. |pip| replace:: :command:`pip`
 
+.. _repository: https://github.com/dlespiau/patchwork
