@@ -47,6 +47,8 @@ API metadata
 
     :>json int revision: API revision. This can be used to ensure the server
                          supports a feature introduced from a specific revision.
+                         The list of API revisions and the changes introduced
+                         by each of them is documented in `API Revisions`_.
 
 
 Projects
