@@ -27,6 +27,7 @@ from django.contrib.sites.models import Site
 from django.conf import settings
 from django.utils.functional import cached_property
 from patchwork.parser import hash_patch, extract_tags
+import jsonfield
 
 import re
 import datetime, time
@@ -554,6 +555,7 @@ class EventLog(models.Model):
     event_time = models.DateTimeField(auto_now=True)
     series = models.ForeignKey(Series)
     user = models.ForeignKey(User, null=True)
+    parameters = jsonfield.JSONField(null=True)
 
     class Meta:
         ordering = ['-event_time']
@@ -642,7 +644,8 @@ models.signals.pre_save.connect(_patch_change_callback, sender = Patch)
 def _on_revision_complete(sender, revision, **kwargs):
     new_revision = Event.objects.get(name='series-new-revision')
     log = EventLog(event=new_revision, series=revision.series,
-                   user=revision.series.submitter.user)
+                   user=revision.series.submitter.user,
+                   parameters={'revision': revision.version})
     log.save()
 
 series_revision_complete.connect(_on_revision_complete)

@@ -150,27 +150,38 @@ Events
                     "name": "series-new-revision",
                     "event_time": "2015-10-20T19:49:49.494",
                     "series": 23,
-                    "user": null
+                    "user": null,
+                    "parameters": {
+                        "revision": 2
+                    }
                 },
                 {
                     "name": "series-new-revision",
                     "event_time": "2015-10-20T19:49:43.895",
                     "series": 22,
-                    "user": null
+                    "user": null,
+                    "parameters": {
+                        "revision": 1
+                    }
                 }
             ]
         }
 
-At the moment, only one event is listed:
+Each event type has some ``parameters`` specific to that event. At the moment,
+only one event is possible:
 
-- **series-new-revision**: This event corresponds to patchwork receiving a
-  full new revision of a series, should it be the initial submission of
-  subsequent updates. The difference can be made by looking at the version of
-  the series.
+- **series-new-revision**: This event corresponds to patchwork receiving a new
+  revision of a series, should it be the initial submission or subsequent
+  updates. The difference can be made by looking at the version of the series.
 
   This event only appears when patchwork has received the full set of mails
-  belonging to the same series, so the series object is guaranteed to contain
-  all patches.
+  belonging to the same series, so the revision object is guaranteed to
+  contain all patches.
+
+  **revision**: The version of the new revision that has been created.
+  ``series`` and ``revision`` can be used to retrieve the corresponding
+  patches.
+
 
 Series
 ------
@@ -447,9 +458,13 @@ API Revisions
 
 **Revision 2**
 
-- Add mbox entry points for both patches and seriesL
+- Add mbox entry points for both patches and series:
+
   - /patches/${id}/mbox/
   - /series/${id}/revisions/${version}/mbox/
+
+- Add a ``parameters`` field to events and include the revision number to the
+  ``series-new-revision`` event.
 
 **Revision 1**
 

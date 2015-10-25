@@ -17,7 +17,10 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import json
+
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
                              State, EventLog
 from rest_framework import serializers
@@ -74,6 +77,17 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
         else:
             return super(PatchworkModelSerializer, self). \
                     get_related_field(model_field, related_model, to_many)
+
+# See https://github.com/tomchristie/django-rest-framework/issues/1880
+class JSONField(serializers.WritableField):
+    def to_native(self, obj):
+        return obj
+
+    def from_native(self, value):
+        if value is not None and not isinstance(value, dict):
+            raise ValidationError("This field must be a JSON object")
+
+        return value
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -134,9 +148,10 @@ class RevisionSerializer(PatchworkModelSerializer):
 
 class EventLogSerializer(PatchworkModelSerializer):
     name = serializers.CharField(source='event.name', read_only=True)
+    parameters = JSONField(read_only=True)
     class Meta:
         model = EventLog
-        fields = ('name', 'event_time', 'series', 'user')
+        fields = ('name', 'event_time', 'series', 'user', 'parameters')
         expand_serializers = {
             'series': SeriesSerializer,
             'user': UserSerializer,

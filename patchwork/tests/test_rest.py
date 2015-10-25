@@ -18,6 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import Client
+from rest_framework.test import APIClient
 import patchwork.tests.test_series as test_series
 from patchwork.models import Series, Patch
 
@@ -49,6 +50,7 @@ class APITest(test_series.Series0010):
 
     def setUp(self):
         super(APITest, self).setUp()
+        self.api = APIClient()
         self.series = Series.objects.all()[0]
         self.patch = Patch.objects.all()[2]
 
@@ -67,15 +69,21 @@ class APITest(test_series.Series0010):
         content_hash.update(content)
         self.assertEqual(content_hash.hexdigest(), md5sum)
 
-    def testEntryPointPresence(self):
-        for entry_point in entry_points:
-            r = self.client.get('/api/1.0' + entry_point % {
+    def get(self, url):
+        return self.api.get('/api/1.0' + url % {
                 'project_id': self.project.pk,
                 'project_linkname': self.project.linkname,
                 'series_id': self.series.pk,
                 'revision_version': 1,
                 'patch_id': self.patch.pk,
-            })
+        })
+
+    def get_json(self, url):
+        return self.get(url).data
+
+    def testEntryPointPresence(self):
+        for entry_point in entry_points:
+            r = self.get(entry_point)
             self.assertEqual(r.status_code, 200)
 
     def testSeriesMbox(self):
@@ -87,3 +95,9 @@ class APITest(test_series.Series0010):
         self.check_mbox("/api/1.0/patches/%s/mbox/" % self.patch.pk,
                         '3-4-drm-i915-Introduce-a-for_each_crtc-macro.patch',
                         'b951af09618c6360516f16ed97a30753')
+
+    def testSeriesNewRevisionEvent(self):
+        events = self.get_json('/projects/%(project_id)s/events/')
+        self.assertEqual(events['count'], 1)
+        event = events['results'][0]
+        self.assertEqual(event['parameters']['revision'], 1)
