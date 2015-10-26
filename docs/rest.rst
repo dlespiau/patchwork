@@ -372,16 +372,21 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
         Vary: Accept
         Allow: GET, HEAD, OPTIONS
 
-        [
-            {
-                "version": 1,
-                "cover_letter": null,
-                "patches": [
-                    120,
-                    121
-                ]
-            }
-        ]
+        {
+            "count": 1,
+            "next": null,
+            "previous": null,
+            "results": [
+                {
+                    "version": 1,
+                    "cover_letter": null,
+                    "patches": [
+                        120,
+                        121
+                    ]
+                }
+            ]
+        }
 
 .. http:get:: /api/1.0/series/(int: series_id)/revisions/(int: version)/
 
