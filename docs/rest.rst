@@ -185,7 +185,7 @@ Events
 
         {
             "count": 23,
-            "next": "http://127.0.0.1:8000/api/1.0/events/?page=2",
+            "next": "http://patchwork.example.com/api/1.0/events/?page=2",
             "previous": null,
             "results": [
                 {
@@ -196,6 +196,8 @@ Events
                     "parameters": {
                         "revision": 2
                     }
+                },
+                {
                 },
                 {
                     "name": "series-new-revision",
@@ -254,7 +256,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
 
         {
             "count": 59,
-            "next": "http://patchwork.freedesktop.org/api/1.0/projects/intel-gfx/series/?page=2",
+            "next": "http://patchwork.example.com/api/1.0/projects/intel-gfx/series/?page=2",
             "previous": null,
             "results": [
                 {
@@ -299,7 +301,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
 
         {
             "count": 344,
-            "next": "http://127.0.0.1:8000/api/1.0/series/?page=2",
+            "next": "http://patchwork.example.com/api/1.0/series/?page=2",
             "previous": null,
             "results": [
                 {
@@ -414,7 +416,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
 
 ::
 
-    $ curl -s http://patchwork.freedesktop.org/api/1.0/series/42/revisions/2/mbox/ | git am -3
+    $ curl -s http://patchwork.example.com/api/1.0/series/42/revisions/2/mbox/ | git am -3
 
 
 Patches
@@ -438,7 +440,7 @@ Patches
 
         {
             "count": 1392,
-            "next": "http://127.0.0.1:8000/api/1.0/patches/?page=2",
+            "next": "http://patchwork.example.com/api/1.0/patches/?page=2",
             "previous": null,
             "results": [
                 {
@@ -493,7 +495,7 @@ Patches
 
 ::
 
-    $ curl -s http://patchwork.freedesktop.org/api/1.0/patches/42/mbox/ | git am -3
+    $ curl -s http://patchwork.example.com/api/1.0/patches/42/mbox/ | git am -3
 
 API Revisions
 -------------
