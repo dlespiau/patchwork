@@ -156,7 +156,7 @@ $(document).ready(function() {
 {% for tag in project.tags %}
    {{ patch|patch_tags:tag }}
 {% endfor %}
-   <td>{{ patch.date|date:"Y-m-d" }}</td>
+   <td class="text-nowrap">{{ patch.date|date:"Y-m-d" }}</td>
    <td>{{ patch.submitter|personify:project }}</td>
    <td>{{ patch.delegate.username }}</td>
    <td>{{ patch.state }}</td>
