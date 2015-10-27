@@ -167,7 +167,7 @@ On Fedora:
 
 ::
 
-    $ sudo dnf install python-GitPython python-requests
+    $ sudo dnf install GitPython python-requests
 
 It's also possible to use |pip|. :file:`git-pw/requirements.txt` in the
 patchwork git repository_ has the list of required packages:
