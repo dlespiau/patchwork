@@ -135,6 +135,17 @@ class APITest(test_series.Series0010):
             self.assertTrue('previous' in json)
             self.assertTrue('results' in json)
 
+    def testRevisionPatchOrdering(self):
+        revision = self.get_json('/series/%(series_id)s/revisions/1/')
+        self.assertEqual(revision['version'], 1)
+        patches = revision['patches']
+        self.assertEqual(len(patches), 4)
+        i = 1
+        for patch_id in patches:
+            patch = self.get_json('/patches/%d/' % patch_id)
+            self.assertTrue('[%d/4]' % i in patch['name'])
+            i += 1
+
     def testSeriesMbox(self):
         self.check_mbox("/api/1.0/series/%s/revisions/1/mbox/" % self.series.pk,
                         'for_each_-intel_-crtc-v2.mbox',

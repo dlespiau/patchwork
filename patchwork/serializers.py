@@ -138,6 +138,18 @@ class PatchSerializer(PatchworkModelSerializer):
         }
 
 class RevisionSerializer(PatchworkModelSerializer):
+    patches = serializers.SerializerMethodField('get_patches')
+
+    def get_patches(self, revision):
+        queryset = revision.ordered_patches()
+
+        if self._pw_related == RelatedMode.expand:
+            serializer = PatchSerializer(instance=queryset, many=True,
+                                         context=self.context)
+            return serializer.data
+
+        return [patch.pk for patch in queryset]
+
     class Meta:
         model = SeriesRevision
         fields = ('version', 'cover_letter', 'patches')
