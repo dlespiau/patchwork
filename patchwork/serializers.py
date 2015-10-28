@@ -21,15 +21,21 @@ import json
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import models
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
                              State, EventLog
 from rest_framework import serializers
+from rest_framework import fields
 from enum import Enum
 
 class RelatedMode(Enum):
     """Select how to show related fields in the JSON responses."""
     primary_key = 1
     expand = 2
+
+class Iso8601DateTimeField(fields.DateTimeField):
+    def __init__(self, **kwargs):
+        super(Iso8601DateTimeField, self).__init__(format='iso-8601', **kwargs)
 
 class PatchworkModelSerializerOptions(serializers.ModelSerializerOptions):
     """Meta class options for PatchworkModelSerializer"""
@@ -50,6 +56,13 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(PatchworkModelSerializer, self).__init__(*args, **kwargs)
+
+        # All DateTimeFields should be in ISO 8601 format so nano seconds
+        # aren't truncated. This is important to be able to correctly re-inject
+        # the timestamps string the API gives you back into queries and have
+        # the gt (greater than) and gte (greater or equal) operators work
+        # correctly.
+        self.field_mapping[models.DateTimeField] = Iso8601DateTimeField
 
         self._pw_related = RelatedMode.primary_key
         related = self.context['request'].QUERY_PARAMS.get('related')

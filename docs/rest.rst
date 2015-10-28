@@ -190,7 +190,7 @@ Events
             "results": [
                 {
                     "name": "series-new-revision",
-                    "event_time": "2015-10-20T19:49:49.494",
+                    "event_time": "2015-10-20T19:49:49.494183",
                     "series": 23,
                     "user": null,
                     "parameters": {
@@ -201,7 +201,7 @@ Events
                 },
                 {
                     "name": "series-new-revision",
-                    "event_time": "2015-10-20T19:49:43.895",
+                    "event_time": "2015-10-20T19:49:43.895382",
                     "series": 22,
                     "user": null,
                     "parameters": {
@@ -266,7 +266,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "n_patches": 1,
                     "submitter": 77,
                     "submitted": "2015-10-09T11:51:38",
-                    "last_updated": "2015-10-09T11:51:59.013",
+                    "last_updated": "2015-10-09T11:51:59.013345",
                     "version": 1,
                     "reviewer": null
                 },
@@ -277,7 +277,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "n_patches": 1,
                     "submitter": 77,
                     "submitted": "2015-10-09T12:21:45",
-                    "last_updated": "2015-10-09T12:21:58.657",
+                    "last_updated": "2015-10-09T12:21:58.657976",
                     "version": 1,
                     "reviewer": null,
                 }
@@ -311,7 +311,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "n_patches": 1,
                     "submitter": 10,
                     "submitted": "2015-01-02T11:06:40",
-                    "last_updated": "2015-10-09T07:55:18.608",
+                    "last_updated": "2015-10-09T07:55:18.608251",
                     "version": 1,
                     "reviewer": null
                 },
@@ -322,7 +322,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "n_patches": 4,
                     "submitter": 1,
                     "submitted": "2014-12-26T10:23:26",
-                    "last_updated": "2015-10-09T07:55:01.558",
+                    "last_updated": "2015-10-09T07:55:01.558523",
                     "version": 1,
                     "reviewer": null,
                 },
@@ -351,7 +351,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
             "n_patches": 2,
             "submitter": 21,
             "submitted": "2015-01-13T09:32:24",
-            "last_updated": "2015-10-09T07:57:23.541",
+            "last_updated": "2015-10-09T07:57:23.541373",
             "version": 1,
             "reviewer": null
         }
@@ -518,6 +518,8 @@ API Revisions
   entry points. This is technically an API change, but the impact is limited
   at this early point. Hopefully noone will ever find out.
 - Document how lists of objects work.
+- Make all DateTime field serialize to ISO 8061 format and not the ECMA 262
+  subset.
 
 **Revision 1**
 
