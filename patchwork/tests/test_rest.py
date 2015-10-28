@@ -21,9 +21,12 @@ from django.test import Client
 import patchwork.tests.test_series as test_series
 from patchwork.models import Series, Patch
 
+import datetime
 import hashlib
 import json
 import re
+
+import dateutil.parser
 
 
 entry_points = {
@@ -100,17 +103,17 @@ class APITest(test_series.Series0010):
         content_hash.update(content)
         self.assertEqual(content_hash.hexdigest(), md5sum)
 
-    def get(self, url):
+    def get(self, url, params={}):
         return self.client.get('/api/1.0' + url % {
                 'project_id': self.project.pk,
                 'project_linkname': self.project.linkname,
                 'series_id': self.series.pk,
                 'revision_version': 1,
                 'patch_id': self.patch.pk,
-        })
+        }, params)
 
-    def get_json(self, url):
-        return json.loads(self.get(url).content)
+    def get_json(self, url, params={}):
+        return json.loads(self.get(url, params).content)
 
     def testEntryPointPresence(self):
         for entry_point in entry_points:
@@ -156,7 +159,30 @@ class APITest(test_series.Series0010):
                         'b951af09618c6360516f16ed97a30753')
 
     def testSeriesNewRevisionEvent(self):
+        # no 'since' parameter
         events = self.get_json('/projects/%(project_id)s/events/')
         self.assertEqual(events['count'], 1)
         event = events['results'][0]
         self.assertEqual(event['parameters']['revision'], 1)
+
+        event_time_str = event['event_time']
+        event_time = dateutil.parser.parse(event_time_str)
+        before = (event_time - datetime.timedelta(minutes=1)).isoformat()
+        after = (event_time + datetime.timedelta(minutes=1)).isoformat()
+
+        # strictly inferior timestamp, should return the event
+        events = self.get_json('/projects/%(project_id)s/events/',
+                               params={'since': before})
+        self.assertEqual(events['count'], 1)
+        event = events['results'][0]
+        self.assertEqual(event['parameters']['revision'], 1)
+
+        # same timestamp, should return no event
+        events = self.get_json('/projects/%(project_id)s/events/',
+                               params={'since': event_time_str})
+        self.assertEqual(events['count'], 0)
+
+        # strictly superior timestamp, should return no event
+        events = self.get_json('/projects/%(project_id)s/events/',
+                               params={'since': after})
+        self.assertEqual(events['count'], 0)

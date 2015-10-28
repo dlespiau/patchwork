@@ -30,6 +30,7 @@ from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
                                   EventLogSerializer
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
+import django_filters
 
 
 API_REVISION = 1
@@ -148,12 +149,28 @@ class PatchViewSet(mixins.ListModelMixin,
     def mbox(self, request, pk=None):
         return patch_mbox(request, pk)
 
+class EventTimeFilter(django_filters.FilterSet):
+
+    def event_time_filter(query_set, date):
+        queryset = query_set
+        if date:
+            queryset =  queryset.filter(event_time__gt=date)
+        return queryset
+
+    since = django_filters.CharFilter(name='event_time', action=event_time_filter)
+
+    class Meta:
+        model = EventLog
+        fields = ['since']
+
 class EventLogViewSet(mixins.ListModelMixin,
                       ListMixin,
                       viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = EventLog.objects.all()
     serializer_class = EventLogSerializer
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = EventTimeFilter
 
     def get_queryset(self):
 

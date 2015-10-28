@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'patchwork',
     'rest_framework',
+    'django_filters',
 ]
 
 # HTTP

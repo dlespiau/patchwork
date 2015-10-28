@@ -211,6 +211,12 @@ Events
             ]
         }
 
+    :query since: Retrieve only events newer than a specific time. Format is
+                  the same as ``event_time`` in response, an ISO 8601 date. That
+                  means that the ``event_time`` from the last seen event can
+                  be used in the next query with a ``since`` parameter to only
+                  retrieve events that haven't been seen yet.
+
 Each event type has some ``parameters`` specific to that event. At the moment,
 only one event is possible:
 
@@ -520,6 +526,7 @@ API Revisions
 - Document how lists of objects work.
 - Make all DateTime field serialize to ISO 8061 format and not the ECMA 262
   subset.
+- Add a ``since`` GET parameter to /projects/${id,linkname}/events/
 
 **Revision 1**
 
