@@ -18,11 +18,11 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import Client
-from rest_framework.test import APIClient
 import patchwork.tests.test_series as test_series
 from patchwork.models import Series, Patch
 
 import hashlib
+import json
 import re
 
 
@@ -82,7 +82,6 @@ class APITest(test_series.Series0010):
 
     def setUp(self):
         super(APITest, self).setUp()
-        self.api = APIClient()
         self.series = Series.objects.all()[0]
         self.patch = Patch.objects.all()[2]
 
@@ -102,7 +101,7 @@ class APITest(test_series.Series0010):
         self.assertEqual(content_hash.hexdigest(), md5sum)
 
     def get(self, url):
-        return self.api.get('/api/1.0' + url % {
+        return self.client.get('/api/1.0' + url % {
                 'project_id': self.project.pk,
                 'project_linkname': self.project.linkname,
                 'series_id': self.series.pk,
@@ -111,7 +110,7 @@ class APITest(test_series.Series0010):
         })
 
     def get_json(self, url):
-        return self.get(url).data
+        return json.loads(self.get(url).content)
 
     def testEntryPointPresence(self):
         for entry_point in entry_points:
