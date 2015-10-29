@@ -208,7 +208,7 @@ class StateFilter(Filter):
             str += '<option value="%d" %s>%s</option>' % \
                 (state.id, selected, state.name)
         str += '</select>'
-        return mark_safe(str);
+        return mark_safe(str)
 
     def form_function(self):
         return 'function(form) { return form.x.value }'

@@ -45,7 +45,7 @@ def register(request):
             user = auth.models.User.objects.create_user(data['username'],
                                                         data['email'],
                                                         data['password'])
-            user.is_active = False;
+            user.is_active = False
             user.first_name = data.get('first_name', '')
             user.last_name = data.get('last_name', '')
             user.save()

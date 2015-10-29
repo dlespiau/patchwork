@@ -619,7 +619,7 @@ def parse_mail(mail):
 
     hint = mail.get('X-Patchwork-Hint', '').lower()
     if hint == 'ignore':
-        return 0;
+        return 0
 
     project = find_project(mail)
     if project is None:
