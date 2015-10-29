@@ -3,6 +3,27 @@
 Developing patchwork
 ====================
 
+Quick Start
+-----------
+
+We have scripts that will get developers started in no time::
+
+    $ git clone https://github.com/dlespiau/patchwork/
+    $ cd patchwork
+    $ ./tools/setup-devel.sh
+    $ ./tools/run-devel.sh
+
+``setup-devel.sh`` will:
+
+- Create a virtual environment in the ``venv`` directory,
+- Install all the required dependencies in that virtual environment,
+- Populate a SQLite database with a few patches,
+- Create an ``admin`` account with ``pass`` as password.
+
+``run-devel.sh`` will run the web server serve the patchwork
+application. Pointing your browser to http://127.0.0.1:8000/ should
+bring up patchwork.
+
 Using virtualenv
 ----------------
 

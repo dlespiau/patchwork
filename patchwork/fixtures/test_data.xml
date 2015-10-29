@@ -1,0 +1,3840 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0"><object pk="1" model="contenttypes.contenttype"><field type="CharField" name="app_label">auth</field><field type="CharField" name="model">permission</field></object><object pk="2" model="contenttypes.contenttype"><field type="CharField" name="app_label">auth</field><field type="CharField" name="model">group</field></object><object pk="3" model="contenttypes.contenttype"><field type="CharField" name="app_label">auth</field><field type="CharField" name="model">user</field></object><object pk="4" model="contenttypes.contenttype"><field type="CharField" name="app_label">contenttypes</field><field type="CharField" name="model">contenttype</field></object><object pk="5" model="contenttypes.contenttype"><field type="CharField" name="app_label">sessions</field><field type="CharField" name="model">session</field></object><object pk="6" model="contenttypes.contenttype"><field type="CharField" name="app_label">sites</field><field type="CharField" name="model">site</field></object><object pk="7" model="contenttypes.contenttype"><field type="CharField" name="app_label">admin</field><field type="CharField" name="model">logentry</field></object><object pk="8" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">person</field></object><object pk="9" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">project</field></object><object pk="10" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">userprofile</field></object><object pk="11" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">state</field></object><object pk="12" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">tag</field></object><object pk="13" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">patchtag</field></object><object pk="14" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">patch</field></object><object pk="15" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">comment</field></object><object pk="16" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">bundle</field></object><object pk="17" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">bundlepatch</field></object><object pk="18" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">series</field></object><object pk="19" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">seriesrevision</field></object><object pk="20" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">seriesrevisionpatch</field></object><object pk="21" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">event</field></object><object pk="22" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">eventlog</field></object><object pk="23" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">emailconfirmation</field></object><object pk="24" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">emailoptout</field></object><object pk="25" model="contenttypes.contenttype"><field type="CharField" name="app_label">patchwork</field><field type="CharField" name="model">patchchangenotification</field></object><object pk="gxuqbag67wy0myfs43sfb5h1hzz3s5vr" model="sessions.session"><field type="TextField" name="session_data">NGM1ZWRkZGI0MzZiOTlmYTc0NjI1NGJiYjEwMGEyOTNlMGZiZjJiYzp7Il9hdXRoX3VzZXJfaGFzaCI6ImE4NmQzNmFlM2MyYmM5MWUyMjRhYTdjNjMyOTBjNzEzNjM4MzlkMTIiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIxIn0=</field><field type="DateTimeField" name="expire_date">2015-11-12T12:44:03.897445</field></object><object pk="1" model="sites.site"><field type="CharField" name="domain">example.com</field><field type="CharField" name="name">example.com</field></object><object pk="1" model="patchwork.project"><field type="CharField" name="linkname">gfx</field><field type="CharField" name="name">Intel-gfx</field><field type="CharField" name="listid">intel-gfx.lists.freedesktop.org</field><field type="CharField" name="listemail">intel-gfx.lists.freedesktop.org</field><field type="CharField" name="web_url"></field><field type="CharField" name="scm_url"></field><field type="CharField" name="webscm_url"></field><field type="BooleanField" name="send_notifications">False</field><field type="BooleanField" name="use_tags">True</field><field type="BooleanField" name="git_send_email_only">False</field></object><object pk="1" model="patchwork.state"><field type="CharField" name="name">New</field><field type="IntegerField" name="ordering">0</field><field type="BooleanField" name="action_required">True</field></object><object pk="2" model="patchwork.state"><field type="CharField" name="name">Under Review</field><field type="IntegerField" name="ordering">1</field><field type="BooleanField" name="action_required">True</field></object><object pk="3" model="patchwork.state"><field type="CharField" name="name">Accepted</field><field type="IntegerField" name="ordering">2</field><field type="BooleanField" name="action_required">False</field></object><object pk="4" model="patchwork.state"><field type="CharField" name="name">Rejected</field><field type="IntegerField" name="ordering">3</field><field type="BooleanField" name="action_required">False</field></object><object pk="5" model="patchwork.state"><field type="CharField" name="name">RFC</field><field type="IntegerField" name="ordering">4</field><field type="BooleanField" name="action_required">False</field></object><object pk="6" model="patchwork.state"><field type="CharField" name="name">Not Applicable</field><field type="IntegerField" name="ordering">5</field><field type="BooleanField" name="action_required">False</field></object><object pk="7" model="patchwork.state"><field type="CharField" name="name">Changes Requested</field><field type="IntegerField" name="ordering">6</field><field type="BooleanField" name="action_required">False</field></object><object pk="8" model="patchwork.state"><field type="CharField" name="name">Awaiting Upstream</field><field type="IntegerField" name="ordering">7</field><field type="BooleanField" name="action_required">False</field></object><object pk="9" model="patchwork.state"><field type="CharField" name="name">Superseded</field><field type="IntegerField" name="ordering">8</field><field type="BooleanField" name="action_required">False</field></object><object pk="10" model="patchwork.state"><field type="CharField" name="name">Deferred</field><field type="IntegerField" name="ordering">9</field><field type="BooleanField" name="action_required">False</field></object><object pk="1" model="patchwork.tag"><field type="CharField" name="name">Acked-by</field><field type="CharField" name="pattern">^Acked-by:</field><field type="CharField" name="abbrev">A</field></object><object pk="2" model="patchwork.tag"><field type="CharField" name="name">Reviewed-by</field><field type="CharField" name="pattern">^Reviewed-by:</field><field type="CharField" name="abbrev">R</field></object><object pk="3" model="patchwork.tag"><field type="CharField" name="name">Tested-by</field><field type="CharField" name="pattern">^Tested-by:</field><field type="CharField" name="abbrev">T</field></object><object pk="1" model="patchwork.comment"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">1</field><field type="CharField" name="msgid">&lt;1446031792-22881-2-git-send-email-david.weinehall@linux.intel.com&gt;</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field type="DateTimeField" name="date">2015-10-28T11:29:50</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp2245621vkz;
+	Wed, 28 Oct 2015 04:30:24 -0700 (PDT)
+X-Received: by 10.68.228.200 with SMTP id sk8mr34931649pbc.115.1446031824046;
+	Wed, 28 Oct 2015 04:30:24 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id
+	yv10si69795831pac.91.2015.10.28.04.30.23; 
+	Wed, 28 Oct 2015 04:30:24 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id A93AC891CD;
+	Wed, 28 Oct 2015 04:30:22 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 2B379891CD
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Wed, 28 Oct 2015 04:30:12 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by orsmga103.jf.intel.com with ESMTP; 28 Oct 2015 04:30:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,209,1444719600"; d="scan'208";a="805413281"
+Received: from dweineha-mobl3.fi.intel.com (HELO
+	dweineha-mobl3.fi.intel.com.) ([10.237.72.152])
+	by orsmga001.jf.intel.com with ESMTP; 28 Oct 2015 04:30:11 -0700
+From: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Wed, 28 Oct 2015 13:29:50 +0200
+Message-Id: &lt;1446031792-22881-2-git-send-email-david.weinehall@linux.intel.com&gt;
+X-Mailer: git-send-email 2.6.2
+In-Reply-To: &lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+References: &lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;
+	&lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+MIME-Version: 1.0
+Subject: [Intel-gfx] [PATCH i-g-t 1/3] Copy gem_concurrent_all to
+	gem_concurrent_blit
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">We'll both rename gem_concurrent_all over gem_concurrent_blit
+and change gem_concurrent_blit in this changeset. To make
+this easier to follow we first do the the rename.
+
+Signed-off-by: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+---
+ tests/gem_concurrent_blit.c | 1116 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 1108 insertions(+), 8 deletions(-)</field></object><object pk="2" model="patchwork.comment"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">2</field><field type="CharField" name="msgid">&lt;1446031792-22881-3-git-send-email-david.weinehall@linux.intel.com&gt;</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field type="DateTimeField" name="date">2015-10-28T11:29:51</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp2245942vkz;
+	Wed, 28 Oct 2015 04:31:02 -0700 (PDT)
+X-Received: by 10.50.70.1 with SMTP id i1mr2449903igu.78.1446031862817;
+	Wed, 28 Oct 2015 04:31:02 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id h8si20767480igh.81.2015.10.28.04.31.00;
+	Wed, 28 Oct 2015 04:31:02 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id ECADE6E821;
+	Wed, 28 Oct 2015 04:30:59 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 5A6596E40E
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Wed, 28 Oct 2015 04:30:40 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by orsmga103.jf.intel.com with ESMTP; 28 Oct 2015 04:30:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,209,1444719600"; d="scan'208";a="805413299"
+Received: from dweineha-mobl3.fi.intel.com (HELO
+	dweineha-mobl3.fi.intel.com.) ([10.237.72.152])
+	by orsmga001.jf.intel.com with ESMTP; 28 Oct 2015 04:30:13 -0700
+From: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Wed, 28 Oct 2015 13:29:51 +0200
+Message-Id: &lt;1446031792-22881-3-git-send-email-david.weinehall@linux.intel.com&gt;
+X-Mailer: git-send-email 2.6.2
+In-Reply-To: &lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+References: &lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;
+	&lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+Subject: [Intel-gfx] [PATCH i-g-t 2/3] Unify handling of slow/combinatorial
+	tests
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">Some tests should not be run by default, due to their slow,
+and sometimes superfluous, nature.
+
+We still want to be able to run these tests in some cases.
+Until now there's been no unified way of handling this. Remedy
+this by introducing the --all option to igt_core,
+and use it in gem_concurrent_blit &amp; kms_frontbuffer_tracking.
+
+Signed-off-by: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+---
+ lib/igt_core.c                   |  24 +++++
+ lib/igt_core.h                   |   7 ++
+ tests/gem_concurrent_blit.c      |  44 ++++-----
+ tests/kms_frontbuffer_tracking.c | 208 ++++++++++++++++++++++-----------------
+ 4 files changed, 165 insertions(+), 118 deletions(-)</field></object><object pk="3" model="patchwork.comment"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">3</field><field type="CharField" name="msgid">&lt;1446031792-22881-4-git-send-email-david.weinehall@linux.intel.com&gt;</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field type="DateTimeField" name="date">2015-10-28T11:29:52</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp2245881vkz;
+	Wed, 28 Oct 2015 04:30:54 -0700 (PDT)
+X-Received: by 10.50.60.102 with SMTP id g6mr2270060igr.29.1446031854521;
+	Wed, 28 Oct 2015 04:30:54 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id
+	j74si33205198ioe.62.2015.10.28.04.30.53; 
+	Wed, 28 Oct 2015 04:30:54 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 581216E862;
+	Wed, 28 Oct 2015 04:30:51 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 8612A6E821
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Wed, 28 Oct 2015 04:30:42 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by orsmga103.jf.intel.com with ESMTP; 28 Oct 2015 04:30:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,209,1444719600"; d="scan'208";a="805413311"
+Received: from dweineha-mobl3.fi.intel.com (HELO
+	dweineha-mobl3.fi.intel.com.) ([10.237.72.152])
+	by orsmga001.jf.intel.com with ESMTP; 28 Oct 2015 04:30:14 -0700
+From: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Wed, 28 Oct 2015 13:29:52 +0200
+Message-Id: &lt;1446031792-22881-4-git-send-email-david.weinehall@linux.intel.com&gt;
+X-Mailer: git-send-email 2.6.2
+In-Reply-To: &lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+References: &lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;
+	&lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+MIME-Version: 1.0
+Subject: [Intel-gfx] [PATCH i-g-t 3/3] Remove superfluous
+	gem_concurrent_all.c
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">When gem_concurrent_blit was converted to use the new common framework
+for choosing whether or not to include slow/combinatorial tests,
+gem_concurrent_all became superfluous.  This patch removes it.
+
+Signed-off-by: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+---
+ tests/.gitignore           |    1 -
+ tests/Makefile.sources     |    1 -
+ tests/gem_concurrent_all.c | 1108 --------------------------------------------
+ 3 files changed, 1110 deletions(-)
+ delete mode 100644 tests/gem_concurrent_all.c</field></object><object pk="4" model="patchwork.comment"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">4</field><field type="CharField" name="msgid">&lt;1445610265-27189-1-git-send-email-robert.fekete@linux.intel.com&gt;</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">2</field><field type="DateTimeField" name="date">2015-10-23T14:24:25</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp1041014vkz;
+	Fri, 23 Oct 2015 07:22:49 -0700 (PDT)
+X-Received: by 10.50.23.73 with SMTP id k9mr4498284igf.25.1445610169482;
+	Fri, 23 Oct 2015 07:22:49 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id nv7si3589960igb.3.2015.10.23.07.22.49; 
+	Fri, 23 Oct 2015 07:22:49 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 540EB6F057;
+	Fri, 23 Oct 2015 07:22:48 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 4176C6F057
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Fri, 23 Oct 2015 07:22:47 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by fmsmga102.fm.intel.com with ESMTP; 23 Oct 2015 07:22:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,186,1444719600"; d="scan'208";a="801166756"
+Received: from robertfe-linux.isw.intel.com ([10.237.180.144])
+	by orsmga001.jf.intel.com with ESMTP; 23 Oct 2015 07:22:45 -0700
+From: Robert Fekete &lt;robert.fekete@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Fri, 23 Oct 2015 16:24:25 +0200
+Message-Id: &lt;1445610265-27189-1-git-send-email-robert.fekete@linux.intel.com&gt;
+X-Mailer: git-send-email 1.9.1
+Subject: [Intel-gfx] [PATCH] drm/i915: Add extra plane information in
+	debugfs.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">Extends i915_display_info so that for each active crtc also print
+all planes associated with the pipe. This patch shows information
+about each plane wrt format, size, position, rotation, and scaling.
+This is very useful when debugging user space compositors that try
+to utilize several planes for a commit.
+
+Signed-off-by: Robert Fekete &lt;robert.fekete@linux.intel.com&gt;
+---
+ drivers/gpu/drm/i915/i915_debugfs.c | 124 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 122 insertions(+), 2 deletions(-)</field></object><object pk="5" model="patchwork.comment"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">5</field><field type="CharField" name="msgid">&lt;1445960989-14961-1-git-send-email-robert.fekete@linux.intel.com&gt;</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">2</field><field type="DateTimeField" name="date">2015-10-27T15:49:49</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp1786421vkz;
+	Tue, 27 Oct 2015 08:48:27 -0700 (PDT)
+X-Received: by 10.107.43.2 with SMTP id r2mr25466002ior.114.1445960907711;
+	Tue, 27 Oct 2015 08:48:27 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id
+	op7si17487372igb.80.2015.10.27.08.48.26; 
+	Tue, 27 Oct 2015 08:48:27 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 4C0D86E596;
+	Tue, 27 Oct 2015 08:48:25 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+	by gabe.freedesktop.org (Postfix) with ESMTP id D4C0D6E596
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Tue, 27 Oct 2015 08:48:23 -0700 (PDT)
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+	by fmsmga101.fm.intel.com with ESMTP; 27 Oct 2015 08:48:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,205,1444719600"; d="scan'208";a="672788513"
+Received: from robertfe-linux.isw.intel.com ([10.237.180.144])
+	by orsmga003.jf.intel.com with ESMTP; 27 Oct 2015 08:48:02 -0700
+From: Robert Fekete &lt;robert.fekete@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Tue, 27 Oct 2015 16:49:49 +0100
+Message-Id: &lt;1445960989-14961-1-git-send-email-robert.fekete@linux.intel.com&gt;
+X-Mailer: git-send-email 1.9.1
+Subject: [Intel-gfx] [PATCH v2] drm/i915: Add extra plane information in
+	debugfs.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">Extends i915_display_info so that for each active crtc also print
+all planes associated with the pipe. This patch shows information
+about each plane wrt format, size, position, rotation, and scaling.
+This is very useful when debugging user space compositors that try
+to utilize several planes for a commit.
+
+V2: Fixed comments from Maarten, Ville, and Chris. Fixed printing of
+16.16 fixpoint, better rotation bitmask management and some minor fixes
+
+Signed-off-by: Robert Fekete &lt;robert.fekete@linux.intel.com&gt;
+---
+ drivers/gpu/drm/i915/i915_debugfs.c | 109 +++++++++++++++++++++++++++++++++++-
+ 1 file changed, 107 insertions(+), 2 deletions(-)</field></object><object pk="1" model="patchwork.seriesrevision"><field to="patchwork.series" name="series" rel="ManyToOneRel">1</field><field type="IntegerField" name="version">1</field><field type="CharField" name="root_msgid">&lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;</field><field type="TextField" name="cover_letter">Until now we've had no unified way to handle slow/combinatorial tests.
+Most of the time we don't want to run slow/combinatorial tests, so this
+should remain the default, but when we do want to run such tests,
+it has been handled differently in different tests.
+
+This patch adds a --with-slow-combinatorial command line option to
+igt_core, changes gem_concurrent_blit and kms_frontbuffer_tracking
+to use this instead of their own methods, and removes gem_concurrent_all
+in the process, since it's now unnecessary.
+
+The diffstat looks a bit scary, but that is due to the rename
+of gem_concurrent_all to gem_concurrent_blit.
+
+David Weinehall (3):
+  Rename gem_concurren_all over gem_concurrent_blit
+  Unify handling of slow/combinatorial tests
+  Remove gem_concurrent_all, since it is now superfluous
+
+ lib/igt_core.c                   |   19 +
+ lib/igt_core.h                   |    1 +
+ tests/Makefile.sources           |    1 -
+ tests/gem_concurrent_all.c       | 1108 -------------------------------------
+ tests/gem_concurrent_blit.c      | 1132 +++++++++++++++++++++++++++++++++++++-
+ tests/kms_frontbuffer_tracking.c |  135 +++--
+ 6 files changed, 1238 insertions(+), 1158 deletions(-)
+ delete mode 100644 tests/gem_concurrent_all.c</field></object><object pk="3" model="patchwork.seriesrevision"><field to="patchwork.series" name="series" rel="ManyToOneRel">3</field><field type="IntegerField" name="version">1</field><field type="CharField" name="root_msgid">&lt;1445960989-14961-1-git-send-email-robert.fekete@linux.intel.com&gt;</field><field type="TextField" name="cover_letter"><None></None></field></object><object pk="4" model="patchwork.seriesrevision"><field to="patchwork.series" name="series" rel="ManyToOneRel">3</field><field type="IntegerField" name="version">2</field><field type="CharField" name="root_msgid">&lt;1445610265-27189-1-git-send-email-robert.fekete@linux.intel.com&gt;</field><field type="TextField" name="cover_letter"><None></None></field></object><object pk="1" model="patchwork.seriesrevisionpatch"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">1</field><field to="patchwork.seriesrevision" name="revision" rel="ManyToOneRel">1</field><field type="IntegerField" name="order">1</field></object><object pk="2" model="patchwork.seriesrevisionpatch"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">2</field><field to="patchwork.seriesrevision" name="revision" rel="ManyToOneRel">1</field><field type="IntegerField" name="order">2</field></object><object pk="3" model="patchwork.seriesrevisionpatch"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">3</field><field to="patchwork.seriesrevision" name="revision" rel="ManyToOneRel">1</field><field type="IntegerField" name="order">3</field></object><object pk="5" model="patchwork.seriesrevisionpatch"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">4</field><field to="patchwork.seriesrevision" name="revision" rel="ManyToOneRel">4</field><field type="IntegerField" name="order">1</field></object><object pk="6" model="patchwork.seriesrevisionpatch"><field to="patchwork.patch" name="patch" rel="ManyToOneRel">5</field><field to="patchwork.seriesrevision" name="revision" rel="ManyToOneRel">3</field><field type="IntegerField" name="order">1</field></object><object pk="1" model="patchwork.event"><field type="CharField" name="name">series-new-revision</field></object><object pk="1" model="auth.permission"><field type="CharField" name="name">Can add permission</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">1</field><field type="CharField" name="codename">add_permission</field></object><object pk="2" model="auth.permission"><field type="CharField" name="name">Can change permission</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">1</field><field type="CharField" name="codename">change_permission</field></object><object pk="3" model="auth.permission"><field type="CharField" name="name">Can delete permission</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">1</field><field type="CharField" name="codename">delete_permission</field></object><object pk="4" model="auth.permission"><field type="CharField" name="name">Can add group</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">2</field><field type="CharField" name="codename">add_group</field></object><object pk="5" model="auth.permission"><field type="CharField" name="name">Can change group</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">2</field><field type="CharField" name="codename">change_group</field></object><object pk="6" model="auth.permission"><field type="CharField" name="name">Can delete group</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">2</field><field type="CharField" name="codename">delete_group</field></object><object pk="7" model="auth.permission"><field type="CharField" name="name">Can add user</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field><field type="CharField" name="codename">add_user</field></object><object pk="8" model="auth.permission"><field type="CharField" name="name">Can change user</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field><field type="CharField" name="codename">change_user</field></object><object pk="9" model="auth.permission"><field type="CharField" name="name">Can delete user</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">3</field><field type="CharField" name="codename">delete_user</field></object><object pk="10" model="auth.permission"><field type="CharField" name="name">Can add content type</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">4</field><field type="CharField" name="codename">add_contenttype</field></object><object pk="11" model="auth.permission"><field type="CharField" name="name">Can change content type</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">4</field><field type="CharField" name="codename">change_contenttype</field></object><object pk="12" model="auth.permission"><field type="CharField" name="name">Can delete content type</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">4</field><field type="CharField" name="codename">delete_contenttype</field></object><object pk="13" model="auth.permission"><field type="CharField" name="name">Can add session</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">5</field><field type="CharField" name="codename">add_session</field></object><object pk="14" model="auth.permission"><field type="CharField" name="name">Can change session</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">5</field><field type="CharField" name="codename">change_session</field></object><object pk="15" model="auth.permission"><field type="CharField" name="name">Can delete session</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">5</field><field type="CharField" name="codename">delete_session</field></object><object pk="16" model="auth.permission"><field type="CharField" name="name">Can add site</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">6</field><field type="CharField" name="codename">add_site</field></object><object pk="17" model="auth.permission"><field type="CharField" name="name">Can change site</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">6</field><field type="CharField" name="codename">change_site</field></object><object pk="18" model="auth.permission"><field type="CharField" name="name">Can delete site</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">6</field><field type="CharField" name="codename">delete_site</field></object><object pk="19" model="auth.permission"><field type="CharField" name="name">Can add log entry</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">7</field><field type="CharField" name="codename">add_logentry</field></object><object pk="20" model="auth.permission"><field type="CharField" name="name">Can change log entry</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">7</field><field type="CharField" name="codename">change_logentry</field></object><object pk="21" model="auth.permission"><field type="CharField" name="name">Can delete log entry</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">7</field><field type="CharField" name="codename">delete_logentry</field></object><object pk="22" model="auth.permission"><field type="CharField" name="name">Can add person</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">8</field><field type="CharField" name="codename">add_person</field></object><object pk="23" model="auth.permission"><field type="CharField" name="name">Can change person</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">8</field><field type="CharField" name="codename">change_person</field></object><object pk="24" model="auth.permission"><field type="CharField" name="name">Can delete person</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">8</field><field type="CharField" name="codename">delete_person</field></object><object pk="25" model="auth.permission"><field type="CharField" name="name">Can add project</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">9</field><field type="CharField" name="codename">add_project</field></object><object pk="26" model="auth.permission"><field type="CharField" name="name">Can change project</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">9</field><field type="CharField" name="codename">change_project</field></object><object pk="27" model="auth.permission"><field type="CharField" name="name">Can delete project</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">9</field><field type="CharField" name="codename">delete_project</field></object><object pk="28" model="auth.permission"><field type="CharField" name="name">Can add user profile</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">10</field><field type="CharField" name="codename">add_userprofile</field></object><object pk="29" model="auth.permission"><field type="CharField" name="name">Can change user profile</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">10</field><field type="CharField" name="codename">change_userprofile</field></object><object pk="30" model="auth.permission"><field type="CharField" name="name">Can delete user profile</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">10</field><field type="CharField" name="codename">delete_userprofile</field></object><object pk="31" model="auth.permission"><field type="CharField" name="name">Can add state</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">11</field><field type="CharField" name="codename">add_state</field></object><object pk="32" model="auth.permission"><field type="CharField" name="name">Can change state</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">11</field><field type="CharField" name="codename">change_state</field></object><object pk="33" model="auth.permission"><field type="CharField" name="name">Can delete state</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">11</field><field type="CharField" name="codename">delete_state</field></object><object pk="34" model="auth.permission"><field type="CharField" name="name">Can add tag</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">12</field><field type="CharField" name="codename">add_tag</field></object><object pk="35" model="auth.permission"><field type="CharField" name="name">Can change tag</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">12</field><field type="CharField" name="codename">change_tag</field></object><object pk="36" model="auth.permission"><field type="CharField" name="name">Can delete tag</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">12</field><field type="CharField" name="codename">delete_tag</field></object><object pk="37" model="auth.permission"><field type="CharField" name="name">Can add patch tag</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">13</field><field type="CharField" name="codename">add_patchtag</field></object><object pk="38" model="auth.permission"><field type="CharField" name="name">Can change patch tag</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">13</field><field type="CharField" name="codename">change_patchtag</field></object><object pk="39" model="auth.permission"><field type="CharField" name="name">Can delete patch tag</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">13</field><field type="CharField" name="codename">delete_patchtag</field></object><object pk="40" model="auth.permission"><field type="CharField" name="name">Can add patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">14</field><field type="CharField" name="codename">add_patch</field></object><object pk="41" model="auth.permission"><field type="CharField" name="name">Can change patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">14</field><field type="CharField" name="codename">change_patch</field></object><object pk="42" model="auth.permission"><field type="CharField" name="name">Can delete patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">14</field><field type="CharField" name="codename">delete_patch</field></object><object pk="43" model="auth.permission"><field type="CharField" name="name">Can add comment</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">15</field><field type="CharField" name="codename">add_comment</field></object><object pk="44" model="auth.permission"><field type="CharField" name="name">Can change comment</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">15</field><field type="CharField" name="codename">change_comment</field></object><object pk="45" model="auth.permission"><field type="CharField" name="name">Can delete comment</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">15</field><field type="CharField" name="codename">delete_comment</field></object><object pk="46" model="auth.permission"><field type="CharField" name="name">Can add bundle</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">16</field><field type="CharField" name="codename">add_bundle</field></object><object pk="47" model="auth.permission"><field type="CharField" name="name">Can change bundle</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">16</field><field type="CharField" name="codename">change_bundle</field></object><object pk="48" model="auth.permission"><field type="CharField" name="name">Can delete bundle</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">16</field><field type="CharField" name="codename">delete_bundle</field></object><object pk="49" model="auth.permission"><field type="CharField" name="name">Can add bundle patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">17</field><field type="CharField" name="codename">add_bundlepatch</field></object><object pk="50" model="auth.permission"><field type="CharField" name="name">Can change bundle patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">17</field><field type="CharField" name="codename">change_bundlepatch</field></object><object pk="51" model="auth.permission"><field type="CharField" name="name">Can delete bundle patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">17</field><field type="CharField" name="codename">delete_bundlepatch</field></object><object pk="52" model="auth.permission"><field type="CharField" name="name">Can add series</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">18</field><field type="CharField" name="codename">add_series</field></object><object pk="53" model="auth.permission"><field type="CharField" name="name">Can change series</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">18</field><field type="CharField" name="codename">change_series</field></object><object pk="54" model="auth.permission"><field type="CharField" name="name">Can delete series</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">18</field><field type="CharField" name="codename">delete_series</field></object><object pk="55" model="auth.permission"><field type="CharField" name="name">Can add series revision</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">19</field><field type="CharField" name="codename">add_seriesrevision</field></object><object pk="56" model="auth.permission"><field type="CharField" name="name">Can change series revision</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">19</field><field type="CharField" name="codename">change_seriesrevision</field></object><object pk="57" model="auth.permission"><field type="CharField" name="name">Can delete series revision</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">19</field><field type="CharField" name="codename">delete_seriesrevision</field></object><object pk="58" model="auth.permission"><field type="CharField" name="name">Can add series revision patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">20</field><field type="CharField" name="codename">add_seriesrevisionpatch</field></object><object pk="59" model="auth.permission"><field type="CharField" name="name">Can change series revision patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">20</field><field type="CharField" name="codename">change_seriesrevisionpatch</field></object><object pk="60" model="auth.permission"><field type="CharField" name="name">Can delete series revision patch</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">20</field><field type="CharField" name="codename">delete_seriesrevisionpatch</field></object><object pk="61" model="auth.permission"><field type="CharField" name="name">Can add event</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">21</field><field type="CharField" name="codename">add_event</field></object><object pk="62" model="auth.permission"><field type="CharField" name="name">Can change event</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">21</field><field type="CharField" name="codename">change_event</field></object><object pk="63" model="auth.permission"><field type="CharField" name="name">Can delete event</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">21</field><field type="CharField" name="codename">delete_event</field></object><object pk="64" model="auth.permission"><field type="CharField" name="name">Can add event log</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">22</field><field type="CharField" name="codename">add_eventlog</field></object><object pk="65" model="auth.permission"><field type="CharField" name="name">Can change event log</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">22</field><field type="CharField" name="codename">change_eventlog</field></object><object pk="66" model="auth.permission"><field type="CharField" name="name">Can delete event log</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">22</field><field type="CharField" name="codename">delete_eventlog</field></object><object pk="67" model="auth.permission"><field type="CharField" name="name">Can add email confirmation</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">23</field><field type="CharField" name="codename">add_emailconfirmation</field></object><object pk="68" model="auth.permission"><field type="CharField" name="name">Can change email confirmation</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">23</field><field type="CharField" name="codename">change_emailconfirmation</field></object><object pk="69" model="auth.permission"><field type="CharField" name="name">Can delete email confirmation</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">23</field><field type="CharField" name="codename">delete_emailconfirmation</field></object><object pk="70" model="auth.permission"><field type="CharField" name="name">Can add email optout</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">24</field><field type="CharField" name="codename">add_emailoptout</field></object><object pk="71" model="auth.permission"><field type="CharField" name="name">Can change email optout</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">24</field><field type="CharField" name="codename">change_emailoptout</field></object><object pk="72" model="auth.permission"><field type="CharField" name="name">Can delete email optout</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">24</field><field type="CharField" name="codename">delete_emailoptout</field></object><object pk="73" model="auth.permission"><field type="CharField" name="name">Can add patch change notification</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">25</field><field type="CharField" name="codename">add_patchchangenotification</field></object><object pk="74" model="auth.permission"><field type="CharField" name="name">Can change patch change notification</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">25</field><field type="CharField" name="codename">change_patchchangenotification</field></object><object pk="75" model="auth.permission"><field type="CharField" name="name">Can delete patch change notification</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">25</field><field type="CharField" name="codename">delete_patchchangenotification</field></object><object pk="1" model="auth.user"><field type="CharField" name="password">pbkdf2_sha256$20000$MFR0G2GLbLka$mthD/dW3Lj71vD71De/FXybE5b2oL9lSrmynlz8+Gt0=</field><field type="DateTimeField" name="last_login">2015-10-29T12:44:03.835200</field><field type="BooleanField" name="is_superuser">True</field><field type="CharField" name="username">admin</field><field type="CharField" name="first_name"></field><field type="CharField" name="last_name"></field><field type="CharField" name="email"></field><field type="BooleanField" name="is_staff">True</field><field type="BooleanField" name="is_active">True</field><field type="DateTimeField" name="date_joined">2015-10-29T12:41:13.636454</field><field to="auth.group" name="groups" rel="ManyToManyRel"></field><field to="auth.permission" name="user_permissions" rel="ManyToManyRel"></field></object><object pk="1" model="admin.logentry"><field type="DateTimeField" name="action_time">2015-10-29T12:58:36.264883</field><field to="auth.user" name="user" rel="ManyToOneRel">1</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">9</field><field type="TextField" name="object_id">1</field><field type="CharField" name="object_repr">Intel-gfx</field><field type="PositiveSmallIntegerField" name="action_flag">1</field><field type="TextField" name="change_message"></field></object><object pk="2" model="admin.logentry"><field type="DateTimeField" name="action_time">2015-10-29T12:59:23.986947</field><field to="auth.user" name="user" rel="ManyToOneRel">1</field><field to="contenttypes.contenttype" name="content_type" rel="ManyToOneRel">9</field><field type="TextField" name="object_id">1</field><field type="CharField" name="object_repr">Intel-gfx</field><field type="PositiveSmallIntegerField" name="action_flag">2</field><field type="TextField" name="change_message">Changed listid.</field></object><object pk="1" model="patchwork.person"><field type="CharField" name="email">david.weinehall@linux.intel.com</field><field type="CharField" name="name">David Weinehall</field><field to="auth.user" name="user" rel="ManyToOneRel"><None></None></field></object><object pk="2" model="patchwork.person"><field type="CharField" name="email">robert.fekete@linux.intel.com</field><field type="CharField" name="name">Robert Fekete</field><field to="auth.user" name="user" rel="ManyToOneRel"><None></None></field></object><object pk="1" model="patchwork.userprofile"><field to="auth.user" name="user" rel="OneToOneRel">1</field><field to="patchwork.project" name="primary_project" rel="ManyToOneRel"><None></None></field><field type="BooleanField" name="send_email">False</field><field type="PositiveIntegerField" name="patches_per_page">100</field><field to="patchwork.project" name="maintainer_projects" rel="ManyToManyRel"></field></object><object pk="1" model="patchwork.patch"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="msgid">&lt;1446031792-22881-2-git-send-email-david.weinehall@linux.intel.com&gt;</field><field type="CharField" name="name">[Intel-gfx,i-g-t,1/3] Copy gem_concurrent_all to gem_concurrent_blit</field><field type="DateTimeField" name="date">2015-10-28T11:29:50</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field to="auth.user" name="delegate" rel="ManyToOneRel"><None></None></field><field to="patchwork.state" name="state" rel="ManyToOneRel">1</field><field type="BooleanField" name="archived">False</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp2245621vkz;
+	Wed, 28 Oct 2015 04:30:24 -0700 (PDT)
+X-Received: by 10.68.228.200 with SMTP id sk8mr34931649pbc.115.1446031824046;
+	Wed, 28 Oct 2015 04:30:24 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id
+	yv10si69795831pac.91.2015.10.28.04.30.23; 
+	Wed, 28 Oct 2015 04:30:24 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id A93AC891CD;
+	Wed, 28 Oct 2015 04:30:22 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 2B379891CD
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Wed, 28 Oct 2015 04:30:12 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by orsmga103.jf.intel.com with ESMTP; 28 Oct 2015 04:30:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,209,1444719600"; d="scan'208";a="805413281"
+Received: from dweineha-mobl3.fi.intel.com (HELO
+	dweineha-mobl3.fi.intel.com.) ([10.237.72.152])
+	by orsmga001.jf.intel.com with ESMTP; 28 Oct 2015 04:30:11 -0700
+From: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Wed, 28 Oct 2015 13:29:50 +0200
+Message-Id: &lt;1446031792-22881-2-git-send-email-david.weinehall@linux.intel.com&gt;
+X-Mailer: git-send-email 2.6.2
+In-Reply-To: &lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+References: &lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;
+	&lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+MIME-Version: 1.0
+Subject: [Intel-gfx] [PATCH i-g-t 1/3] Copy gem_concurrent_all to
+	gem_concurrent_blit
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">diff --git a/tests/gem_concurrent_blit.c b/tests/gem_concurrent_blit.c
+index 513de4a1b719..1d2d787202df 100644
+--- a/tests/gem_concurrent_blit.c
++++ b/tests/gem_concurrent_blit.c
+@@ -1,8 +1,1108 @@
+-/* This test is just a duplicate of gem_concurrent_all. */
+-/* However the executeable will be gem_concurrent_blit. */
+-/* The main function examines argv[0] and, in the case  */
+-/* of gem_concurent_blit runs only a subset of the      */
+-/* available subtests. This avoids the use of           */
+-/* non-standard command line parameters which can cause */
+-/* problems for automated testing */
+-#include "gem_concurrent_all.c"
++/*
++ * Copyright © 2009,2012,2013 Intel Corporation
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice (including the next
++ * paragraph) shall be included in all copies or substantial portions of the
++ * Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
++ * IN THE SOFTWARE.
++ *
++ * Authors:
++ *    Eric Anholt &lt;eric@anholt.net&gt;
++ *    Chris Wilson &lt;chris@chris-wilson.co.uk&gt;
++ *    Daniel Vetter &lt;daniel.vetter@ffwll.ch&gt;
++ *
++ */
++
++/** @file gem_concurrent.c
++ *
++ * This is a test of pread/pwrite/mmap behavior when writing to active
++ * buffers.
++ *
++ * Based on gem_gtt_concurrent_blt.
++ */
++
++#include "igt.h"
++#include &lt;stdlib.h&gt;
++#include &lt;stdio.h&gt;
++#include &lt;string.h&gt;
++#include &lt;fcntl.h&gt;
++#include &lt;inttypes.h&gt;
++#include &lt;errno.h&gt;
++#include &lt;sys/stat.h&gt;
++#include &lt;sys/time.h&gt;
++#include &lt;sys/wait.h&gt;
++
++#include &lt;drm.h&gt;
++
++#include "intel_bufmgr.h"
++
++IGT_TEST_DESCRIPTION("Test of pread/pwrite/mmap behavior when writing to active"
++		     " buffers.");
++
++int fd, devid, gen;
++struct intel_batchbuffer *batch;
++int all;
++
++static void
++nop_release_bo(drm_intel_bo *bo)
++{
++	drm_intel_bo_unreference(bo);
++}
++
++static void
++prw_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
++{
++	int size = width * height, i;
++	uint32_t *tmp;
++
++	tmp = malloc(4*size);
++	if (tmp) {
++		for (i = 0; i &lt; size; i++)
++			tmp[i] = val;
++		drm_intel_bo_subdata(bo, 0, 4*size, tmp);
++		free(tmp);
++	} else {
++		for (i = 0; i &lt; size; i++)
++			drm_intel_bo_subdata(bo, 4*i, 4, &amp;val);
++	}
++}
++
++static void
++prw_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
++{
++	int size = width * height, i;
++	uint32_t *vaddr;
++
++	do_or_die(drm_intel_bo_map(tmp, true));
++	do_or_die(drm_intel_bo_get_subdata(bo, 0, 4*size, tmp-&gt;virtual));
++	vaddr = tmp-&gt;virtual;
++	for (i = 0; i &lt; size; i++)
++		igt_assert_eq_u32(vaddr[i], val);
++	drm_intel_bo_unmap(tmp);
++}
++
++static drm_intel_bo *
++unmapped_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	drm_intel_bo *bo;
++
++	bo = drm_intel_bo_alloc(bufmgr, "bo", 4*width*height, 0);
++	igt_assert(bo);
++
++	return bo;
++}
++
++static drm_intel_bo *
++snoop_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	drm_intel_bo *bo;
++
++	igt_skip_on(gem_has_llc(fd));
++
++	bo = unmapped_create_bo(bufmgr, width, height);
++	gem_set_caching(fd, bo-&gt;handle, I915_CACHING_CACHED);
++	drm_intel_bo_disable_reuse(bo);
++
++	return bo;
++}
++
++static void
++gtt_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
++{
++	uint32_t *vaddr = bo-&gt;virtual;
++	int size = width * height;
++
++	drm_intel_gem_bo_start_gtt_access(bo, true);
++	while (size--)
++		*vaddr++ = val;
++}
++
++static void
++gtt_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
++{
++	uint32_t *vaddr = bo-&gt;virtual;
++	int y;
++
++	/* GTT access is slow. So we just compare a few points */
++	drm_intel_gem_bo_start_gtt_access(bo, false);
++	for (y = 0; y &lt; height; y++)
++		igt_assert_eq_u32(vaddr[y*width+y], val);
++}
++
++static drm_intel_bo *
++map_bo(drm_intel_bo *bo)
++{
++	/* gtt map doesn't have a write parameter, so just keep the mapping
++	 * around (to avoid the set_domain with the gtt write domain set) and
++	 * manually tell the kernel when we start access the gtt. */
++	do_or_die(drm_intel_gem_bo_map_gtt(bo));
++
++	return bo;
++}
++
++static drm_intel_bo *
++tile_bo(drm_intel_bo *bo, int width)
++{
++	uint32_t tiling = I915_TILING_X;
++	uint32_t stride = width * 4;
++
++	do_or_die(drm_intel_bo_set_tiling(bo, &amp;tiling, stride));
++
++	return bo;
++}
++
++static drm_intel_bo *
++gtt_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	return map_bo(unmapped_create_bo(bufmgr, width, height));
++}
++
++static drm_intel_bo *
++gttX_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	return tile_bo(gtt_create_bo(bufmgr, width, height), width);
++}
++
++static drm_intel_bo *
++wc_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	drm_intel_bo *bo;
++
++	gem_require_mmap_wc(fd);
++
++	bo = unmapped_create_bo(bufmgr, width, height);
++	bo-&gt;virtual = __gem_mmap__wc(fd, bo-&gt;handle, 0, bo-&gt;size, PROT_READ | PROT_WRITE);
++	return bo;
++}
++
++static void
++wc_release_bo(drm_intel_bo *bo)
++{
++	munmap(bo-&gt;virtual, bo-&gt;size);
++	bo-&gt;virtual = NULL;
++
++	nop_release_bo(bo);
++}
++
++static drm_intel_bo *
++gpu_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	return unmapped_create_bo(bufmgr, width, height);
++}
++
++
++static drm_intel_bo *
++gpuX_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
++{
++	return tile_bo(gpu_create_bo(bufmgr, width, height), width);
++}
++
++static void
++cpu_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
++{
++	int size = width * height;
++	uint32_t *vaddr;
++
++	do_or_die(drm_intel_bo_map(bo, true));
++	vaddr = bo-&gt;virtual;
++	while (size--)
++		*vaddr++ = val;
++	drm_intel_bo_unmap(bo);
++}
++
++static void
++cpu_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
++{
++	int size = width * height;
++	uint32_t *vaddr;
++
++	do_or_die(drm_intel_bo_map(bo, false));
++	vaddr = bo-&gt;virtual;
++	while (size--)
++		igt_assert_eq_u32(*vaddr++, val);
++	drm_intel_bo_unmap(bo);
++}
++
++static void
++gpu_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
++{
++	struct drm_i915_gem_relocation_entry reloc[1];
++	struct drm_i915_gem_exec_object2 gem_exec[2];
++	struct drm_i915_gem_execbuffer2 execbuf;
++	struct drm_i915_gem_pwrite gem_pwrite;
++	struct drm_i915_gem_create create;
++	uint32_t buf[10], *b;
++	uint32_t tiling, swizzle;
++
++	drm_intel_bo_get_tiling(bo, &amp;tiling, &amp;swizzle);
++
++	memset(reloc, 0, sizeof(reloc));
++	memset(gem_exec, 0, sizeof(gem_exec));
++	memset(&amp;execbuf, 0, sizeof(execbuf));
++
++	b = buf;
++	*b++ = XY_COLOR_BLT_CMD_NOLEN |
++		((gen &gt;= 8) ? 5 : 4) |
++		COLOR_BLT_WRITE_ALPHA | XY_COLOR_BLT_WRITE_RGB;
++	if (gen &gt;= 4 &amp;&amp; tiling) {
++		b[-1] |= XY_COLOR_BLT_TILED;
++		*b = width;
++	} else
++		*b = width &lt;&lt; 2;
++	*b++ |= 0xf0 &lt;&lt; 16 | 1 &lt;&lt; 25 | 1 &lt;&lt; 24;
++	*b++ = 0;
++	*b++ = height &lt;&lt; 16 | width;
++	reloc[0].offset = (b - buf) * sizeof(uint32_t);
++	reloc[0].target_handle = bo-&gt;handle;
++	reloc[0].read_domains = I915_GEM_DOMAIN_RENDER;
++	reloc[0].write_domain = I915_GEM_DOMAIN_RENDER;
++	*b++ = 0;
++	if (gen &gt;= 8)
++		*b++ = 0;
++	*b++ = val;
++	*b++ = MI_BATCH_BUFFER_END;
++	if ((b - buf) &amp; 1)
++		*b++ = 0;
++
++	gem_exec[0].handle = bo-&gt;handle;
++	gem_exec[0].flags = EXEC_OBJECT_NEEDS_FENCE;
++
++	create.handle = 0;
++	create.size = 4096;
++	drmIoctl(fd, DRM_IOCTL_I915_GEM_CREATE, &amp;create);
++	gem_exec[1].handle = create.handle;
++	gem_exec[1].relocation_count = 1;
++	gem_exec[1].relocs_ptr = (uintptr_t)reloc;
++
++	execbuf.buffers_ptr = (uintptr_t)gem_exec;
++	execbuf.buffer_count = 2;
++	execbuf.batch_len = (b - buf) * sizeof(buf[0]);
++	if (gen &gt;= 6)
++		execbuf.flags = I915_EXEC_BLT;
++
++	gem_pwrite.handle = gem_exec[1].handle;
++	gem_pwrite.offset = 0;
++	gem_pwrite.size = execbuf.batch_len;
++	gem_pwrite.data_ptr = (uintptr_t)buf;
++	do_or_die(drmIoctl(fd, DRM_IOCTL_I915_GEM_PWRITE, &amp;gem_pwrite));
++	do_or_die(drmIoctl(fd, DRM_IOCTL_I915_GEM_EXECBUFFER2, &amp;execbuf));
++
++	drmIoctl(fd, DRM_IOCTL_GEM_CLOSE, &amp;create.handle);
++}
++
++static void
++gpu_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
++{
++	intel_blt_copy(batch,
++		       bo, 0, 0, 4*width,
++		       tmp, 0, 0, 4*width,
++		       width, height, 32);
++	cpu_cmp_bo(tmp, val, width, height, NULL);
++}
++
++const struct access_mode {
++	const char *name;
++	void (*set_bo)(drm_intel_bo *bo, uint32_t val, int w, int h);
++	void (*cmp_bo)(drm_intel_bo *bo, uint32_t val, int w, int h, drm_intel_bo *tmp);
++	drm_intel_bo *(*create_bo)(drm_intel_bufmgr *bufmgr, int width, int height);
++	void (*release_bo)(drm_intel_bo *bo);
++} access_modes[] = {
++	{
++		.name = "prw",
++		.set_bo = prw_set_bo,
++		.cmp_bo = prw_cmp_bo,
++		.create_bo = unmapped_create_bo,
++		.release_bo = nop_release_bo,
++	},
++	{
++		.name = "cpu",
++		.set_bo = cpu_set_bo,
++		.cmp_bo = cpu_cmp_bo,
++		.create_bo = unmapped_create_bo,
++		.release_bo = nop_release_bo,
++	},
++	{
++		.name = "snoop",
++		.set_bo = cpu_set_bo,
++		.cmp_bo = cpu_cmp_bo,
++		.create_bo = snoop_create_bo,
++		.release_bo = nop_release_bo,
++	},
++	{
++		.name = "gtt",
++		.set_bo = gtt_set_bo,
++		.cmp_bo = gtt_cmp_bo,
++		.create_bo = gtt_create_bo,
++		.release_bo = nop_release_bo,
++	},
++	{
++		.name = "gttX",
++		.set_bo = gtt_set_bo,
++		.cmp_bo = gtt_cmp_bo,
++		.create_bo = gttX_create_bo,
++		.release_bo = nop_release_bo,
++	},
++	{
++		.name = "wc",
++		.set_bo = gtt_set_bo,
++		.cmp_bo = gtt_cmp_bo,
++		.create_bo = wc_create_bo,
++		.release_bo = wc_release_bo,
++	},
++	{
++		.name = "gpu",
++		.set_bo = gpu_set_bo,
++		.cmp_bo = gpu_cmp_bo,
++		.create_bo = gpu_create_bo,
++		.release_bo = nop_release_bo,
++	},
++	{
++		.name = "gpuX",
++		.set_bo = gpu_set_bo,
++		.cmp_bo = gpu_cmp_bo,
++		.create_bo = gpuX_create_bo,
++		.release_bo = nop_release_bo,
++	},
++};
++
++#define MAX_NUM_BUFFERS 1024
++int num_buffers = MAX_NUM_BUFFERS;
++const int width = 512, height = 512;
++igt_render_copyfunc_t rendercopy;
++
++struct buffers {
++	const struct access_mode *mode;
++	drm_intel_bufmgr *bufmgr;
++	drm_intel_bo *src[MAX_NUM_BUFFERS], *dst[MAX_NUM_BUFFERS];
++	drm_intel_bo *dummy, *spare;
++	int count;
++};
++
++static void *buffers_init(struct buffers *data,
++			  const struct access_mode *mode,
++			  int _fd)
++{
++	data-&gt;mode = mode;
++	data-&gt;count = 0;
++
++	data-&gt;bufmgr = drm_intel_bufmgr_gem_init(_fd, 4096);
++	igt_assert(data-&gt;bufmgr);
++
++	drm_intel_bufmgr_gem_enable_reuse(data-&gt;bufmgr);
++	return intel_batchbuffer_alloc(data-&gt;bufmgr, devid);
++}
++
++static void buffers_destroy(struct buffers *data)
++{
++	if (data-&gt;count == 0)
++		return;
++
++	for (int i = 0; i &lt; data-&gt;count; i++) {
++		data-&gt;mode-&gt;release_bo(data-&gt;src[i]);
++		data-&gt;mode-&gt;release_bo(data-&gt;dst[i]);
++	}
++	data-&gt;mode-&gt;release_bo(data-&gt;dummy);
++	data-&gt;mode-&gt;release_bo(data-&gt;spare);
++	data-&gt;count = 0;
++}
++
++static void buffers_create(struct buffers *data,
++			   int count)
++{
++	igt_assert(data-&gt;bufmgr);
++
++	buffers_destroy(data);
++
++	for (int i = 0; i &lt; count; i++) {
++		data-&gt;src[i] =
++			data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
++		data-&gt;dst[i] =
++			data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
++	}
++	data-&gt;dummy = data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
++	data-&gt;spare = data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
++	data-&gt;count = count;
++}
++
++static void buffers_fini(struct buffers *data)
++{
++	if (data-&gt;bufmgr == NULL)
++		return;
++
++	buffers_destroy(data);
++
++	intel_batchbuffer_free(batch);
++	drm_intel_bufmgr_destroy(data-&gt;bufmgr);
++	data-&gt;bufmgr = NULL;
++}
++
++typedef void (*do_copy)(drm_intel_bo *dst, drm_intel_bo *src);
++typedef struct igt_hang_ring (*do_hang)(void);
++
++static void render_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
++{
++	struct igt_buf d = {
++		.bo = dst,
++		.size = width * height * 4,
++		.num_tiles = width * height * 4,
++		.stride = width * 4,
++	}, s = {
++		.bo = src,
++		.size = width * height * 4,
++		.num_tiles = width * height * 4,
++		.stride = width * 4,
++	};
++	uint32_t swizzle;
++
++	drm_intel_bo_get_tiling(dst, &amp;d.tiling, &amp;swizzle);
++	drm_intel_bo_get_tiling(src, &amp;s.tiling, &amp;swizzle);
++
++	rendercopy(batch, NULL,
++		   &amp;s, 0, 0,
++		   width, height,
++		   &amp;d, 0, 0);
++}
++
++static void blt_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
++{
++	intel_blt_copy(batch,
++		       src, 0, 0, 4*width,
++		       dst, 0, 0, 4*width,
++		       width, height, 32);
++}
++
++static void cpu_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
++{
++	const int size = width * height * sizeof(uint32_t);
++	void *d, *s;
++
++	gem_set_domain(fd, src-&gt;handle, I915_GEM_DOMAIN_CPU, 0);
++	gem_set_domain(fd, dst-&gt;handle, I915_GEM_DOMAIN_CPU, I915_GEM_DOMAIN_CPU);
++	s = gem_mmap__cpu(fd, src-&gt;handle, 0, size, PROT_READ);
++	d = gem_mmap__cpu(fd, dst-&gt;handle, 0, size, PROT_WRITE);
++
++	memcpy(d, s, size);
++
++	munmap(d, size);
++	munmap(s, size);
++}
++
++static void gtt_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
++{
++	const int size = width * height * sizeof(uint32_t);
++	void *d, *s;
++
++	gem_set_domain(fd, src-&gt;handle, I915_GEM_DOMAIN_GTT, 0);
++	gem_set_domain(fd, dst-&gt;handle, I915_GEM_DOMAIN_GTT, I915_GEM_DOMAIN_GTT);
++
++	s = gem_mmap__gtt(fd, src-&gt;handle, size, PROT_READ);
++	d = gem_mmap__gtt(fd, dst-&gt;handle, size, PROT_WRITE);
++
++	memcpy(d, s, size);
++
++	munmap(d, size);
++	munmap(s, size);
++}
++
++static void wc_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
++{
++	const int size = width * height * sizeof(uint32_t);
++	void *d, *s;
++
++	gem_set_domain(fd, src-&gt;handle, I915_GEM_DOMAIN_GTT, 0);
++	gem_set_domain(fd, dst-&gt;handle, I915_GEM_DOMAIN_GTT, I915_GEM_DOMAIN_GTT);
++
++	s = gem_mmap__wc(fd, src-&gt;handle, 0, size, PROT_READ);
++	d = gem_mmap__wc(fd, dst-&gt;handle, 0, size, PROT_WRITE);
++
++	memcpy(d, s, size);
++
++	munmap(d, size);
++	munmap(s, size);
++}
++
++static struct igt_hang_ring no_hang(void)
++{
++	return (struct igt_hang_ring){0, 0};
++}
++
++static struct igt_hang_ring bcs_hang(void)
++{
++	return igt_hang_ring(fd, I915_EXEC_BLT);
++}
++
++static struct igt_hang_ring rcs_hang(void)
++{
++	return igt_hang_ring(fd, I915_EXEC_RENDER);
++}
++
++static void hang_require(void)
++{
++	igt_require_hang_ring(fd, -1);
++}
++
++static void do_overwrite_source(struct buffers *buffers,
++				do_copy do_copy_func,
++				do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = 0; i &lt; buffers-&gt;count; i++) {
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], i, width, height);
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], ~i, width, height);
++	}
++	for (i = 0; i &lt; buffers-&gt;count; i++)
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++	hang = do_hang_func();
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
++	for (i = 0; i &lt; buffers-&gt;count; i++)
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], i, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_overwrite_source_read(struct buffers *buffers,
++				     do_copy do_copy_func,
++				     do_hang do_hang_func,
++				     int do_rcs)
++{
++	const int half = buffers-&gt;count/2;
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = 0; i &lt; half; i++) {
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], i, width, height);
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], ~i, width, height);
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i+half], ~i, width, height);
++	}
++	for (i = 0; i &lt; half; i++) {
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++		if (do_rcs)
++			render_copy_bo(buffers-&gt;dst[i+half], buffers-&gt;src[i]);
++		else
++			blt_copy_bo(buffers-&gt;dst[i+half], buffers-&gt;src[i]);
++	}
++	hang = do_hang_func();
++	for (i = half; i--; )
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
++	for (i = 0; i &lt; half; i++) {
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], i, width, height, buffers-&gt;dummy);
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i+half], i, width, height, buffers-&gt;dummy);
++	}
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_overwrite_source_read_bcs(struct buffers *buffers,
++					 do_copy do_copy_func,
++					 do_hang do_hang_func)
++{
++	do_overwrite_source_read(buffers, do_copy_func, do_hang_func, 0);
++}
++
++static void do_overwrite_source_read_rcs(struct buffers *buffers,
++					 do_copy do_copy_func,
++					 do_hang do_hang_func)
++{
++	do_overwrite_source_read(buffers, do_copy_func, do_hang_func, 1);
++}
++
++static void do_overwrite_source__rev(struct buffers *buffers,
++				     do_copy do_copy_func,
++				     do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = 0; i &lt; buffers-&gt;count; i++) {
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], i, width, height);
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], ~i, width, height);
++	}
++	for (i = 0; i &lt; buffers-&gt;count; i++)
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++	hang = do_hang_func();
++	for (i = 0; i &lt; buffers-&gt;count; i++)
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], i, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_overwrite_source__one(struct buffers *buffers,
++				     do_copy do_copy_func,
++				     do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++
++	gem_quiescent_gpu(fd);
++	buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[0], 0, width, height);
++	buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[0], ~0, width, height);
++	do_copy_func(buffers-&gt;dst[0], buffers-&gt;src[0]);
++	hang = do_hang_func();
++	buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[0], 0xdeadbeef, width, height);
++	buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[0], 0, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_intermix(struct buffers *buffers,
++			do_copy do_copy_func,
++			do_hang do_hang_func,
++			int do_rcs)
++{
++	const int half = buffers-&gt;count/2;
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = 0; i &lt; buffers-&gt;count; i++) {
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef^~i, width, height);
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], i, width, height);
++	}
++	for (i = 0; i &lt; half; i++) {
++		if (do_rcs == 1 || (do_rcs == -1 &amp;&amp; i &amp; 1))
++			render_copy_bo(buffers-&gt;dst[i], buffers-&gt;src[i]);
++		else
++			blt_copy_bo(buffers-&gt;dst[i], buffers-&gt;src[i]);
++
++		do_copy_func(buffers-&gt;dst[i+half], buffers-&gt;src[i]);
++
++		if (do_rcs == 1 || (do_rcs == -1 &amp;&amp; (i &amp; 1) == 0))
++			render_copy_bo(buffers-&gt;dst[i], buffers-&gt;dst[i+half]);
++		else
++			blt_copy_bo(buffers-&gt;dst[i], buffers-&gt;dst[i+half]);
++
++		do_copy_func(buffers-&gt;dst[i+half], buffers-&gt;src[i+half]);
++	}
++	hang = do_hang_func();
++	for (i = 0; i &lt; 2*half; i++)
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef^~i, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_intermix_rcs(struct buffers *buffers,
++			    do_copy do_copy_func,
++			    do_hang do_hang_func)
++{
++	do_intermix(buffers, do_copy_func, do_hang_func, 1);
++}
++
++static void do_intermix_bcs(struct buffers *buffers,
++			    do_copy do_copy_func,
++			    do_hang do_hang_func)
++{
++	do_intermix(buffers, do_copy_func, do_hang_func, 0);
++}
++
++static void do_intermix_both(struct buffers *buffers,
++			     do_copy do_copy_func,
++			     do_hang do_hang_func)
++{
++	do_intermix(buffers, do_copy_func, do_hang_func, -1);
++}
++
++static void do_early_read(struct buffers *buffers,
++			  do_copy do_copy_func,
++			  do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
++	for (i = 0; i &lt; buffers-&gt;count; i++)
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++	hang = do_hang_func();
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_read_read_bcs(struct buffers *buffers,
++			     do_copy do_copy_func,
++			     do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef ^ i, width, height);
++	for (i = 0; i &lt; buffers-&gt;count; i++) {
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++		blt_copy_bo(buffers-&gt;spare, buffers-&gt;src[i]);
++	}
++	cpu_cmp_bo(buffers-&gt;spare, 0xdeadbeef^(buffers-&gt;count-1), width, height, NULL);
++	hang = do_hang_func();
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef ^ i, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_read_read_rcs(struct buffers *buffers,
++			     do_copy do_copy_func,
++			     do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef ^ i, width, height);
++	for (i = 0; i &lt; buffers-&gt;count; i++) {
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++		render_copy_bo(buffers-&gt;spare, buffers-&gt;src[i]);
++	}
++	cpu_cmp_bo(buffers-&gt;spare, 0xdeadbeef^(buffers-&gt;count-1), width, height, NULL);
++	hang = do_hang_func();
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef ^ i, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++static void do_gpu_read_after_write(struct buffers *buffers,
++				    do_copy do_copy_func,
++				    do_hang do_hang_func)
++{
++	struct igt_hang_ring hang;
++	int i;
++
++	gem_quiescent_gpu(fd);
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xabcdabcd, width, height);
++	for (i = 0; i &lt; buffers-&gt;count; i++)
++		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
++	for (i = buffers-&gt;count; i--; )
++		do_copy_func(buffers-&gt;dummy, buffers-&gt;dst[i]);
++	hang = do_hang_func();
++	for (i = buffers-&gt;count; i--; )
++		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xabcdabcd, width, height, buffers-&gt;dummy);
++	igt_post_hang_ring(fd, hang);
++}
++
++typedef void (*do_test)(struct buffers *buffers,
++			do_copy do_copy_func,
++			do_hang do_hang_func);
++
++typedef void (*run_wrap)(struct buffers *buffers,
++			 do_test do_test_func,
++			 do_copy do_copy_func,
++			 do_hang do_hang_func);
++
++static void run_single(struct buffers *buffers,
++		       do_test do_test_func,
++		       do_copy do_copy_func,
++		       do_hang do_hang_func)
++{
++	do_test_func(buffers, do_copy_func, do_hang_func);
++}
++
++static void run_interruptible(struct buffers *buffers,
++			      do_test do_test_func,
++			      do_copy do_copy_func,
++			      do_hang do_hang_func)
++{
++	int loop;
++
++	for (loop = 0; loop &lt; 10; loop++)
++		do_test_func(buffers, do_copy_func, do_hang_func);
++}
++
++static void run_forked(struct buffers *buffers,
++		       do_test do_test_func,
++		       do_copy do_copy_func,
++		       do_hang do_hang_func)
++{
++	const int old_num_buffers = num_buffers;
++
++	num_buffers /= 16;
++	num_buffers += 2;
++
++	igt_fork(child, 16) {
++		/* recreate process local variables */
++		buffers-&gt;count = 0;
++		fd = drm_open_driver(DRIVER_INTEL);
++
++		batch = buffers_init(buffers, buffers-&gt;mode, fd);
++
++		buffers_create(buffers, num_buffers);
++		for (int loop = 0; loop &lt; 10; loop++)
++			do_test_func(buffers, do_copy_func, do_hang_func);
++
++		buffers_fini(buffers);
++	}
++
++	igt_waitchildren();
++
++	num_buffers = old_num_buffers;
++}
++
++static void bit17_require(void)
++{
++	struct drm_i915_gem_get_tiling2 {
++		uint32_t handle;
++		uint32_t tiling_mode;
++		uint32_t swizzle_mode;
++		uint32_t phys_swizzle_mode;
++	} arg;
++#define DRM_IOCTL_I915_GEM_GET_TILING2	DRM_IOWR (DRM_COMMAND_BASE + DRM_I915_GEM_GET_TILING, struct drm_i915_gem_get_tiling2)
++
++	memset(&amp;arg, 0, sizeof(arg));
++	arg.handle = gem_create(fd, 4096);
++	gem_set_tiling(fd, arg.handle, I915_TILING_X, 512);
++
++	do_or_die(drmIoctl(fd, DRM_IOCTL_I915_GEM_GET_TILING2, &amp;arg));
++	gem_close(fd, arg.handle);
++	igt_require(arg.phys_swizzle_mode == arg.swizzle_mode);
++}
++
++static void cpu_require(void)
++{
++	bit17_require();
++}
++
++static void gtt_require(void)
++{
++}
++
++static void wc_require(void)
++{
++	bit17_require();
++	gem_require_mmap_wc(fd);
++}
++
++static void bcs_require(void)
++{
++}
++
++static void rcs_require(void)
++{
++	igt_require(rendercopy);
++}
++
++static void no_require(void)
++{
++}
++
++static void
++run_basic_modes(const struct access_mode *mode,
++		const char *suffix,
++		run_wrap run_wrap_func)
++{
++	const struct {
++		const char *prefix;
++		do_copy copy;
++		void (*require)(void);
++	} pipelines[] = {
++		{ "cpu", cpu_copy_bo, cpu_require },
++		{ "gtt", gtt_copy_bo, gtt_require },
++		{ "wc", wc_copy_bo, wc_require },
++		{ "blt", blt_copy_bo, bcs_require },
++		{ "render", render_copy_bo, rcs_require },
++		{ NULL, NULL }
++	}, *pskip = pipelines + 3, *p;
++	const struct {
++		const char *suffix;
++		do_hang hang;
++		void (*require)(void);
++	} hangs[] = {
++		{ "", no_hang, no_require },
++		{ "-hang-blt", bcs_hang, hang_require },
++		{ "-hang-render", rcs_hang, hang_require },
++		{ NULL, NULL },
++	}, *h;
++	struct buffers buffers;
++
++	for (h = hangs; h-&gt;suffix; h++) {
++		if (!all &amp;&amp; *h-&gt;suffix)
++			continue;
++
++		for (p = all ? pipelines : pskip; p-&gt;prefix; p++) {
++			igt_fixture {
++				batch = buffers_init(&amp;buffers, mode, fd);
++			}
++
++			/* try to overwrite the source values */
++			igt_subtest_f("%s-%s-overwrite-source-one%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_overwrite_source__one,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			igt_subtest_f("%s-%s-overwrite-source%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_overwrite_source,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			igt_subtest_f("%s-%s-overwrite-source-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_overwrite_source_read_bcs,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			igt_subtest_f("%s-%s-overwrite-source-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				igt_require(rendercopy);
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_overwrite_source_read_rcs,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			igt_subtest_f("%s-%s-overwrite-source-rev%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_overwrite_source__rev,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			/* try to intermix copies with GPU copies*/
++			igt_subtest_f("%s-%s-intermix-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				igt_require(rendercopy);
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_intermix_rcs,
++					      p-&gt;copy, h-&gt;hang);
++			}
++			igt_subtest_f("%s-%s-intermix-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				igt_require(rendercopy);
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_intermix_bcs,
++					      p-&gt;copy, h-&gt;hang);
++			}
++			igt_subtest_f("%s-%s-intermix-both%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				igt_require(rendercopy);
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_intermix_both,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			/* try to read the results before the copy completes */
++			igt_subtest_f("%s-%s-early-read%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_early_read,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			/* concurrent reads */
++			igt_subtest_f("%s-%s-read-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_read_read_bcs,
++					      p-&gt;copy, h-&gt;hang);
++			}
++			igt_subtest_f("%s-%s-read-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				igt_require(rendercopy);
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_read_read_rcs,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			/* and finally try to trick the kernel into loosing the pending write */
++			igt_subtest_f("%s-%s-gpu-read-after-write%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++				h-&gt;require();
++				p-&gt;require();
++				buffers_create(&amp;buffers, num_buffers);
++				run_wrap_func(&amp;buffers,
++					      do_gpu_read_after_write,
++					      p-&gt;copy, h-&gt;hang);
++			}
++
++			igt_fixture {
++				buffers_fini(&amp;buffers);
++			}
++		}
++	}
++}
++
++static void
++run_modes(const struct access_mode *mode)
++{
++	if (all) {
++		run_basic_modes(mode, "", run_single);
++
++		igt_fork_signal_helper();
++		run_basic_modes(mode, "-interruptible", run_interruptible);
++		igt_stop_signal_helper();
++	}
++
++	igt_fork_signal_helper();
++	run_basic_modes(mode, "-forked", run_forked);
++	igt_stop_signal_helper();
++}
++
++igt_main
++{
++	int max, i;
++
++	igt_skip_on_simulation();
++
++	if (strstr(igt_test_name(), "all"))
++		all = true;
++
++	igt_fixture {
++		fd = drm_open_driver(DRIVER_INTEL);
++		devid = intel_get_drm_devid(fd);
++		gen = intel_gen(devid);
++		rendercopy = igt_get_render_copyfunc(devid);
++
++		max = gem_aperture_size (fd) / (1024 * 1024) / 2;
++		if (num_buffers &gt; max)
++			num_buffers = max;
++
++		max = intel_get_total_ram_mb() * 3 / 4;
++		if (num_buffers &gt; max)
++			num_buffers = max;
++		num_buffers /= 2;
++		igt_info("using 2x%d buffers, each 1MiB\n", num_buffers);
++	}
++
++	for (i = 0; i &lt; ARRAY_SIZE(access_modes); i++)
++		run_modes(&amp;access_modes[i]);
++}
+</field><field type="CharField" name="pull_url"><None></None></field><field type="CharField" name="commit_ref"><None></None></field><field type="CharField" name="hash">0b1a59efef1457e1677b1cdd4abdc5975b26624b</field></object><object pk="2" model="patchwork.patch"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="msgid">&lt;1446031792-22881-3-git-send-email-david.weinehall@linux.intel.com&gt;</field><field type="CharField" name="name">[Intel-gfx,i-g-t,2/3] Unify handling of slow/combinatorial tests</field><field type="DateTimeField" name="date">2015-10-28T11:29:51</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field to="auth.user" name="delegate" rel="ManyToOneRel"><None></None></field><field to="patchwork.state" name="state" rel="ManyToOneRel">1</field><field type="BooleanField" name="archived">False</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp2245942vkz;
+	Wed, 28 Oct 2015 04:31:02 -0700 (PDT)
+X-Received: by 10.50.70.1 with SMTP id i1mr2449903igu.78.1446031862817;
+	Wed, 28 Oct 2015 04:31:02 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id h8si20767480igh.81.2015.10.28.04.31.00;
+	Wed, 28 Oct 2015 04:31:02 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id ECADE6E821;
+	Wed, 28 Oct 2015 04:30:59 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 5A6596E40E
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Wed, 28 Oct 2015 04:30:40 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by orsmga103.jf.intel.com with ESMTP; 28 Oct 2015 04:30:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,209,1444719600"; d="scan'208";a="805413299"
+Received: from dweineha-mobl3.fi.intel.com (HELO
+	dweineha-mobl3.fi.intel.com.) ([10.237.72.152])
+	by orsmga001.jf.intel.com with ESMTP; 28 Oct 2015 04:30:13 -0700
+From: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Wed, 28 Oct 2015 13:29:51 +0200
+Message-Id: &lt;1446031792-22881-3-git-send-email-david.weinehall@linux.intel.com&gt;
+X-Mailer: git-send-email 2.6.2
+In-Reply-To: &lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+References: &lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;
+	&lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+Subject: [Intel-gfx] [PATCH i-g-t 2/3] Unify handling of slow/combinatorial
+	tests
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">diff --git a/lib/igt_core.c b/lib/igt_core.c
+index 59127cafe606..6575b9d6bf0d 100644
+--- a/lib/igt_core.c
++++ b/lib/igt_core.c
+@@ -216,6 +216,7 @@ const char *igt_interactive_debug;
+ 
+ /* subtests helpers */
+ static bool list_subtests = false;
++static bool with_slow_combinatorial = false;
+ static char *run_single_subtest = NULL;
+ static bool run_single_subtest_found = false;
+ static const char *in_subtest = NULL;
+@@ -235,6 +236,7 @@ bool test_child;
+ 
+ enum {
+  OPT_LIST_SUBTESTS,
++ OPT_WITH_SLOW_COMBINATORIAL,
+  OPT_RUN_SUBTEST,
+  OPT_DESCRIPTION,
+  OPT_DEBUG,
+@@ -478,6 +480,7 @@ static void print_usage(const char *help_str, bool output_on_stderr)
+ 
+ 	fprintf(f, "Usage: %s [OPTIONS]\n", command_str);
+ 	fprintf(f, "  --list-subtests\n"
++		   "  --all\n"
+ 		   "  --run-subtest &lt;pattern&gt;\n"
+ 		   "  --debug[=log-domain]\n"
+ 		   "  --interactive-debug[=domain]\n"
+@@ -510,6 +513,7 @@ static int common_init(int *argc, char **argv,
+ 	int c, option_index = 0, i, x;
+ 	static struct option long_options[] = {
+ 		{"list-subtests", 0, 0, OPT_LIST_SUBTESTS},
++		{"all", 0, 0, OPT_WITH_SLOW_COMBINATORIAL},
+ 		{"run-subtest", 1, 0, OPT_RUN_SUBTEST},
+ 		{"help-description", 0, 0, OPT_DESCRIPTION},
+ 		{"debug", optional_argument, 0, OPT_DEBUG},
+@@ -617,6 +621,10 @@ static int common_init(int *argc, char **argv,
+ 			if (!run_single_subtest)
+ 				list_subtests = true;
+ 			break;
++		case OPT_WITH_SLOW_COMBINATORIAL:
++			if (!run_single_subtest)
++				with_slow_combinatorial = true;
++			break;
+ 		case OPT_RUN_SUBTEST:
+ 			if (!list_subtests)
+ 				run_single_subtest = strdup(optarg);
+@@ -1629,6 +1637,22 @@ void igt_skip_on_simulation(void)
+ 		igt_require(!igt_run_in_simulation());
+ }
+ 
++/**
++ * __igt_slow_combinatorial:
++ *
++ * This is used to skip subtests that should only be included
++ * when the "--all" command line option has been specified.  This version
++ * is intended as a test.
++ *
++ * @slow_test: true if the subtest is part of the slow/combinatorial set
++ *
++ * Returns: true if the test should be run, false if the test should be skipped
++ */
++bool __igt_slow_combinatorial(bool slow_test)
++{
++	return !slow_test || with_slow_combinatorial;
++}
++
+ /* structured logging */
+ 
+ /**
+diff --git a/lib/igt_core.h b/lib/igt_core.h
+index 5ae09653fd55..7b592278bf6c 100644
+--- a/lib/igt_core.h
++++ b/lib/igt_core.h
+@@ -191,6 +191,12 @@ bool __igt_run_subtest(const char *subtest_name);
+ #define igt_subtest_f(f...) \
+ 	__igt_subtest_f(igt_tokencat(__tmpchar, __LINE__), f)
+ 
++bool __igt_slow_combinatorial(bool slow_test);
++
++#define igt_subtest_slow_f(__slow, f...) \
++	if (__igt_slow_combinatorial(__slow)) \
++	__igt_subtest_f(igt_tokencat(__tmpchar, __LINE__), f)
++
+ const char *igt_subtest_name(void);
+ bool igt_only_list_subtests(void);
+ 
+@@ -669,6 +675,7 @@ void igt_disable_exit_handler(void);
+ 
+ /* helpers to automatically reduce test runtime in simulation */
+ bool igt_run_in_simulation(void);
++
+ /**
+  * SLOW_QUICK:
+  * @slow: value in simulation mode
+diff --git a/tests/gem_concurrent_blit.c b/tests/gem_concurrent_blit.c
+index 1d2d787202df..fe37cc707583 100644
+--- a/tests/gem_concurrent_blit.c
++++ b/tests/gem_concurrent_blit.c
+@@ -55,7 +55,6 @@ IGT_TEST_DESCRIPTION("Test of pread/pwrite/mmap behavior when writing to active"
+ 
+ int fd, devid, gen;
+ struct intel_batchbuffer *batch;
+-int all;
+ 
+ static void
+ nop_release_bo(drm_intel_bo *bo)
+@@ -931,16 +930,14 @@ run_basic_modes(const struct access_mode *mode,
+ 	struct buffers buffers;
+ 
+ 	for (h = hangs; h-&gt;suffix; h++) {
+-		if (!all &amp;&amp; *h-&gt;suffix)
+-			continue;
+-
+-		for (p = all ? pipelines : pskip; p-&gt;prefix; p++) {
++		for (p = __igt_slow_combinatorial(true) ? pipelines : pskip;
++		     p-&gt;prefix; p++) {
+ 			igt_fixture {
+ 				batch = buffers_init(&amp;buffers, mode, fd);
+ 			}
+ 
+ 			/* try to overwrite the source values */
+-			igt_subtest_f("%s-%s-overwrite-source-one%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-overwrite-source-one%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -949,7 +946,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+ 
+-			igt_subtest_f("%s-%s-overwrite-source%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-overwrite-source%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -958,7 +955,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+ 
+-			igt_subtest_f("%s-%s-overwrite-source-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-overwrite-source-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -967,7 +964,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+ 
+-			igt_subtest_f("%s-%s-overwrite-source-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-overwrite-source-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				igt_require(rendercopy);
+@@ -977,7 +974,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+ 
+-			igt_subtest_f("%s-%s-overwrite-source-rev%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-overwrite-source-rev%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -987,7 +984,7 @@ run_basic_modes(const struct access_mode *mode,
+ 			}
+ 
+ 			/* try to intermix copies with GPU copies*/
+-			igt_subtest_f("%s-%s-intermix-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-intermix-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				igt_require(rendercopy);
+@@ -996,7 +993,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      do_intermix_rcs,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+-			igt_subtest_f("%s-%s-intermix-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-intermix-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				igt_require(rendercopy);
+@@ -1005,7 +1002,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      do_intermix_bcs,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+-			igt_subtest_f("%s-%s-intermix-both%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-intermix-both%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				igt_require(rendercopy);
+@@ -1016,7 +1013,7 @@ run_basic_modes(const struct access_mode *mode,
+ 			}
+ 
+ 			/* try to read the results before the copy completes */
+-			igt_subtest_f("%s-%s-early-read%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-early-read%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -1026,7 +1023,7 @@ run_basic_modes(const struct access_mode *mode,
+ 			}
+ 
+ 			/* concurrent reads */
+-			igt_subtest_f("%s-%s-read-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-read-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -1034,7 +1031,7 @@ run_basic_modes(const struct access_mode *mode,
+ 					      do_read_read_bcs,
+ 					      p-&gt;copy, h-&gt;hang);
+ 			}
+-			igt_subtest_f("%s-%s-read-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-read-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				igt_require(rendercopy);
+@@ -1045,7 +1042,7 @@ run_basic_modes(const struct access_mode *mode,
+ 			}
+ 
+ 			/* and finally try to trick the kernel into loosing the pending write */
+-			igt_subtest_f("%s-%s-gpu-read-after-write%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
++			igt_subtest_slow_f(*h-&gt;suffix, "%s-%s-gpu-read-after-write%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+ 				h-&gt;require();
+ 				p-&gt;require();
+ 				buffers_create(&amp;buffers, num_buffers);
+@@ -1064,13 +1061,11 @@ run_basic_modes(const struct access_mode *mode,
+ static void
+ run_modes(const struct access_mode *mode)
+ {
+-	if (all) {
+-		run_basic_modes(mode, "", run_single);
++	run_basic_modes(mode, "", run_single);
+ 
+-		igt_fork_signal_helper();
+-		run_basic_modes(mode, "-interruptible", run_interruptible);
+-		igt_stop_signal_helper();
+-	}
++	igt_fork_signal_helper();
++	run_basic_modes(mode, "-interruptible", run_interruptible);
++	igt_stop_signal_helper();
+ 
+ 	igt_fork_signal_helper();
+ 	run_basic_modes(mode, "-forked", run_forked);
+@@ -1083,9 +1078,6 @@ igt_main
+ 
+ 	igt_skip_on_simulation();
+ 
+-	if (strstr(igt_test_name(), "all"))
+-		all = true;
+-
+ 	igt_fixture {
+ 		fd = drm_open_driver(DRIVER_INTEL);
+ 		devid = intel_get_drm_devid(fd);
+diff --git a/tests/kms_frontbuffer_tracking.c b/tests/kms_frontbuffer_tracking.c
+index 15707b9b9040..86fd7ca08692 100644
+--- a/tests/kms_frontbuffer_tracking.c
++++ b/tests/kms_frontbuffer_tracking.c
+@@ -47,8 +47,7 @@ IGT_TEST_DESCRIPTION("Test the Kernel's frontbuffer tracking mechanism and "
+  * combinations that are somewhat redundant and don't add much value to the
+  * test. For example, since we already do the offscreen testing with a single
+  * pipe enabled, there's no much value in doing it again with dual pipes. If you
+- * still want to try these redundant tests, you need to use the --show-hidden
+- * option.
++ * still want to try these redundant tests, you need to use the --all option.
+  *
+  * The most important hidden thing is the FEATURE_NONE set of tests. Whenever
+  * you get a failure on any test, it is important to check whether the same test
+@@ -116,6 +115,10 @@ struct test_mode {
+ 	} format;
+ 
+ 	enum igt_draw_method method;
++
++	/* The test is slow and/or combinatorial;
++	 * skip unless otherwise specified */
++	bool slow;
+ };
+ 
+ enum flip_type {
+@@ -237,7 +240,6 @@ struct {
+ 	bool fbc_check_last_action;
+ 	bool no_edp;
+ 	bool small_modes;
+-	bool show_hidden;
+ 	int step;
+ 	int only_pipes;
+ 	int shared_fb_x_offset;
+@@ -249,7 +251,6 @@ struct {
+ 	.fbc_check_last_action = true,
+ 	.no_edp = false,
+ 	.small_modes = false,
+-	.show_hidden= false,
+ 	.step = 0,
+ 	.only_pipes = PIPE_COUNT,
+ 	.shared_fb_x_offset = 500,
+@@ -2933,9 +2934,6 @@ static int opt_handler(int option, int option_index, void *data)
+ 	case 'm':
+ 		opt.small_modes = true;
+ 		break;
+-	case 'i':
+-		opt.show_hidden = true;
+-		break;
+ 	case 't':
+ 		opt.step++;
+ 		break;
+@@ -2971,7 +2969,6 @@ const char *help_str =
+ "  --no-fbc-action-check       Don't check for the FBC last action\n"
+ "  --no-edp                    Don't use eDP monitors\n"
+ "  --use-small-modes           Use smaller resolutions for the modes\n"
+-"  --show-hidden               Show hidden subtests\n"
+ "  --step                      Stop on each step so you can check the screen\n"
+ "  --shared-fb-x offset        Use 'offset' as the X offset for the shared FB\n"
+ "  --shared-fb-y offset        Use 'offset' as the Y offset for the shared FB\n"
+@@ -3068,18 +3065,19 @@ static const char *format_str(enum pixel_format format)
+ 	for (t.plane = 0; t.plane &lt; PLANE_COUNT; t.plane++) {		   \
+ 	for (t.fbs = 0; t.fbs &lt; FBS_COUNT; t.fbs++) {			   \
+ 	for (t.method = 0; t.method &lt; IGT_DRAW_METHOD_COUNT; t.method++) { \
++		t.slow = false;						   \
+ 		if (t.pipes == PIPE_SINGLE &amp;&amp; t.screen == SCREEN_SCND)	   \
+ 			continue;					   \
+ 		if (t.screen == SCREEN_OFFSCREEN &amp;&amp; t.plane != PLANE_PRI)  \
+ 			continue;					   \
+-		if (!opt.show_hidden &amp;&amp; t.pipes == PIPE_DUAL &amp;&amp;		   \
++		if (t.pipes == PIPE_DUAL &amp;&amp;				   \
+ 		    t.screen == SCREEN_OFFSCREEN)			   \
+-			continue;					   \
+-		if (!opt.show_hidden &amp;&amp; t.feature == FEATURE_NONE)	   \
+-			continue;					   \
+-		if (!opt.show_hidden &amp;&amp; t.fbs == FBS_SHARED &amp;&amp;		   \
++			t.slow = true;					   \
++		if (t.feature == FEATURE_NONE)				   \
++			t.slow = true;					   \
++		if (t.fbs == FBS_SHARED &amp;&amp;				   \
+ 		    (t.plane == PLANE_CUR || t.plane == PLANE_SPR))	   \
+-			continue;
++			t.slow = true;
+ 
+ 
+ #define TEST_MODE_ITER_END } } } } } }
+@@ -3094,7 +3092,6 @@ int main(int argc, char *argv[])
+ 		{ "no-fbc-action-check",      0, 0, 'a'},
+ 		{ "no-edp",                   0, 0, 'e'},
+ 		{ "use-small-modes",          0, 0, 'm'},
+-		{ "show-hidden",              0, 0, 'i'},
+ 		{ "step",                     0, 0, 't'},
+ 		{ "shared-fb-x",              1, 0, 'x'},
+ 		{ "shared-fb-y",              1, 0, 'y'},
+@@ -3110,8 +3107,9 @@ int main(int argc, char *argv[])
+ 		setup_environment();
+ 
+ 	for (t.feature = 0; t.feature &lt; FEATURE_COUNT; t.feature++) {
+-		if (!opt.show_hidden &amp;&amp; t.feature == FEATURE_NONE)
+-			continue;
++		t.slow = false;
++		if (t.feature == FEATURE_NONE)
++			t.slow = true;
+ 		for (t.pipes = 0; t.pipes &lt; PIPE_COUNT; t.pipes++) {
+ 			t.screen = SCREEN_PRIM;
+ 			t.plane = PLANE_PRI;
+@@ -3120,52 +3118,58 @@ int main(int argc, char *argv[])
+ 			/* Make sure nothing is using this value. */
+ 			t.method = -1;
+ 
+-			igt_subtest_f("%s-%s-rte",
+-				      feature_str(t.feature),
+-				      pipes_str(t.pipes))
++			igt_subtest_slow_f(t.slow,
++					   "%s-%s-rte",
++					   feature_str(t.feature),
++					   pipes_str(t.pipes))
+ 				rte_subtest(&amp;t);
+ 		}
+ 	}
+ 
+ 	TEST_MODE_ITER_BEGIN(t)
+-		igt_subtest_f("%s-%s-%s-%s-%s-draw-%s",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      plane_str(t.plane),
+-			      fbs_str(t.fbs),
+-			      igt_draw_get_method_name(t.method))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-%s-draw-%s",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   plane_str(t.plane),
++				   fbs_str(t.fbs),
++				   igt_draw_get_method_name(t.method))
+ 			draw_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+ 	TEST_MODE_ITER_BEGIN(t)
+ 		if (t.plane != PLANE_PRI ||
+-		    t.screen == SCREEN_OFFSCREEN ||
+-		    (!opt.show_hidden &amp;&amp; t.method != IGT_DRAW_BLT))
++		    t.screen == SCREEN_OFFSCREEN)
+ 			continue;
+-
+-		igt_subtest_f("%s-%s-%s-%s-flip-%s",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      fbs_str(t.fbs),
+-			      igt_draw_get_method_name(t.method))
++		if (t.method != IGT_DRAW_BLT)
++			t.slow = true;
++
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-flip-%s",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   fbs_str(t.fbs),
++				   igt_draw_get_method_name(t.method))
+ 			flip_subtest(&amp;t, FLIP_PAGEFLIP);
+ 
+-		igt_subtest_f("%s-%s-%s-%s-evflip-%s",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      fbs_str(t.fbs),
+-			      igt_draw_get_method_name(t.method))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-evflip-%s",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   fbs_str(t.fbs),
++				   igt_draw_get_method_name(t.method))
+ 			flip_subtest(&amp;t, FLIP_PAGEFLIP_EVENT);
+ 
+-		igt_subtest_f("%s-%s-%s-%s-msflip-%s",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      fbs_str(t.fbs),
+-			      igt_draw_get_method_name(t.method))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-msflip-%s",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   fbs_str(t.fbs),
++				   igt_draw_get_method_name(t.method))
+ 			flip_subtest(&amp;t, FLIP_MODESET);
+ 
+ 	TEST_MODE_ITER_END
+@@ -3177,10 +3181,11 @@ int main(int argc, char *argv[])
+ 		    (t.feature &amp; FEATURE_FBC) == 0)
+ 			continue;
+ 
+-		igt_subtest_f("%s-%s-%s-fliptrack",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      fbs_str(t.fbs))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-fliptrack",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   fbs_str(t.fbs))
+ 			fliptrack_subtest(&amp;t, FLIP_PAGEFLIP);
+ 	TEST_MODE_ITER_END
+ 
+@@ -3190,20 +3195,22 @@ int main(int argc, char *argv[])
+ 		    t.plane == PLANE_PRI)
+ 			continue;
+ 
+-		igt_subtest_f("%s-%s-%s-%s-%s-move",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      plane_str(t.plane),
+-			      fbs_str(t.fbs))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-%s-move",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   plane_str(t.plane),
++				   fbs_str(t.fbs))
+ 			move_subtest(&amp;t);
+ 
+-		igt_subtest_f("%s-%s-%s-%s-%s-onoff",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      plane_str(t.plane),
+-			      fbs_str(t.fbs))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-%s-onoff",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   plane_str(t.plane),
++				   fbs_str(t.fbs))
+ 			onoff_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+@@ -3213,27 +3220,30 @@ int main(int argc, char *argv[])
+ 		    t.plane != PLANE_SPR)
+ 			continue;
+ 
+-		igt_subtest_f("%s-%s-%s-%s-%s-fullscreen",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      screen_str(t.screen),
+-			      plane_str(t.plane),
+-			      fbs_str(t.fbs))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-%s-fullscreen",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   screen_str(t.screen),
++				   plane_str(t.plane),
++				   fbs_str(t.fbs))
+ 			fullscreen_plane_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+ 	TEST_MODE_ITER_BEGIN(t)
+ 		if (t.screen != SCREEN_PRIM ||
+-		    t.method != IGT_DRAW_BLT ||
+-		    (!opt.show_hidden &amp;&amp; t.plane != PLANE_PRI) ||
+-		    (!opt.show_hidden &amp;&amp; t.fbs != FBS_INDIVIDUAL))
++		    t.method != IGT_DRAW_BLT)
+ 			continue;
+-
+-		igt_subtest_f("%s-%s-%s-%s-multidraw",
+-			      feature_str(t.feature),
+-			      pipes_str(t.pipes),
+-			      plane_str(t.plane),
+-			      fbs_str(t.fbs))
++		if (t.plane != PLANE_PRI ||
++		    t.fbs != FBS_INDIVIDUAL)
++			t.slow = true;
++
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-%s-%s-multidraw",
++				   feature_str(t.feature),
++				   pipes_str(t.pipes),
++				   plane_str(t.plane),
++				   fbs_str(t.fbs))
+ 			multidraw_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+@@ -3245,7 +3255,9 @@ int main(int argc, char *argv[])
+ 		    t.method != IGT_DRAW_MMAP_GTT)
+ 			continue;
+ 
+-		igt_subtest_f("%s-farfromfence", feature_str(t.feature))
++		igt_subtest_slow_f(t.slow,
++				   "%s-farfromfence",
++				   feature_str(t.feature))
+ 			farfromfence_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+@@ -3261,10 +3273,11 @@ int main(int argc, char *argv[])
+ 			if (t.format == FORMAT_DEFAULT)
+ 				continue;
+ 
+-			igt_subtest_f("%s-%s-draw-%s",
+-				      feature_str(t.feature),
+-				      format_str(t.format),
+-				      igt_draw_get_method_name(t.method))
++			igt_subtest_slow_f(t.slow,
++					   "%s-%s-draw-%s",
++					   feature_str(t.feature),
++					   format_str(t.format),
++					   igt_draw_get_method_name(t.method))
+ 				format_draw_subtest(&amp;t);
+ 		}
+ 	TEST_MODE_ITER_END
+@@ -3275,9 +3288,10 @@ int main(int argc, char *argv[])
+ 		    t.plane != PLANE_PRI ||
+ 		    t.method != IGT_DRAW_MMAP_CPU)
+ 			continue;
+-		igt_subtest_f("%s-%s-scaledprimary",
+-			      feature_str(t.feature),
+-			      fbs_str(t.fbs))
++		igt_subtest_slow_f(t.slow,
++				   "%s-%s-scaledprimary",
++				   feature_str(t.feature),
++				   fbs_str(t.fbs))
+ 			scaledprimary_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+@@ -3289,22 +3303,32 @@ int main(int argc, char *argv[])
+ 		    t.method != IGT_DRAW_MMAP_CPU)
+ 			continue;
+ 
+-		igt_subtest_f("%s-modesetfrombusy", feature_str(t.feature))
++		igt_subtest_slow_f(t.slow,
++				   "%s-modesetfrombusy",
++				   feature_str(t.feature))
+ 			modesetfrombusy_subtest(&amp;t);
+ 
+ 		if (t.feature &amp; FEATURE_FBC) {
+-			igt_subtest_f("%s-badstride", feature_str(t.feature))
++			igt_subtest_slow_f(t.slow,
++					   "%s-badstride",
++					   feature_str(t.feature))
+ 				badstride_subtest(&amp;t);
+ 
+-			igt_subtest_f("%s-stridechange", feature_str(t.feature))
++			igt_subtest_slow_f(t.slow,
++					   "%s-stridechange",
++					   feature_str(t.feature))
+ 				stridechange_subtest(&amp;t);
+ 		}
+ 
+ 		if (t.feature &amp; FEATURE_PSR)
+-			igt_subtest_f("%s-slowdraw", feature_str(t.feature))
++			igt_subtest_slow_f(t.slow,
++					   "%s-slowdraw",
++					   feature_str(t.feature))
+ 				slow_draw_subtest(&amp;t);
+ 
+-		igt_subtest_f("%s-suspend", feature_str(t.feature))
++		igt_subtest_slow_f(t.slow,
++				   "%s-suspend",
++				   feature_str(t.feature))
+ 			suspend_subtest(&amp;t);
+ 	TEST_MODE_ITER_END
+ 
+</field><field type="CharField" name="pull_url"><None></None></field><field type="CharField" name="commit_ref"><None></None></field><field type="CharField" name="hash">5cf077479a6beff37178978ce0c435f4d8895d62</field></object><object pk="3" model="patchwork.patch"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="msgid">&lt;1446031792-22881-4-git-send-email-david.weinehall@linux.intel.com&gt;</field><field type="CharField" name="name">[Intel-gfx,i-g-t,3/3] Remove superfluous gem_concurrent_all.c</field><field type="DateTimeField" name="date">2015-10-28T11:29:52</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field to="auth.user" name="delegate" rel="ManyToOneRel"><None></None></field><field to="patchwork.state" name="state" rel="ManyToOneRel">1</field><field type="BooleanField" name="archived">False</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp2245881vkz;
+	Wed, 28 Oct 2015 04:30:54 -0700 (PDT)
+X-Received: by 10.50.60.102 with SMTP id g6mr2270060igr.29.1446031854521;
+	Wed, 28 Oct 2015 04:30:54 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id
+	j74si33205198ioe.62.2015.10.28.04.30.53; 
+	Wed, 28 Oct 2015 04:30:54 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 581216E862;
+	Wed, 28 Oct 2015 04:30:51 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 8612A6E821
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Wed, 28 Oct 2015 04:30:42 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by orsmga103.jf.intel.com with ESMTP; 28 Oct 2015 04:30:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,209,1444719600"; d="scan'208";a="805413311"
+Received: from dweineha-mobl3.fi.intel.com (HELO
+	dweineha-mobl3.fi.intel.com.) ([10.237.72.152])
+	by orsmga001.jf.intel.com with ESMTP; 28 Oct 2015 04:30:14 -0700
+From: David Weinehall &lt;david.weinehall@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Wed, 28 Oct 2015 13:29:52 +0200
+Message-Id: &lt;1446031792-22881-4-git-send-email-david.weinehall@linux.intel.com&gt;
+X-Mailer: git-send-email 2.6.2
+In-Reply-To: &lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+References: &lt;1445600556-14884-1-git-send-email-david.weinehall@linux.intel.com&gt;
+	&lt;1446031792-22881-1-git-send-email-david.weinehall@linux.intel.com&gt;
+MIME-Version: 1.0
+Subject: [Intel-gfx] [PATCH i-g-t 3/3] Remove superfluous
+	gem_concurrent_all.c
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">diff --git a/tests/.gitignore b/tests/.gitignore
+index beda5117da5c..da4f9961fc60 100644
+--- a/tests/.gitignore
++++ b/tests/.gitignore
+@@ -23,7 +23,6 @@ gem_bad_reloc
+ gem_basic
+ gem_caching
+ gem_close_race
+-gem_concurrent_all
+ gem_concurrent_blit
+ gem_cpu_reloc
+ gem_cs_prefetch
+diff --git a/tests/Makefile.sources b/tests/Makefile.sources
+index ac731f90dcb2..321c7f33e4d3 100644
+--- a/tests/Makefile.sources
++++ b/tests/Makefile.sources
+@@ -14,7 +14,6 @@ TESTS_progs_M = \
+ 	gem_caching \
+ 	gem_close_race \
+ 	gem_concurrent_blit \
+-	gem_concurrent_all \
+ 	gem_cs_tlb \
+ 	gem_ctx_param_basic \
+ 	gem_ctx_bad_exec \
+diff --git a/tests/gem_concurrent_all.c b/tests/gem_concurrent_all.c
+deleted file mode 100644
+index 1d2d787202df..000000000000
+--- a/tests/gem_concurrent_all.c
++++ /dev/null
+@@ -1,1108 +0,0 @@
+-/*
+- * Copyright © 2009,2012,2013 Intel Corporation
+- *
+- * Permission is hereby granted, free of charge, to any person obtaining a
+- * copy of this software and associated documentation files (the "Software"),
+- * to deal in the Software without restriction, including without limitation
+- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+- * and/or sell copies of the Software, and to permit persons to whom the
+- * Software is furnished to do so, subject to the following conditions:
+- *
+- * The above copyright notice and this permission notice (including the next
+- * paragraph) shall be included in all copies or substantial portions of the
+- * Software.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+- * IN THE SOFTWARE.
+- *
+- * Authors:
+- *    Eric Anholt &lt;eric@anholt.net&gt;
+- *    Chris Wilson &lt;chris@chris-wilson.co.uk&gt;
+- *    Daniel Vetter &lt;daniel.vetter@ffwll.ch&gt;
+- *
+- */
+-
+-/** @file gem_concurrent.c
+- *
+- * This is a test of pread/pwrite/mmap behavior when writing to active
+- * buffers.
+- *
+- * Based on gem_gtt_concurrent_blt.
+- */
+-
+-#include "igt.h"
+-#include &lt;stdlib.h&gt;
+-#include &lt;stdio.h&gt;
+-#include &lt;string.h&gt;
+-#include &lt;fcntl.h&gt;
+-#include &lt;inttypes.h&gt;
+-#include &lt;errno.h&gt;
+-#include &lt;sys/stat.h&gt;
+-#include &lt;sys/time.h&gt;
+-#include &lt;sys/wait.h&gt;
+-
+-#include &lt;drm.h&gt;
+-
+-#include "intel_bufmgr.h"
+-
+-IGT_TEST_DESCRIPTION("Test of pread/pwrite/mmap behavior when writing to active"
+-		     " buffers.");
+-
+-int fd, devid, gen;
+-struct intel_batchbuffer *batch;
+-int all;
+-
+-static void
+-nop_release_bo(drm_intel_bo *bo)
+-{
+-	drm_intel_bo_unreference(bo);
+-}
+-
+-static void
+-prw_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
+-{
+-	int size = width * height, i;
+-	uint32_t *tmp;
+-
+-	tmp = malloc(4*size);
+-	if (tmp) {
+-		for (i = 0; i &lt; size; i++)
+-			tmp[i] = val;
+-		drm_intel_bo_subdata(bo, 0, 4*size, tmp);
+-		free(tmp);
+-	} else {
+-		for (i = 0; i &lt; size; i++)
+-			drm_intel_bo_subdata(bo, 4*i, 4, &amp;val);
+-	}
+-}
+-
+-static void
+-prw_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
+-{
+-	int size = width * height, i;
+-	uint32_t *vaddr;
+-
+-	do_or_die(drm_intel_bo_map(tmp, true));
+-	do_or_die(drm_intel_bo_get_subdata(bo, 0, 4*size, tmp-&gt;virtual));
+-	vaddr = tmp-&gt;virtual;
+-	for (i = 0; i &lt; size; i++)
+-		igt_assert_eq_u32(vaddr[i], val);
+-	drm_intel_bo_unmap(tmp);
+-}
+-
+-static drm_intel_bo *
+-unmapped_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	drm_intel_bo *bo;
+-
+-	bo = drm_intel_bo_alloc(bufmgr, "bo", 4*width*height, 0);
+-	igt_assert(bo);
+-
+-	return bo;
+-}
+-
+-static drm_intel_bo *
+-snoop_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	drm_intel_bo *bo;
+-
+-	igt_skip_on(gem_has_llc(fd));
+-
+-	bo = unmapped_create_bo(bufmgr, width, height);
+-	gem_set_caching(fd, bo-&gt;handle, I915_CACHING_CACHED);
+-	drm_intel_bo_disable_reuse(bo);
+-
+-	return bo;
+-}
+-
+-static void
+-gtt_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
+-{
+-	uint32_t *vaddr = bo-&gt;virtual;
+-	int size = width * height;
+-
+-	drm_intel_gem_bo_start_gtt_access(bo, true);
+-	while (size--)
+-		*vaddr++ = val;
+-}
+-
+-static void
+-gtt_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
+-{
+-	uint32_t *vaddr = bo-&gt;virtual;
+-	int y;
+-
+-	/* GTT access is slow. So we just compare a few points */
+-	drm_intel_gem_bo_start_gtt_access(bo, false);
+-	for (y = 0; y &lt; height; y++)
+-		igt_assert_eq_u32(vaddr[y*width+y], val);
+-}
+-
+-static drm_intel_bo *
+-map_bo(drm_intel_bo *bo)
+-{
+-	/* gtt map doesn't have a write parameter, so just keep the mapping
+-	 * around (to avoid the set_domain with the gtt write domain set) and
+-	 * manually tell the kernel when we start access the gtt. */
+-	do_or_die(drm_intel_gem_bo_map_gtt(bo));
+-
+-	return bo;
+-}
+-
+-static drm_intel_bo *
+-tile_bo(drm_intel_bo *bo, int width)
+-{
+-	uint32_t tiling = I915_TILING_X;
+-	uint32_t stride = width * 4;
+-
+-	do_or_die(drm_intel_bo_set_tiling(bo, &amp;tiling, stride));
+-
+-	return bo;
+-}
+-
+-static drm_intel_bo *
+-gtt_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	return map_bo(unmapped_create_bo(bufmgr, width, height));
+-}
+-
+-static drm_intel_bo *
+-gttX_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	return tile_bo(gtt_create_bo(bufmgr, width, height), width);
+-}
+-
+-static drm_intel_bo *
+-wc_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	drm_intel_bo *bo;
+-
+-	gem_require_mmap_wc(fd);
+-
+-	bo = unmapped_create_bo(bufmgr, width, height);
+-	bo-&gt;virtual = __gem_mmap__wc(fd, bo-&gt;handle, 0, bo-&gt;size, PROT_READ | PROT_WRITE);
+-	return bo;
+-}
+-
+-static void
+-wc_release_bo(drm_intel_bo *bo)
+-{
+-	munmap(bo-&gt;virtual, bo-&gt;size);
+-	bo-&gt;virtual = NULL;
+-
+-	nop_release_bo(bo);
+-}
+-
+-static drm_intel_bo *
+-gpu_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	return unmapped_create_bo(bufmgr, width, height);
+-}
+-
+-
+-static drm_intel_bo *
+-gpuX_create_bo(drm_intel_bufmgr *bufmgr, int width, int height)
+-{
+-	return tile_bo(gpu_create_bo(bufmgr, width, height), width);
+-}
+-
+-static void
+-cpu_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
+-{
+-	int size = width * height;
+-	uint32_t *vaddr;
+-
+-	do_or_die(drm_intel_bo_map(bo, true));
+-	vaddr = bo-&gt;virtual;
+-	while (size--)
+-		*vaddr++ = val;
+-	drm_intel_bo_unmap(bo);
+-}
+-
+-static void
+-cpu_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
+-{
+-	int size = width * height;
+-	uint32_t *vaddr;
+-
+-	do_or_die(drm_intel_bo_map(bo, false));
+-	vaddr = bo-&gt;virtual;
+-	while (size--)
+-		igt_assert_eq_u32(*vaddr++, val);
+-	drm_intel_bo_unmap(bo);
+-}
+-
+-static void
+-gpu_set_bo(drm_intel_bo *bo, uint32_t val, int width, int height)
+-{
+-	struct drm_i915_gem_relocation_entry reloc[1];
+-	struct drm_i915_gem_exec_object2 gem_exec[2];
+-	struct drm_i915_gem_execbuffer2 execbuf;
+-	struct drm_i915_gem_pwrite gem_pwrite;
+-	struct drm_i915_gem_create create;
+-	uint32_t buf[10], *b;
+-	uint32_t tiling, swizzle;
+-
+-	drm_intel_bo_get_tiling(bo, &amp;tiling, &amp;swizzle);
+-
+-	memset(reloc, 0, sizeof(reloc));
+-	memset(gem_exec, 0, sizeof(gem_exec));
+-	memset(&amp;execbuf, 0, sizeof(execbuf));
+-
+-	b = buf;
+-	*b++ = XY_COLOR_BLT_CMD_NOLEN |
+-		((gen &gt;= 8) ? 5 : 4) |
+-		COLOR_BLT_WRITE_ALPHA | XY_COLOR_BLT_WRITE_RGB;
+-	if (gen &gt;= 4 &amp;&amp; tiling) {
+-		b[-1] |= XY_COLOR_BLT_TILED;
+-		*b = width;
+-	} else
+-		*b = width &lt;&lt; 2;
+-	*b++ |= 0xf0 &lt;&lt; 16 | 1 &lt;&lt; 25 | 1 &lt;&lt; 24;
+-	*b++ = 0;
+-	*b++ = height &lt;&lt; 16 | width;
+-	reloc[0].offset = (b - buf) * sizeof(uint32_t);
+-	reloc[0].target_handle = bo-&gt;handle;
+-	reloc[0].read_domains = I915_GEM_DOMAIN_RENDER;
+-	reloc[0].write_domain = I915_GEM_DOMAIN_RENDER;
+-	*b++ = 0;
+-	if (gen &gt;= 8)
+-		*b++ = 0;
+-	*b++ = val;
+-	*b++ = MI_BATCH_BUFFER_END;
+-	if ((b - buf) &amp; 1)
+-		*b++ = 0;
+-
+-	gem_exec[0].handle = bo-&gt;handle;
+-	gem_exec[0].flags = EXEC_OBJECT_NEEDS_FENCE;
+-
+-	create.handle = 0;
+-	create.size = 4096;
+-	drmIoctl(fd, DRM_IOCTL_I915_GEM_CREATE, &amp;create);
+-	gem_exec[1].handle = create.handle;
+-	gem_exec[1].relocation_count = 1;
+-	gem_exec[1].relocs_ptr = (uintptr_t)reloc;
+-
+-	execbuf.buffers_ptr = (uintptr_t)gem_exec;
+-	execbuf.buffer_count = 2;
+-	execbuf.batch_len = (b - buf) * sizeof(buf[0]);
+-	if (gen &gt;= 6)
+-		execbuf.flags = I915_EXEC_BLT;
+-
+-	gem_pwrite.handle = gem_exec[1].handle;
+-	gem_pwrite.offset = 0;
+-	gem_pwrite.size = execbuf.batch_len;
+-	gem_pwrite.data_ptr = (uintptr_t)buf;
+-	do_or_die(drmIoctl(fd, DRM_IOCTL_I915_GEM_PWRITE, &amp;gem_pwrite));
+-	do_or_die(drmIoctl(fd, DRM_IOCTL_I915_GEM_EXECBUFFER2, &amp;execbuf));
+-
+-	drmIoctl(fd, DRM_IOCTL_GEM_CLOSE, &amp;create.handle);
+-}
+-
+-static void
+-gpu_cmp_bo(drm_intel_bo *bo, uint32_t val, int width, int height, drm_intel_bo *tmp)
+-{
+-	intel_blt_copy(batch,
+-		       bo, 0, 0, 4*width,
+-		       tmp, 0, 0, 4*width,
+-		       width, height, 32);
+-	cpu_cmp_bo(tmp, val, width, height, NULL);
+-}
+-
+-const struct access_mode {
+-	const char *name;
+-	void (*set_bo)(drm_intel_bo *bo, uint32_t val, int w, int h);
+-	void (*cmp_bo)(drm_intel_bo *bo, uint32_t val, int w, int h, drm_intel_bo *tmp);
+-	drm_intel_bo *(*create_bo)(drm_intel_bufmgr *bufmgr, int width, int height);
+-	void (*release_bo)(drm_intel_bo *bo);
+-} access_modes[] = {
+-	{
+-		.name = "prw",
+-		.set_bo = prw_set_bo,
+-		.cmp_bo = prw_cmp_bo,
+-		.create_bo = unmapped_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-	{
+-		.name = "cpu",
+-		.set_bo = cpu_set_bo,
+-		.cmp_bo = cpu_cmp_bo,
+-		.create_bo = unmapped_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-	{
+-		.name = "snoop",
+-		.set_bo = cpu_set_bo,
+-		.cmp_bo = cpu_cmp_bo,
+-		.create_bo = snoop_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-	{
+-		.name = "gtt",
+-		.set_bo = gtt_set_bo,
+-		.cmp_bo = gtt_cmp_bo,
+-		.create_bo = gtt_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-	{
+-		.name = "gttX",
+-		.set_bo = gtt_set_bo,
+-		.cmp_bo = gtt_cmp_bo,
+-		.create_bo = gttX_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-	{
+-		.name = "wc",
+-		.set_bo = gtt_set_bo,
+-		.cmp_bo = gtt_cmp_bo,
+-		.create_bo = wc_create_bo,
+-		.release_bo = wc_release_bo,
+-	},
+-	{
+-		.name = "gpu",
+-		.set_bo = gpu_set_bo,
+-		.cmp_bo = gpu_cmp_bo,
+-		.create_bo = gpu_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-	{
+-		.name = "gpuX",
+-		.set_bo = gpu_set_bo,
+-		.cmp_bo = gpu_cmp_bo,
+-		.create_bo = gpuX_create_bo,
+-		.release_bo = nop_release_bo,
+-	},
+-};
+-
+-#define MAX_NUM_BUFFERS 1024
+-int num_buffers = MAX_NUM_BUFFERS;
+-const int width = 512, height = 512;
+-igt_render_copyfunc_t rendercopy;
+-
+-struct buffers {
+-	const struct access_mode *mode;
+-	drm_intel_bufmgr *bufmgr;
+-	drm_intel_bo *src[MAX_NUM_BUFFERS], *dst[MAX_NUM_BUFFERS];
+-	drm_intel_bo *dummy, *spare;
+-	int count;
+-};
+-
+-static void *buffers_init(struct buffers *data,
+-			  const struct access_mode *mode,
+-			  int _fd)
+-{
+-	data-&gt;mode = mode;
+-	data-&gt;count = 0;
+-
+-	data-&gt;bufmgr = drm_intel_bufmgr_gem_init(_fd, 4096);
+-	igt_assert(data-&gt;bufmgr);
+-
+-	drm_intel_bufmgr_gem_enable_reuse(data-&gt;bufmgr);
+-	return intel_batchbuffer_alloc(data-&gt;bufmgr, devid);
+-}
+-
+-static void buffers_destroy(struct buffers *data)
+-{
+-	if (data-&gt;count == 0)
+-		return;
+-
+-	for (int i = 0; i &lt; data-&gt;count; i++) {
+-		data-&gt;mode-&gt;release_bo(data-&gt;src[i]);
+-		data-&gt;mode-&gt;release_bo(data-&gt;dst[i]);
+-	}
+-	data-&gt;mode-&gt;release_bo(data-&gt;dummy);
+-	data-&gt;mode-&gt;release_bo(data-&gt;spare);
+-	data-&gt;count = 0;
+-}
+-
+-static void buffers_create(struct buffers *data,
+-			   int count)
+-{
+-	igt_assert(data-&gt;bufmgr);
+-
+-	buffers_destroy(data);
+-
+-	for (int i = 0; i &lt; count; i++) {
+-		data-&gt;src[i] =
+-			data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
+-		data-&gt;dst[i] =
+-			data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
+-	}
+-	data-&gt;dummy = data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
+-	data-&gt;spare = data-&gt;mode-&gt;create_bo(data-&gt;bufmgr, width, height);
+-	data-&gt;count = count;
+-}
+-
+-static void buffers_fini(struct buffers *data)
+-{
+-	if (data-&gt;bufmgr == NULL)
+-		return;
+-
+-	buffers_destroy(data);
+-
+-	intel_batchbuffer_free(batch);
+-	drm_intel_bufmgr_destroy(data-&gt;bufmgr);
+-	data-&gt;bufmgr = NULL;
+-}
+-
+-typedef void (*do_copy)(drm_intel_bo *dst, drm_intel_bo *src);
+-typedef struct igt_hang_ring (*do_hang)(void);
+-
+-static void render_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
+-{
+-	struct igt_buf d = {
+-		.bo = dst,
+-		.size = width * height * 4,
+-		.num_tiles = width * height * 4,
+-		.stride = width * 4,
+-	}, s = {
+-		.bo = src,
+-		.size = width * height * 4,
+-		.num_tiles = width * height * 4,
+-		.stride = width * 4,
+-	};
+-	uint32_t swizzle;
+-
+-	drm_intel_bo_get_tiling(dst, &amp;d.tiling, &amp;swizzle);
+-	drm_intel_bo_get_tiling(src, &amp;s.tiling, &amp;swizzle);
+-
+-	rendercopy(batch, NULL,
+-		   &amp;s, 0, 0,
+-		   width, height,
+-		   &amp;d, 0, 0);
+-}
+-
+-static void blt_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
+-{
+-	intel_blt_copy(batch,
+-		       src, 0, 0, 4*width,
+-		       dst, 0, 0, 4*width,
+-		       width, height, 32);
+-}
+-
+-static void cpu_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
+-{
+-	const int size = width * height * sizeof(uint32_t);
+-	void *d, *s;
+-
+-	gem_set_domain(fd, src-&gt;handle, I915_GEM_DOMAIN_CPU, 0);
+-	gem_set_domain(fd, dst-&gt;handle, I915_GEM_DOMAIN_CPU, I915_GEM_DOMAIN_CPU);
+-	s = gem_mmap__cpu(fd, src-&gt;handle, 0, size, PROT_READ);
+-	d = gem_mmap__cpu(fd, dst-&gt;handle, 0, size, PROT_WRITE);
+-
+-	memcpy(d, s, size);
+-
+-	munmap(d, size);
+-	munmap(s, size);
+-}
+-
+-static void gtt_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
+-{
+-	const int size = width * height * sizeof(uint32_t);
+-	void *d, *s;
+-
+-	gem_set_domain(fd, src-&gt;handle, I915_GEM_DOMAIN_GTT, 0);
+-	gem_set_domain(fd, dst-&gt;handle, I915_GEM_DOMAIN_GTT, I915_GEM_DOMAIN_GTT);
+-
+-	s = gem_mmap__gtt(fd, src-&gt;handle, size, PROT_READ);
+-	d = gem_mmap__gtt(fd, dst-&gt;handle, size, PROT_WRITE);
+-
+-	memcpy(d, s, size);
+-
+-	munmap(d, size);
+-	munmap(s, size);
+-}
+-
+-static void wc_copy_bo(drm_intel_bo *dst, drm_intel_bo *src)
+-{
+-	const int size = width * height * sizeof(uint32_t);
+-	void *d, *s;
+-
+-	gem_set_domain(fd, src-&gt;handle, I915_GEM_DOMAIN_GTT, 0);
+-	gem_set_domain(fd, dst-&gt;handle, I915_GEM_DOMAIN_GTT, I915_GEM_DOMAIN_GTT);
+-
+-	s = gem_mmap__wc(fd, src-&gt;handle, 0, size, PROT_READ);
+-	d = gem_mmap__wc(fd, dst-&gt;handle, 0, size, PROT_WRITE);
+-
+-	memcpy(d, s, size);
+-
+-	munmap(d, size);
+-	munmap(s, size);
+-}
+-
+-static struct igt_hang_ring no_hang(void)
+-{
+-	return (struct igt_hang_ring){0, 0};
+-}
+-
+-static struct igt_hang_ring bcs_hang(void)
+-{
+-	return igt_hang_ring(fd, I915_EXEC_BLT);
+-}
+-
+-static struct igt_hang_ring rcs_hang(void)
+-{
+-	return igt_hang_ring(fd, I915_EXEC_RENDER);
+-}
+-
+-static void hang_require(void)
+-{
+-	igt_require_hang_ring(fd, -1);
+-}
+-
+-static void do_overwrite_source(struct buffers *buffers,
+-				do_copy do_copy_func,
+-				do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = 0; i &lt; buffers-&gt;count; i++) {
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], i, width, height);
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], ~i, width, height);
+-	}
+-	for (i = 0; i &lt; buffers-&gt;count; i++)
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-	hang = do_hang_func();
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
+-	for (i = 0; i &lt; buffers-&gt;count; i++)
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], i, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_overwrite_source_read(struct buffers *buffers,
+-				     do_copy do_copy_func,
+-				     do_hang do_hang_func,
+-				     int do_rcs)
+-{
+-	const int half = buffers-&gt;count/2;
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = 0; i &lt; half; i++) {
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], i, width, height);
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], ~i, width, height);
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i+half], ~i, width, height);
+-	}
+-	for (i = 0; i &lt; half; i++) {
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-		if (do_rcs)
+-			render_copy_bo(buffers-&gt;dst[i+half], buffers-&gt;src[i]);
+-		else
+-			blt_copy_bo(buffers-&gt;dst[i+half], buffers-&gt;src[i]);
+-	}
+-	hang = do_hang_func();
+-	for (i = half; i--; )
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
+-	for (i = 0; i &lt; half; i++) {
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], i, width, height, buffers-&gt;dummy);
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i+half], i, width, height, buffers-&gt;dummy);
+-	}
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_overwrite_source_read_bcs(struct buffers *buffers,
+-					 do_copy do_copy_func,
+-					 do_hang do_hang_func)
+-{
+-	do_overwrite_source_read(buffers, do_copy_func, do_hang_func, 0);
+-}
+-
+-static void do_overwrite_source_read_rcs(struct buffers *buffers,
+-					 do_copy do_copy_func,
+-					 do_hang do_hang_func)
+-{
+-	do_overwrite_source_read(buffers, do_copy_func, do_hang_func, 1);
+-}
+-
+-static void do_overwrite_source__rev(struct buffers *buffers,
+-				     do_copy do_copy_func,
+-				     do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = 0; i &lt; buffers-&gt;count; i++) {
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], i, width, height);
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], ~i, width, height);
+-	}
+-	for (i = 0; i &lt; buffers-&gt;count; i++)
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-	hang = do_hang_func();
+-	for (i = 0; i &lt; buffers-&gt;count; i++)
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], i, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_overwrite_source__one(struct buffers *buffers,
+-				     do_copy do_copy_func,
+-				     do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-
+-	gem_quiescent_gpu(fd);
+-	buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[0], 0, width, height);
+-	buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[0], ~0, width, height);
+-	do_copy_func(buffers-&gt;dst[0], buffers-&gt;src[0]);
+-	hang = do_hang_func();
+-	buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[0], 0xdeadbeef, width, height);
+-	buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[0], 0, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_intermix(struct buffers *buffers,
+-			do_copy do_copy_func,
+-			do_hang do_hang_func,
+-			int do_rcs)
+-{
+-	const int half = buffers-&gt;count/2;
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = 0; i &lt; buffers-&gt;count; i++) {
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef^~i, width, height);
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;dst[i], i, width, height);
+-	}
+-	for (i = 0; i &lt; half; i++) {
+-		if (do_rcs == 1 || (do_rcs == -1 &amp;&amp; i &amp; 1))
+-			render_copy_bo(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-		else
+-			blt_copy_bo(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-
+-		do_copy_func(buffers-&gt;dst[i+half], buffers-&gt;src[i]);
+-
+-		if (do_rcs == 1 || (do_rcs == -1 &amp;&amp; (i &amp; 1) == 0))
+-			render_copy_bo(buffers-&gt;dst[i], buffers-&gt;dst[i+half]);
+-		else
+-			blt_copy_bo(buffers-&gt;dst[i], buffers-&gt;dst[i+half]);
+-
+-		do_copy_func(buffers-&gt;dst[i+half], buffers-&gt;src[i+half]);
+-	}
+-	hang = do_hang_func();
+-	for (i = 0; i &lt; 2*half; i++)
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef^~i, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_intermix_rcs(struct buffers *buffers,
+-			    do_copy do_copy_func,
+-			    do_hang do_hang_func)
+-{
+-	do_intermix(buffers, do_copy_func, do_hang_func, 1);
+-}
+-
+-static void do_intermix_bcs(struct buffers *buffers,
+-			    do_copy do_copy_func,
+-			    do_hang do_hang_func)
+-{
+-	do_intermix(buffers, do_copy_func, do_hang_func, 0);
+-}
+-
+-static void do_intermix_both(struct buffers *buffers,
+-			     do_copy do_copy_func,
+-			     do_hang do_hang_func)
+-{
+-	do_intermix(buffers, do_copy_func, do_hang_func, -1);
+-}
+-
+-static void do_early_read(struct buffers *buffers,
+-			  do_copy do_copy_func,
+-			  do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef, width, height);
+-	for (i = 0; i &lt; buffers-&gt;count; i++)
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-	hang = do_hang_func();
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_read_read_bcs(struct buffers *buffers,
+-			     do_copy do_copy_func,
+-			     do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef ^ i, width, height);
+-	for (i = 0; i &lt; buffers-&gt;count; i++) {
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-		blt_copy_bo(buffers-&gt;spare, buffers-&gt;src[i]);
+-	}
+-	cpu_cmp_bo(buffers-&gt;spare, 0xdeadbeef^(buffers-&gt;count-1), width, height, NULL);
+-	hang = do_hang_func();
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef ^ i, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_read_read_rcs(struct buffers *buffers,
+-			     do_copy do_copy_func,
+-			     do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xdeadbeef ^ i, width, height);
+-	for (i = 0; i &lt; buffers-&gt;count; i++) {
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-		render_copy_bo(buffers-&gt;spare, buffers-&gt;src[i]);
+-	}
+-	cpu_cmp_bo(buffers-&gt;spare, 0xdeadbeef^(buffers-&gt;count-1), width, height, NULL);
+-	hang = do_hang_func();
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xdeadbeef ^ i, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-static void do_gpu_read_after_write(struct buffers *buffers,
+-				    do_copy do_copy_func,
+-				    do_hang do_hang_func)
+-{
+-	struct igt_hang_ring hang;
+-	int i;
+-
+-	gem_quiescent_gpu(fd);
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;set_bo(buffers-&gt;src[i], 0xabcdabcd, width, height);
+-	for (i = 0; i &lt; buffers-&gt;count; i++)
+-		do_copy_func(buffers-&gt;dst[i], buffers-&gt;src[i]);
+-	for (i = buffers-&gt;count; i--; )
+-		do_copy_func(buffers-&gt;dummy, buffers-&gt;dst[i]);
+-	hang = do_hang_func();
+-	for (i = buffers-&gt;count; i--; )
+-		buffers-&gt;mode-&gt;cmp_bo(buffers-&gt;dst[i], 0xabcdabcd, width, height, buffers-&gt;dummy);
+-	igt_post_hang_ring(fd, hang);
+-}
+-
+-typedef void (*do_test)(struct buffers *buffers,
+-			do_copy do_copy_func,
+-			do_hang do_hang_func);
+-
+-typedef void (*run_wrap)(struct buffers *buffers,
+-			 do_test do_test_func,
+-			 do_copy do_copy_func,
+-			 do_hang do_hang_func);
+-
+-static void run_single(struct buffers *buffers,
+-		       do_test do_test_func,
+-		       do_copy do_copy_func,
+-		       do_hang do_hang_func)
+-{
+-	do_test_func(buffers, do_copy_func, do_hang_func);
+-}
+-
+-static void run_interruptible(struct buffers *buffers,
+-			      do_test do_test_func,
+-			      do_copy do_copy_func,
+-			      do_hang do_hang_func)
+-{
+-	int loop;
+-
+-	for (loop = 0; loop &lt; 10; loop++)
+-		do_test_func(buffers, do_copy_func, do_hang_func);
+-}
+-
+-static void run_forked(struct buffers *buffers,
+-		       do_test do_test_func,
+-		       do_copy do_copy_func,
+-		       do_hang do_hang_func)
+-{
+-	const int old_num_buffers = num_buffers;
+-
+-	num_buffers /= 16;
+-	num_buffers += 2;
+-
+-	igt_fork(child, 16) {
+-		/* recreate process local variables */
+-		buffers-&gt;count = 0;
+-		fd = drm_open_driver(DRIVER_INTEL);
+-
+-		batch = buffers_init(buffers, buffers-&gt;mode, fd);
+-
+-		buffers_create(buffers, num_buffers);
+-		for (int loop = 0; loop &lt; 10; loop++)
+-			do_test_func(buffers, do_copy_func, do_hang_func);
+-
+-		buffers_fini(buffers);
+-	}
+-
+-	igt_waitchildren();
+-
+-	num_buffers = old_num_buffers;
+-}
+-
+-static void bit17_require(void)
+-{
+-	struct drm_i915_gem_get_tiling2 {
+-		uint32_t handle;
+-		uint32_t tiling_mode;
+-		uint32_t swizzle_mode;
+-		uint32_t phys_swizzle_mode;
+-	} arg;
+-#define DRM_IOCTL_I915_GEM_GET_TILING2	DRM_IOWR (DRM_COMMAND_BASE + DRM_I915_GEM_GET_TILING, struct drm_i915_gem_get_tiling2)
+-
+-	memset(&amp;arg, 0, sizeof(arg));
+-	arg.handle = gem_create(fd, 4096);
+-	gem_set_tiling(fd, arg.handle, I915_TILING_X, 512);
+-
+-	do_or_die(drmIoctl(fd, DRM_IOCTL_I915_GEM_GET_TILING2, &amp;arg));
+-	gem_close(fd, arg.handle);
+-	igt_require(arg.phys_swizzle_mode == arg.swizzle_mode);
+-}
+-
+-static void cpu_require(void)
+-{
+-	bit17_require();
+-}
+-
+-static void gtt_require(void)
+-{
+-}
+-
+-static void wc_require(void)
+-{
+-	bit17_require();
+-	gem_require_mmap_wc(fd);
+-}
+-
+-static void bcs_require(void)
+-{
+-}
+-
+-static void rcs_require(void)
+-{
+-	igt_require(rendercopy);
+-}
+-
+-static void no_require(void)
+-{
+-}
+-
+-static void
+-run_basic_modes(const struct access_mode *mode,
+-		const char *suffix,
+-		run_wrap run_wrap_func)
+-{
+-	const struct {
+-		const char *prefix;
+-		do_copy copy;
+-		void (*require)(void);
+-	} pipelines[] = {
+-		{ "cpu", cpu_copy_bo, cpu_require },
+-		{ "gtt", gtt_copy_bo, gtt_require },
+-		{ "wc", wc_copy_bo, wc_require },
+-		{ "blt", blt_copy_bo, bcs_require },
+-		{ "render", render_copy_bo, rcs_require },
+-		{ NULL, NULL }
+-	}, *pskip = pipelines + 3, *p;
+-	const struct {
+-		const char *suffix;
+-		do_hang hang;
+-		void (*require)(void);
+-	} hangs[] = {
+-		{ "", no_hang, no_require },
+-		{ "-hang-blt", bcs_hang, hang_require },
+-		{ "-hang-render", rcs_hang, hang_require },
+-		{ NULL, NULL },
+-	}, *h;
+-	struct buffers buffers;
+-
+-	for (h = hangs; h-&gt;suffix; h++) {
+-		if (!all &amp;&amp; *h-&gt;suffix)
+-			continue;
+-
+-		for (p = all ? pipelines : pskip; p-&gt;prefix; p++) {
+-			igt_fixture {
+-				batch = buffers_init(&amp;buffers, mode, fd);
+-			}
+-
+-			/* try to overwrite the source values */
+-			igt_subtest_f("%s-%s-overwrite-source-one%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_overwrite_source__one,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			igt_subtest_f("%s-%s-overwrite-source%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_overwrite_source,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			igt_subtest_f("%s-%s-overwrite-source-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_overwrite_source_read_bcs,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			igt_subtest_f("%s-%s-overwrite-source-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				igt_require(rendercopy);
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_overwrite_source_read_rcs,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			igt_subtest_f("%s-%s-overwrite-source-rev%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_overwrite_source__rev,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			/* try to intermix copies with GPU copies*/
+-			igt_subtest_f("%s-%s-intermix-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				igt_require(rendercopy);
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_intermix_rcs,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-			igt_subtest_f("%s-%s-intermix-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				igt_require(rendercopy);
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_intermix_bcs,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-			igt_subtest_f("%s-%s-intermix-both%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				igt_require(rendercopy);
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_intermix_both,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			/* try to read the results before the copy completes */
+-			igt_subtest_f("%s-%s-early-read%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_early_read,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			/* concurrent reads */
+-			igt_subtest_f("%s-%s-read-read-bcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_read_read_bcs,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-			igt_subtest_f("%s-%s-read-read-rcs%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				igt_require(rendercopy);
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_read_read_rcs,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			/* and finally try to trick the kernel into loosing the pending write */
+-			igt_subtest_f("%s-%s-gpu-read-after-write%s%s", mode-&gt;name, p-&gt;prefix, suffix, h-&gt;suffix) {
+-				h-&gt;require();
+-				p-&gt;require();
+-				buffers_create(&amp;buffers, num_buffers);
+-				run_wrap_func(&amp;buffers,
+-					      do_gpu_read_after_write,
+-					      p-&gt;copy, h-&gt;hang);
+-			}
+-
+-			igt_fixture {
+-				buffers_fini(&amp;buffers);
+-			}
+-		}
+-	}
+-}
+-
+-static void
+-run_modes(const struct access_mode *mode)
+-{
+-	if (all) {
+-		run_basic_modes(mode, "", run_single);
+-
+-		igt_fork_signal_helper();
+-		run_basic_modes(mode, "-interruptible", run_interruptible);
+-		igt_stop_signal_helper();
+-	}
+-
+-	igt_fork_signal_helper();
+-	run_basic_modes(mode, "-forked", run_forked);
+-	igt_stop_signal_helper();
+-}
+-
+-igt_main
+-{
+-	int max, i;
+-
+-	igt_skip_on_simulation();
+-
+-	if (strstr(igt_test_name(), "all"))
+-		all = true;
+-
+-	igt_fixture {
+-		fd = drm_open_driver(DRIVER_INTEL);
+-		devid = intel_get_drm_devid(fd);
+-		gen = intel_gen(devid);
+-		rendercopy = igt_get_render_copyfunc(devid);
+-
+-		max = gem_aperture_size (fd) / (1024 * 1024) / 2;
+-		if (num_buffers &gt; max)
+-			num_buffers = max;
+-
+-		max = intel_get_total_ram_mb() * 3 / 4;
+-		if (num_buffers &gt; max)
+-			num_buffers = max;
+-		num_buffers /= 2;
+-		igt_info("using 2x%d buffers, each 1MiB\n", num_buffers);
+-	}
+-
+-	for (i = 0; i &lt; ARRAY_SIZE(access_modes); i++)
+-		run_modes(&amp;access_modes[i]);
+-}
+</field><field type="CharField" name="pull_url"><None></None></field><field type="CharField" name="commit_ref"><None></None></field><field type="CharField" name="hash">d8b60d651b59f6143f56ced1046671f9597dd5a7</field></object><object pk="4" model="patchwork.patch"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="msgid">&lt;1445610265-27189-1-git-send-email-robert.fekete@linux.intel.com&gt;</field><field type="CharField" name="name">[Intel-gfx] drm/i915: Add extra plane information in debugfs.</field><field type="DateTimeField" name="date">2015-10-23T14:24:25</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">2</field><field to="auth.user" name="delegate" rel="ManyToOneRel"><None></None></field><field to="patchwork.state" name="state" rel="ManyToOneRel">1</field><field type="BooleanField" name="archived">False</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp1041014vkz;
+	Fri, 23 Oct 2015 07:22:49 -0700 (PDT)
+X-Received: by 10.50.23.73 with SMTP id k9mr4498284igf.25.1445610169482;
+	Fri, 23 Oct 2015 07:22:49 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id nv7si3589960igb.3.2015.10.23.07.22.49; 
+	Fri, 23 Oct 2015 07:22:49 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 540EB6F057;
+	Fri, 23 Oct 2015 07:22:48 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 4176C6F057
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Fri, 23 Oct 2015 07:22:47 -0700 (PDT)
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+	by fmsmga102.fm.intel.com with ESMTP; 23 Oct 2015 07:22:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,186,1444719600"; d="scan'208";a="801166756"
+Received: from robertfe-linux.isw.intel.com ([10.237.180.144])
+	by orsmga001.jf.intel.com with ESMTP; 23 Oct 2015 07:22:45 -0700
+From: Robert Fekete &lt;robert.fekete@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Fri, 23 Oct 2015 16:24:25 +0200
+Message-Id: &lt;1445610265-27189-1-git-send-email-robert.fekete@linux.intel.com&gt;
+X-Mailer: git-send-email 1.9.1
+Subject: [Intel-gfx] [PATCH] drm/i915: Add extra plane information in
+	debugfs.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index eca94d0e4d99..6234f7293dc6 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -2950,6 +2950,122 @@ static bool cursor_position(struct drm_device *dev, int pipe, int *x, int *y)
+ 	return cursor_active(dev, pipe);
+ }
+ 
++static const char *plane_type(enum drm_plane_type type)
++{
++	switch (type) {
++	case DRM_PLANE_TYPE_OVERLAY:
++		return "OVL";
++	case DRM_PLANE_TYPE_PRIMARY:
++		return "PRI";
++	case DRM_PLANE_TYPE_CURSOR:
++		return "CUR";
++	default:
++		MISSING_CASE(type);
++		return "unknown";
++	}
++}
++
++static const char *plane_format(uint32_t format)
++{
++	static char pixel_format_string[5];
++
++	/* fourcc string encoding to string */
++	pixel_format_string[0] = format &amp; 0xff;
++	pixel_format_string[1] = (format &gt;&gt; 8) &amp; 0xff;
++	pixel_format_string[2] = (format &gt;&gt; 16) &amp; 0xff;
++	pixel_format_string[3] = (format &gt;&gt; 24) &amp; 0xff;
++	pixel_format_string[4] = '\0';
++
++	return pixel_format_string;
++}
++
++static const char *plane_rotation(unsigned int rotation)
++{
++	switch (rotation) {
++	case DRM_ROTATE_0:
++		return "0";
++	case DRM_ROTATE_90:
++		return "90";
++	case DRM_ROTATE_180:
++		return "180";
++	case DRM_ROTATE_270:
++		return "270";
++	case DRM_REFLECT_X:
++		return "FLIP X";
++	case DRM_REFLECT_Y:
++		return "FLIP Y";
++	default:
++		MISSING_CASE(rotation);
++		return "unknown";
++	}
++}
++
++
++static void intel_plane_info(struct seq_file *m, struct intel_crtc *intel_crtc)
++{
++	struct drm_info_node *node = m-&gt;private;
++	struct drm_device *dev = node-&gt;minor-&gt;dev;
++	struct intel_plane *intel_plane;
++
++	for_each_intel_plane_on_crtc(dev, intel_crtc, intel_plane) {
++		struct drm_plane_state *state;
++		struct drm_plane *plane = &amp;intel_plane-&gt;base;
++		uint32_t fb_format = 0;
++
++		if (!plane-&gt;state) {
++			seq_puts(m, "plane-&gt;state is NULL!\n");
++			continue;
++		}
++
++		state = plane-&gt;state;
++
++		if (state-&gt;fb) {
++			/* plane not active */
++			fb_format = state-&gt;fb-&gt;pixel_format;
++		}
++
++		seq_printf(m, "\t--Plane id %d: type=%s, crtc_pos=%4dx%4d, crtc_size=%4dx%4d, src_pos=%d.%dx%d.%d, src_size=%d.%dx%d.%d, format=%s, rotation=%s\n",
++			   plane-&gt;base.id,
++			   plane_type(intel_plane-&gt;base.type),
++			   state-&gt;crtc_x, state-&gt;crtc_y,
++			   state-&gt;crtc_w, state-&gt;crtc_h,
++			   (state-&gt;src_x &gt;&gt; 16), (state-&gt;src_x &amp; 0x00ff),
++			   (state-&gt;src_y &gt;&gt; 16), (state-&gt;src_y &amp; 0x00ff),
++			   (state-&gt;src_w &gt;&gt; 16), (state-&gt;src_w &amp; 0x00ff),
++			   (state-&gt;src_h &gt;&gt; 16), (state-&gt;src_h &amp; 0x00ff),
++			   fb_format ? plane_format(fb_format) : "N/A",
++			   plane_rotation(state-&gt;rotation));
++	}
++}
++
++static void intel_scaler_info(struct seq_file *m, struct intel_crtc *intel_crtc)
++{
++	struct intel_crtc_state *pipe_config;
++	int num_scalers = intel_crtc-&gt;num_scalers;
++	int i;
++
++	pipe_config = to_intel_crtc_state(intel_crtc-&gt;base.state);
++
++	/* Not all platformas have a scaler */
++	if (num_scalers) {
++		seq_printf(m, "\tnum_scalers=%d, scaler_users=%d scaler_id=%d",
++			   num_scalers,
++			   pipe_config-&gt;scaler_state.scaler_users,
++			   pipe_config-&gt;scaler_state.scaler_id);
++
++		for (i = 0; i &lt; SKL_NUM_SCALERS; i++) {
++			struct intel_scaler *sc =
++					&amp;pipe_config-&gt;scaler_state.scalers[i];
++
++			seq_printf(m, ", scalers[%d]: use=%d, mode=%d",
++				   i, sc-&gt;in_use, sc-&gt;mode);
++		}
++		seq_puts(m, "\n");
++	} else {
++		seq_puts(m, "\tNo scalers available on this platform\n");
++	}
++}
++
+ static int i915_display_info(struct seq_file *m, void *unused)
+ {
+ 	struct drm_info_node *node = m-&gt;private;
+@@ -2969,10 +3085,12 @@ static int i915_display_info(struct seq_file *m, void *unused)
+ 
+ 		pipe_config = to_intel_crtc_state(crtc-&gt;base.state);
+ 
+-		seq_printf(m, "CRTC %d: pipe: %c, active=%s (size=%dx%d)\n",
++		seq_printf(m, "CRTC %d: pipe: %c, active=%s, (size=%dx%d), dither=%s, bpp=%d\n",
+ 			   crtc-&gt;base.base.id, pipe_name(crtc-&gt;pipe),
+ 			   yesno(pipe_config-&gt;base.active),
+-			   pipe_config-&gt;pipe_src_w, pipe_config-&gt;pipe_src_h);
++			   pipe_config-&gt;pipe_src_w, pipe_config-&gt;pipe_src_h,
++			   yesno(pipe_config-&gt;dither), pipe_config-&gt;pipe_bpp);
++
+ 		if (pipe_config-&gt;base.active) {
+ 			intel_crtc_info(m, crtc);
+ 
+@@ -2982,6 +3100,8 @@ static int i915_display_info(struct seq_file *m, void *unused)
+ 				   x, y, crtc-&gt;base.cursor-&gt;state-&gt;crtc_w,
+ 				   crtc-&gt;base.cursor-&gt;state-&gt;crtc_h,
+ 				   crtc-&gt;cursor_addr, yesno(active));
++			intel_scaler_info(m, crtc);
++			intel_plane_info(m, crtc);
+ 		}
+ 
+ 		seq_printf(m, "\tunderrun reporting: cpu=%s pch=%s \n",
+</field><field type="CharField" name="pull_url"><None></None></field><field type="CharField" name="commit_ref"><None></None></field><field type="CharField" name="hash">716957b5cff3cd6bdd2041b85ec6576bf0a58abd</field></object><object pk="5" model="patchwork.patch"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="msgid">&lt;1445960989-14961-1-git-send-email-robert.fekete@linux.intel.com&gt;</field><field type="CharField" name="name">[Intel-gfx,v2] drm/i915: Add extra plane information in debugfs.</field><field type="DateTimeField" name="date">2015-10-27T15:49:49</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">2</field><field to="auth.user" name="delegate" rel="ManyToOneRel"><None></None></field><field to="patchwork.state" name="state" rel="ManyToOneRel">1</field><field type="BooleanField" name="archived">False</field><field type="TextField" name="headers">Delivered-To: patchworkbot@gmail.com
+Received: by 10.31.51.12 with SMTP id z12csp1786421vkz;
+	Tue, 27 Oct 2015 08:48:27 -0700 (PDT)
+X-Received: by 10.107.43.2 with SMTP id r2mr25466002ior.114.1445960907711;
+	Tue, 27 Oct 2015 08:48:27 -0700 (PDT)
+Return-Path: &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+Received: from gabe.freedesktop.org (gabe.freedesktop.org. [131.252.210.177])
+	by mx.google.com with ESMTP id
+	op7si17487372igb.80.2015.10.27.08.48.26; 
+	Tue, 27 Oct 2015 08:48:27 -0700 (PDT)
+Received-SPF: pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	client-ip=131.252.210.177; 
+Authentication-Results: mx.google.com; spf=pass (google.com: domain of
+	intel-gfx-bounces@lists.freedesktop.org designates
+	131.252.210.177 as permitted sender)
+	smtp.mailfrom=intel-gfx-bounces@lists.freedesktop.org
+Received: from gabe.freedesktop.org (localhost [127.0.0.1])
+	by gabe.freedesktop.org (Postfix) with ESMTP id 4C0D86E596;
+	Tue, 27 Oct 2015 08:48:25 -0700 (PDT)
+X-Original-To: intel-gfx@lists.freedesktop.org
+Delivered-To: intel-gfx@lists.freedesktop.org
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+	by gabe.freedesktop.org (Postfix) with ESMTP id D4C0D6E596
+	for &lt;intel-gfx@lists.freedesktop.org&gt;;
+	Tue, 27 Oct 2015 08:48:23 -0700 (PDT)
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+	by fmsmga101.fm.intel.com with ESMTP; 27 Oct 2015 08:48:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.20,205,1444719600"; d="scan'208";a="672788513"
+Received: from robertfe-linux.isw.intel.com ([10.237.180.144])
+	by orsmga003.jf.intel.com with ESMTP; 27 Oct 2015 08:48:02 -0700
+From: Robert Fekete &lt;robert.fekete@linux.intel.com&gt;
+To: intel-gfx@lists.freedesktop.org
+Date: Tue, 27 Oct 2015 16:49:49 +0100
+Message-Id: &lt;1445960989-14961-1-git-send-email-robert.fekete@linux.intel.com&gt;
+X-Mailer: git-send-email 1.9.1
+Subject: [Intel-gfx] [PATCH v2] drm/i915: Add extra plane information in
+	debugfs.
+X-BeenThere: intel-gfx@lists.freedesktop.org
+X-Mailman-Version: 2.1.18
+Precedence: list
+List-Id: Intel graphics driver community testing &amp; development
+	&lt;intel-gfx.lists.freedesktop.org&gt;
+List-Unsubscribe: &lt;http://lists.freedesktop.org/mailman/options/intel-gfx&gt;, 
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe&gt;
+List-Archive: &lt;http://lists.freedesktop.org/archives/intel-gfx&gt;
+List-Post: &lt;mailto:intel-gfx@lists.freedesktop.org&gt;
+List-Help: &lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=help&gt;
+List-Subscribe: &lt;http://lists.freedesktop.org/mailman/listinfo/intel-gfx&gt;,
+	&lt;mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe&gt;
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" &lt;intel-gfx-bounces@lists.freedesktop.org&gt;
+</field><field type="TextField" name="content">diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+index eca94d0e4d99..9a2265e1139a 100644
+--- a/drivers/gpu/drm/i915/i915_debugfs.c
++++ b/drivers/gpu/drm/i915/i915_debugfs.c
+@@ -2950,6 +2950,107 @@ static bool cursor_position(struct drm_device *dev, int pipe, int *x, int *y)
+ 	return cursor_active(dev, pipe);
+ }
+ 
++static const char *plane_type(enum drm_plane_type type)
++{
++	switch (type) {
++	case DRM_PLANE_TYPE_OVERLAY:
++		return "OVL";
++	case DRM_PLANE_TYPE_PRIMARY:
++		return "PRI";
++	case DRM_PLANE_TYPE_CURSOR:
++		return "CUR";
++	/*
++	 * Deliberately omitting default: to generate compiler warnings
++	 * when a new drm_plane_type gets added.
++	 */
++	}
++
++	return "unknown";
++}
++
++static const char *plane_rotation(unsigned int rotation)
++{
++	static char buf[48];
++	/*
++	 * According to doc only one DRM_ROTATE_ is allowed but this
++	 * will print them all to visualize if the values are misused
++	 */
++	snprintf(buf, sizeof(buf),
++		 "%s%s%s%s%s%s(0x%08x)",
++		 (rotation &amp; BIT(DRM_ROTATE_0)) ? "0 " : "",
++		 (rotation &amp; BIT(DRM_ROTATE_90)) ? "90 " : "",
++		 (rotation &amp; BIT(DRM_ROTATE_180)) ? "180 " : "",
++		 (rotation &amp; BIT(DRM_ROTATE_270)) ? "270 " : "",
++		 (rotation &amp; BIT(DRM_REFLECT_X)) ? "FLIPX " : "",
++		 (rotation &amp; BIT(DRM_REFLECT_Y)) ? "FLIPY " : "",
++		 rotation);
++
++	return buf;
++}
++
++static void intel_plane_info(struct seq_file *m, struct intel_crtc *intel_crtc)
++{
++	struct drm_info_node *node = m-&gt;private;
++	struct drm_device *dev = node-&gt;minor-&gt;dev;
++	struct intel_plane *intel_plane;
++
++	for_each_intel_plane_on_crtc(dev, intel_crtc, intel_plane) {
++		struct drm_plane_state *state;
++		struct drm_plane *plane = &amp;intel_plane-&gt;base;
++
++		if (!plane-&gt;state) {
++			seq_puts(m, "plane-&gt;state is NULL!\n");
++			continue;
++		}
++
++		state = plane-&gt;state;
++
++		seq_printf(m, "\t--Plane id %d: type=%s, crtc_pos=%4dx%4d, crtc_size=%4dx%4d, src_pos=%d.%04ux%d.%04u, src_size=%d.%04ux%d.%04u, format=%s, rotation=%s\n",
++			   plane-&gt;base.id,
++			   plane_type(intel_plane-&gt;base.type),
++			   state-&gt;crtc_x, state-&gt;crtc_y,
++			   state-&gt;crtc_w, state-&gt;crtc_h,
++			   (state-&gt;src_x &gt;&gt; 16),
++			   ((state-&gt;src_x &amp; 0x00ff) * 15625) &gt;&gt; 10,
++			   (state-&gt;src_y &gt;&gt; 16),
++			   ((state-&gt;src_y &amp; 0x00ff) * 15625) &gt;&gt; 10,
++			   (state-&gt;src_w &gt;&gt; 16),
++			   ((state-&gt;src_w &amp; 0x00ff) * 15625) &gt;&gt; 10,
++			   (state-&gt;src_h &gt;&gt; 16),
++			   ((state-&gt;src_h &amp; 0x00ff) * 15625) &gt;&gt; 10,
++			   state-&gt;fb ? drm_get_format_name(state-&gt;fb-&gt;pixel_format) : "N/A",
++			   plane_rotation(state-&gt;rotation));
++	}
++}
++
++static void intel_scaler_info(struct seq_file *m, struct intel_crtc *intel_crtc)
++{
++	struct intel_crtc_state *pipe_config;
++	int num_scalers = intel_crtc-&gt;num_scalers;
++	int i;
++
++	pipe_config = to_intel_crtc_state(intel_crtc-&gt;base.state);
++
++	/* Not all platformas have a scaler */
++	if (num_scalers) {
++		seq_printf(m, "\tnum_scalers=%d, scaler_users=%x scaler_id=%d",
++			   num_scalers,
++			   pipe_config-&gt;scaler_state.scaler_users,
++			   pipe_config-&gt;scaler_state.scaler_id);
++
++		for (i = 0; i &lt; SKL_NUM_SCALERS; i++) {
++			struct intel_scaler *sc =
++					&amp;pipe_config-&gt;scaler_state.scalers[i];
++
++			seq_printf(m, ", scalers[%d]: use=%s, mode=%x",
++				   i, yesno(sc-&gt;in_use), sc-&gt;mode);
++		}
++		seq_puts(m, "\n");
++	} else {
++		seq_puts(m, "\tNo scalers available on this platform\n");
++	}
++}
++
+ static int i915_display_info(struct seq_file *m, void *unused)
+ {
+ 	struct drm_info_node *node = m-&gt;private;
+@@ -2969,10 +3070,12 @@ static int i915_display_info(struct seq_file *m, void *unused)
+ 
+ 		pipe_config = to_intel_crtc_state(crtc-&gt;base.state);
+ 
+-		seq_printf(m, "CRTC %d: pipe: %c, active=%s (size=%dx%d)\n",
++		seq_printf(m, "CRTC %d: pipe: %c, active=%s, (size=%dx%d), dither=%s, bpp=%d\n",
+ 			   crtc-&gt;base.base.id, pipe_name(crtc-&gt;pipe),
+ 			   yesno(pipe_config-&gt;base.active),
+-			   pipe_config-&gt;pipe_src_w, pipe_config-&gt;pipe_src_h);
++			   pipe_config-&gt;pipe_src_w, pipe_config-&gt;pipe_src_h,
++			   yesno(pipe_config-&gt;dither), pipe_config-&gt;pipe_bpp);
++
+ 		if (pipe_config-&gt;base.active) {
+ 			intel_crtc_info(m, crtc);
+ 
+@@ -2982,6 +3085,8 @@ static int i915_display_info(struct seq_file *m, void *unused)
+ 				   x, y, crtc-&gt;base.cursor-&gt;state-&gt;crtc_w,
+ 				   crtc-&gt;base.cursor-&gt;state-&gt;crtc_h,
+ 				   crtc-&gt;cursor_addr, yesno(active));
++			intel_scaler_info(m, crtc);
++			intel_plane_info(m, crtc);
+ 		}
+ 
+ 		seq_printf(m, "\tunderrun reporting: cpu=%s pch=%s \n",
+</field><field type="CharField" name="pull_url"><None></None></field><field type="CharField" name="commit_ref"><None></None></field><field type="CharField" name="hash">71d56957402a4f71cf1fdc140fa08e4410b44458</field></object><object pk="1" model="patchwork.series"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="name">Unify slow/combinatorial test handling</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">1</field><field to="auth.user" name="reviewer" rel="ManyToOneRel"><None></None></field><field type="DateTimeField" name="submitted">2015-10-23T11:42:33</field><field type="DateTimeField" name="last_updated">2015-10-29T13:13:14.352345</field><field type="IntegerField" name="version">1</field><field type="IntegerField" name="n_patches">3</field></object><object pk="3" model="patchwork.series"><field to="patchwork.project" name="project" rel="ManyToOneRel">1</field><field type="CharField" name="name">drm/i915: Add extra plane information in debugfs.</field><field to="patchwork.person" name="submitter" rel="ManyToOneRel">2</field><field to="auth.user" name="reviewer" rel="ManyToOneRel"><None></None></field><field type="DateTimeField" name="submitted">2015-10-27T15:49:49</field><field type="DateTimeField" name="last_updated">2015-10-29T13:13:15.299392</field><field type="IntegerField" name="version">2</field><field type="IntegerField" name="n_patches">1</field></object><object pk="1" model="patchwork.eventlog"><field to="patchwork.event" name="event" rel="ManyToOneRel">1</field><field type="DateTimeField" name="event_time">2015-10-29T13:13:14.499858</field><field to="patchwork.series" name="series" rel="ManyToOneRel">1</field><field to="auth.user" name="user" rel="ManyToOneRel"><None></None></field><field type="TextField" name="parameters">{"revision":1}</field></object><object pk="3" model="patchwork.eventlog"><field to="patchwork.event" name="event" rel="ManyToOneRel">1</field><field type="DateTimeField" name="event_time">2015-10-29T13:13:15.026488</field><field to="patchwork.series" name="series" rel="ManyToOneRel">3</field><field to="auth.user" name="user" rel="ManyToOneRel"><None></None></field><field type="TextField" name="parameters">{"revision":2}</field></object><object pk="4" model="patchwork.eventlog"><field to="patchwork.event" name="event" rel="ManyToOneRel">1</field><field type="DateTimeField" name="event_time">2015-10-29T13:13:15.445310</field><field to="patchwork.series" name="series" rel="ManyToOneRel">3</field><field to="auth.user" name="user" rel="ManyToOneRel"><None></None></field><field type="TextField" name="parameters">{"revision":1}</field></object></django-objects>
