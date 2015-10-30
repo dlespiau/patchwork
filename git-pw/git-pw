@@ -325,7 +325,7 @@ if __name__ == '__main__':
 
     # arguments common to all commands
     parser.add_argument('--config', '-c', metavar='config',
-        type=str, help="configuration to use, 'default' is omitted")
+        type=str, help="configuration to use, 'default' if omitted")
 
     subparsers = parser.add_subparsers(dest='name', metavar='command')
 
