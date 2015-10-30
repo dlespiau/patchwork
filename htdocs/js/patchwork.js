@@ -52,16 +52,22 @@ var pw = (function() {
         'Updated': 'last_updated'
     };
 
+    /* JShint is warning that 'this' may be undefined in strict mode. What it
+     * doesn't know is that dynatable will bind this when calling those
+     * *_writer() functions */
+
     function series_writer(record) {
-        return '<a href="/series/' + record.id + '/">' + record[this.id] + '</a>';
+        return '<a href="/series/' + record.id + '/">' +
+               record[this.id] + // jshint ignore:line
+               '</a>';
     }
 
     function date_writer(record) {
-        return record[this.id].substr(0, 10);
+        return record[this.id].substr(0, 10);   // jshint ignore:line
     }
 
     function name_writer(record) {
-        var path = this.id;
+        var path = this.id; // jshint ignore:line
         var name = get_value_from_path(record, path);
         if (!name)
             return '<em class="text-muted">None</span>';
