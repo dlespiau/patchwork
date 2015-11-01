@@ -17,6 +17,11 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+try:
+    # django 1.8+
+    from django.core.exceptions import FieldDoesNotExist
+except:
+    from django.db.models.fields import FieldDoesNotExist
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog
 from rest_framework import views, viewsets, mixins, generics, filters, permissions
@@ -34,6 +39,33 @@ import django_filters
 
 
 API_REVISION = 1
+
+class RelatedOrderingFilter(filters.OrderingFilter):
+    """
+    Extends OrderingFilter to support ordering by fields in related models.
+    """
+
+    def get_ordering(self, request):
+        params = super(RelatedOrderingFilter, self).get_ordering(request)
+        if params:
+            return [param.replace('.', '__') for param in params]
+
+    def is_valid_field(self, model, field):
+        components = field.split('__', 1)
+        try:
+            field, parent_model, direct, m2m = \
+                model._meta.get_field_by_name(components[0])
+
+            # foreign key
+            if field.rel and len(components) == 2:
+                return self.is_valid_field(field.rel.to, components[1])
+            return True
+        except FieldDoesNotExist:
+            return False
+
+    def remove_invalid_fields(self, queryset, ordering, view):
+        return [term for term in ordering
+                if self.is_valid_field(queryset.model, term.lstrip('-'))]
 
 class MaintainerPermission(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
@@ -57,13 +89,11 @@ class ListMixin(object):
     paginate_by = 20
     paginate_by_param = 'perpage'
     max_paginate_by = 100
+    filter_backends = (RelatedOrderingFilter, )
 
 class SeriesListMixin(ListMixin):
     queryset = Series.objects.all()
     serializer_class = SeriesSerializer
-    filter_backends = (filters.OrderingFilter, )
-    ordering_fields = ('name', 'n_patches', 'submitter__name', 'reviewer__name',
-                        'submitted', 'last_updated')
 
 def is_integer(s):
     try:
