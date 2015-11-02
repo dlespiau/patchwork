@@ -167,7 +167,7 @@ class EventLogViewSet(mixins.ListModelMixin,
                       ListMixin,
                       viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
-    queryset = EventLog.objects.all()
+    queryset = EventLog.objects.all().select_related('event')
     serializer_class = EventLogSerializer
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = EventTimeFilter
