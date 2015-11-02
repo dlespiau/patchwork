@@ -533,10 +533,7 @@ class SeriesRevision(models.Model):
         return new
 
     def __unicode__(self):
-        if hasattr(self, 'series'):
-            return self.series.name + " (rev " + str(self.version) + ")"
-        else:
-            return "New revision" + " (rev " + str(self.version) + ")"
+        return "Revision " + self.version
 
 class SeriesRevisionPatch(models.Model):
     patch = models.ForeignKey(Patch)
