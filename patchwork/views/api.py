@@ -95,6 +95,18 @@ class SeriesListMixin(ListMixin):
     queryset = Series.objects.all()
     serializer_class = SeriesSerializer
 
+class SelectRelatedMixin(object):
+    def select_related(self, queryset):
+        select_fields = getattr(self, 'select_fields', None)
+        if not select_fields:
+            return queryset
+
+        related = self.request.QUERY_PARAMS.get('related')
+        if not related:
+            return queryset
+
+        return queryset.select_related(*select_fields)
+
 def is_integer(s):
     try:
         int(s)
@@ -117,8 +129,10 @@ class ProjectViewSet(mixins.ListModelMixin, ListMixin, viewsets.GenericViewSet):
 
 class SeriesListViewSet(mixins.ListModelMixin,
                         SeriesListMixin,
+                        SelectRelatedMixin,
                         viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
+    select_fields = ('project', 'submitter', 'reviewer')
 
     def get_queryset(self):
 
@@ -127,7 +141,7 @@ class SeriesListViewSet(mixins.ListModelMixin,
             queryset = self.queryset.filter(project__pk=pk)
         else:
             queryset = self.queryset.filter(project__linkname=pk)
-        return queryset
+        return self.select_related(queryset)
 
 class SeriesViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,

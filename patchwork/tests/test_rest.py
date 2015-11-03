@@ -186,3 +186,12 @@ class APITest(test_series.Series0010):
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'since': after})
         self.assertEqual(events['count'], 0)
+
+    def testNumQueries(self):
+        # using the related=expand parameter shouldn't make the number of
+        # queries explode.
+        with self.assertNumQueries(2):
+            self.get('/projects/%(project_id)s/series/')
+        with self.assertNumQueries(2):
+            self.get('/projects/%(project_id)s/series/',
+                     params={'related': 'expand'})
