@@ -19,8 +19,19 @@ var pw = (function() {
         };
     }
 
+    function setup_polyfill_startswith() {
+        if (String.prototype.startsWith)
+            return;
+
+        String.prototype.startsWith = function(searchString, position) {
+            position = position || 0;
+            return this.indexOf(searchString, position) === position;
+        };
+    }
+
     function setup_polyfills() {
         setup_polyfill_endswith();
+        setup_polyfill_startswith();
     }
 
     function get_value_from_path(obj, path) {
@@ -157,6 +168,36 @@ var pw = (function() {
         table.stickyTableHeaders();
     };
 
+    exports.patch_strip_series_marker = function(name) {
+        var res = { order: '1', name: name };
+
+        if (!name.startsWith('['))
+            return res;
+
+        var s = name.split(']');
+        if (s.length == 1)
+            return res;
+
+        res.name = s.slice(1).join(']').trim();
+
+        var tags = s[0].slice(1).split(',');
+        for (var i = 0; i < tags.length; i++) {
+            var matches = tags[i].match(/(\d+)\/(\d+)/);
+
+            if (!matches)
+                continue;
+
+            res.order = matches[1];
+            tags.splice(i, 1);
+            break;
+        }
+
+        if (tags.length > 0)
+            res.name = '[' + tags.join(',') + '] ' + res.name;
+
+        return res;
+    };
+
     exports.setup_series = function(config) {
         var column_num, column_name;
 
@@ -165,22 +206,10 @@ var pw = (function() {
 
         for (var i = 0; i < column_num.length; i++) {
             var name = $(column_name[i]).html();
-            var s = name.split(']');
+            var res = this.patch_strip_series_marker(name);
 
-            if (s.length == 1) {
-                $(column_num[i]).html('1');
-            } else {
-                var matches = s[0].match(/(\d+)\/(\d+)/);
-
-                $(column_name[i]).html(s.slice(1).join(']'));
-
-                if (!matches) {
-                    $(column_num[i]).html('1');
-                    continue;
-                }
-
-                $(column_num[i]).html(matches[1]);
-            }
+            $(column_num[i]).html(res.order);
+            $(column_name[i]).html(res.name);
         }
     };
 
