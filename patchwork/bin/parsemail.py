@@ -84,11 +84,33 @@ def find_project(mail):
 
             listid = match.group(1)
 
-            try:
-                project = Project.objects.get(listid = listid)
+            # order_by will put projects with a blank subject_prefix_tags
+            # first
+            projects = Project.objects.filter(listid=listid).\
+                                       order_by('subject_prefix_tags')
+            if not projects:
                 break
-            except Project.DoesNotExist:
-                pass
+
+            # fast path for the common case
+            if len(projects) == 1:
+                project = projects[0]
+                break
+
+            (_, prefixes) = clean_subject(mail.get('Subject'))
+            catchall_project = None
+            if not projects[0].get_subject_prefix_tags():
+                catchall_project = projects[0]
+
+            for p in projects:
+                if not p.get_subject_prefix_tags():
+                    continue
+
+                for prefix in prefixes:
+                    if prefix in p.get_subject_prefix_tags():
+                        project = p
+
+            if not project:
+                project = catchall_project
 
     return project
 
@@ -319,7 +341,8 @@ def find_content(project, mail):
 
     ret = MailContent()
 
-    (name, prefixes) = clean_subject(mail.get('Subject'), [project.linkname])
+    drop_prefixes = [project.linkname] + project.get_subject_prefix_tags()
+    (name, prefixes) = clean_subject(mail.get('Subject'), drop_prefixes)
     (x, n) = parse_series_marker(prefixes)
     refs = build_references_list(mail)
     is_root = refs == []

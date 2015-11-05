@@ -371,6 +371,82 @@ class ListIdHeaderTest(TestCase):
     def tearDown(self):
         self.project.delete()
 
+class MultipleProjectsPerMailingListTest(TestCase):
+    """Do we handle hosting multiple projects on the same mailing-list?"""
+    fixtures = ['default_states', 'default_events']
+
+    def setUp(self):
+        self.project1 = Project(linkname='test-project-1', name='Project 1',
+                listid='list.example.com', listemail='1@example.com')
+        self.project1.save()
+        self.project2 = Project(linkname='test-project-2', name='Project 2',
+                listid='list.example.com', listemail='2@example.com')
+        self.project2.save()
+
+    def testTagList(self):
+        self.project1.subject_prefix_tags = ''
+        self.assertEquals(self.project1.get_subject_prefix_tags(), [])
+
+        self.project1.subject_prefix_tags = ' '
+        self.assertEquals(self.project1.get_subject_prefix_tags(), [])
+
+        self.project1.subject_prefix_tags = 'i-g-t'
+        self.assertEquals(self.project1.get_subject_prefix_tags(), ['i-g-t'])
+
+        self.project1.subject_prefix_tags = 'a,b'
+        self.assertEquals(self.project1.get_subject_prefix_tags(), ['a', 'b'])
+
+        self.project1.subject_prefix_tags = 'a, ,b,'
+        self.assertEquals(self.project1.get_subject_prefix_tags(), ['a', 'b'])
+
+    def testSingleTag(self):
+        self.project2.subject_prefix_tags = 'i-g-t'
+        self.project2.save()
+
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH] Subject')
+        self.assertEquals(find_project(email), self.project1)
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH i-g-t] Subject')
+        self.assertEquals(find_project(email), self.project2)
+
+    def testSingleTagInverted(self):
+        """To test the order_by()"""
+        self.project1.subject_prefix_tags = 'i-g-t'
+        self.project1.save()
+        self.project2.subject_prefix_tags = ' '
+        self.project2.save()
+
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH i-g-t] Subject')
+        self.assertEquals(find_project(email), self.project1)
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH] Subject')
+        self.assertEquals(find_project(email), self.project2)
+
+    def testMultipleTags(self):
+        self.project2.subject_prefix_tags = 'i-g-t,intel-gpu-tools'
+        self.project2.save()
+
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH] Subject')
+        self.assertEquals(find_project(email), self.project1)
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH i-g-t] Subject')
+        self.assertEquals(find_project(email), self.project2)
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH intel-gpu-tools] Subject')
+        self.assertEquals(find_project(email), self.project2)
+
+    def testStripTag(self):
+        self.project2.subject_prefix_tags = 'i-g-t'
+        self.project2.save()
+        email = create_email(defaults.patch, project=self.project1,
+                             subject='[PATCH i-g-t] Subject')
+        parse_mail(email)
+        patch = Patch.objects.all()[0]
+        self.assertEquals(patch.name, 'Subject')
+
 class MBoxPatchTest(PatchTest):
     def setUp(self):
         self.mail = read_mail(self.mail_file, project = self.project)

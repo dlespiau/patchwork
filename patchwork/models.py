@@ -59,7 +59,7 @@ class Person(models.Model):
 class Project(models.Model):
     linkname = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
-    listid = models.CharField(max_length=255, unique=True)
+    listid = models.CharField(max_length=255)
     listemail = models.CharField(max_length=200)
     web_url = models.CharField(max_length=2000, blank=True)
     scm_url = models.CharField(max_length=2000, blank=True)
@@ -67,6 +67,8 @@ class Project(models.Model):
     send_notifications = models.BooleanField(default=False)
     use_tags = models.BooleanField(default=True)
     git_send_email_only = models.BooleanField(default=False)
+    subject_prefix_tags = models.CharField(max_length=255, blank=True,
+            help_text='Comma separated list of tags')
 
     def __unicode__(self):
         return self.name
@@ -81,6 +83,11 @@ class Project(models.Model):
         if not self.use_tags:
             return []
         return list(Tag.objects.all())
+
+    def get_subject_prefix_tags(self):
+        tags = [t.strip() for t in self.subject_prefix_tags.split(',')]
+        tags = [tag for tag in tags if tag]
+        return tags
 
     class Meta:
         ordering = ['linkname']
