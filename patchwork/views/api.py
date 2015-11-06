@@ -38,7 +38,7 @@ from patchwork.views.patch import mbox as patch_mbox
 import django_filters
 
 
-API_REVISION = 1
+API_REVISION = 2
 
 class RelatedOrderingFilter(filters.OrderingFilter):
     """
