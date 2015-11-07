@@ -17,6 +17,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import sys
 from django.core.management.base import BaseCommand
 from patchwork.models import Patch
 
@@ -38,6 +39,6 @@ class Command(BaseCommand):
         for i, patch in enumerate(query.iterator()):
             patch.refresh_tag_counts()
             if (i % 10) == 0 or i == count:
-                self.stdout.write('%06d/%06d\r' % (i, count))
-                self.stdout.flush()
-        self.stderr.write('\ndone\n')
+                sys.stdout.write('%06d/%06d\r' % (i, count))
+                sys.stdout.flush()
+        sys.stdout.write('\ndone\n')
