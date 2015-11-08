@@ -42,23 +42,14 @@ The shell prompt is preprended with the virtual env name.
 4. Install the required dependencies
 
 To ease this task, it's customary to maintain a list of dependencies in
-a text file and install them in one go. One can maintain such a list of
-dependencies per interesting configuration.
+a text file and install them in one go. Patchwork can work with multiple
+databases so we keep the requirements for each supported db::
 
-::
+    (django-1.8)$ pip install -r docs/requirements-dev-mysql.txt
 
-    (django-1.8)$ pip install -r docs/requirements-dev.txt
+or::
 
-You will also need to install a version of Django - we don't install
-this by default to allow development against multiple versions of
-Django. This can be installed like so (assuming Django 1.8):
-
-::
-
-    (django-1.8)$ pip install 'django<1.9,>=1.8'
-
-Of course, this is a one-time step: once installed in the virtual
-environment there is no need to to install requirements again.
+    (django-1.8)$ pip install -r docs/requirements-dev-postgresql.txt
 
 5. Run the development server
 
