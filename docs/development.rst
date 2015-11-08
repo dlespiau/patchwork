@@ -27,7 +27,7 @@ patchwork and run it from there.
 
     $ virtualenv django-1.8
 
-This will create a virtual env called 'django-1.8' in eponymous
+This will create a virtual env called 'django-1.8' in the eponymous
 directory.
 
 3. Activate a virtual environment
