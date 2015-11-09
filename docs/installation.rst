@@ -356,7 +356,7 @@ Some errors:
    to the tables.
 
 -  pwclient fails for actions that require authentication, but a
-   username and password is given int ~/.pwclient rc. Server reports "No
+   username and password is given in ~/.pwclientrc. Server reports "No
    authentication credentials given". If you're using the FastCGI
    interface to apache, you'll need the ``-pass-header Authorization``
    option to the FastCGIExternalServer configuration directive.
