@@ -540,7 +540,7 @@ class SeriesRevision(models.Model):
         return new
 
     def __unicode__(self):
-        return "Revision " + self.version
+        return "Revision " + str(self.version)
 
 class SeriesRevisionPatch(models.Model):
     patch = models.ForeignKey(Patch)

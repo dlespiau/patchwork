@@ -108,6 +108,14 @@ class BasicGeneratedSeriesTests(GeneratedSeriesTest):
         series.insert(mails)
         self.commonInsertionChecks()
 
+    def testStringRepresentation(self):
+        series = TestSeries(2)
+        series.insert()
+        series = Series.objects.all()[0]
+        self.assertEquals(str(series), defaults.series_name)
+        revision = series.revisions()[0]
+        self.assertEquals(str(revision), 'Revision 1')
+
 class IntelGfxTest(SeriesTest):
     project = Project(linkname = 'intel-gfx',
                       name = 'Intel Gfx',
