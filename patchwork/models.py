@@ -465,7 +465,8 @@ class Series(models.Model):
         print('')
         print('===')
         print('Series: %s' % self)
-        print('    version %d' % self.version)
+        print('    version: %d' % self.version)
+        print('    n_patches: %d' % self.n_patches)
         for rev in self.revisions():
             print('    rev %d:' % rev.version)
             i = 1
