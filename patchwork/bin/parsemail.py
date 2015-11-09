@@ -439,10 +439,9 @@ def find_previous_patch(revision, order, refs):
 
     return None
 
-def find_patch_order(revisions, previous_patch):
+def find_patch_order(revisions, previous_patch, order):
     # cycle through revisions starting by the more recent one and find
     # the revision where previous_patch is
-    order = None
     for revision in revisions:
         try:
             order = SeriesRevisionPatch.objects.get(revision=revision,
@@ -477,7 +476,7 @@ def find_series_for_mail(project, name, msgid, is_patch, order, refs):
         if is_patch:
             previous_patch = find_previous_patch(revision, order, refs)
             if previous_patch:
-                order = find_patch_order(revisions, previous_patch)
+                order = find_patch_order(revisions, previous_patch, order)
                 revision = revision.duplicate(exclude_patches=(order,))
                 # series has been updated, grab the new instance
                 series = revision.series

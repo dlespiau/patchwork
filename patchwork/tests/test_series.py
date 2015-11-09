@@ -400,6 +400,19 @@ class SinglePatchUpdateTest(GeneratedSeriesTest):
 class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
     fixtures = ['default_states', 'default_events']
 
+    def setMessageId(self, mail, msgid):
+        del mail['Message-Id']
+        mail['Message-Id'] = msgid
+
+    def setParentMail(self, mail, parent_mail, references=[]):
+        del mail['References']
+        del mail['In-Reply-To']
+        mail['In-Reply-To'] = parent_mail.get('Message-Id')
+        if not references:
+            mail['References'] = parent_mail.get('Message-Id')
+            return
+        mail['References'] = ' '.join([m.get('Message-Id') for m in references])
+
     def testSinglePatchUpdatesNotSerialized(self):
         """ + patch v1
             +--> patch v2
@@ -472,6 +485,56 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
         self.assertEqual(len(patches), 2)
         self.assertEqual(patches[0].name, '[1/2] ' + defaults.patch_name)
         self.assertEqual(patches[1].name, '[v2] ' + defaults.patch_name)
+
+    def testSeriesAsReplyofSinglePatchCrossSeriesAwarePatchwork(self):
+        """ + initia_patch                     \
+            +--+ reply_1                        | Before patchwork knew
+               +--+ patch_v2                    | about series
+                  +--+ reply_2                 /
+                     +--+ cover letter (0/3)   \
+                        +--> patch 1/3          | After patchwork knew
+                        +--> patch 2/3          | about series
+                        +--> patch 3/3         /
+        """
+        initial_series = TestSeries(1, has_cover_letter=False)
+        mails = initial_series.create_mails()
+        initial_patch = mails[0]
+        self.setMessageId(initial_patch, 'initial_patch')
+
+        reply_1 = initial_series.create_reply(initial_patch)
+        mails.append(reply_1)
+        self.setMessageId(reply_1, 'reply_1')
+
+        patch_v2 = initial_series.create_patch(in_reply_to=reply_1,
+                                               subject_prefix="PATCH v2")
+        mails.append(patch_v2)
+
+        reply_2 = initial_series.create_reply(patch_v2)
+        mails.append(reply_2)
+        self.setMessageId(reply_2, 'reply_2')
+
+        initial_series.insert(mails)
+
+        # deleting the Series objects so far simulates the transition to
+        # a series-aware patchwork from a previous version not creating
+        # Series objects.
+        Series.objects.all().delete()
+
+        series = TestSeries(3)
+        series_mails = series.create_mails()
+        self.setMessageId(series_mails[0], 'cover_letter')
+        self.setParentMail(series_mails[0], reply_2)
+        for mail in series_mails[1:]:
+            self.setParentMail(mail, series_mails[0],
+                    references=(reply_2, series_mails[0]))
+        series.insert(series_mails)
+
+        series = Series.objects.all()
+        self.assertEqual(len(series), 1)
+        revisions = series[0].revisions()
+        # FIXME: We don't treat a series sent as a reply as a single
+        # entity. Something that will need fixing.
+        self.assertEqual(len(revisions), 3)
 
 #
 # New version of a full series (separate mail thread)
