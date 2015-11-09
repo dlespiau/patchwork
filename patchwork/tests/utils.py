@@ -188,7 +188,8 @@ class TestSeries(object):
 
     def create_reply(self, mail, references=None):
         if not references:
-            references = mail.get('References') + ' ' + mail.get('Message-Id')
+            references = mail.get('References') or ''
+            references += ' ' + mail.get('Message-Id')
         return create_email(defaults.review,
                             subject='Re: ' + mail.get('Subject'),
                             references=references)
