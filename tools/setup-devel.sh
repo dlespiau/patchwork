@@ -1,3 +1,4 @@
+#!/bin/sh
 # Patchwork - automated patch tracking system
 # Copyright (C) 2015 Intel Corporation
 #
@@ -26,7 +27,7 @@ update_virtualenv()
     requirements=$2
 
     [ -d "$directory" ] || virtualenv "$directory"
-    source $directory/bin/activate
+    . $directory/bin/activate
     pip install --upgrade -r $requirements
 }
 

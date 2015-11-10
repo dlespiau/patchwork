@@ -1,3 +1,4 @@
+#!/bin/sh
 # Patchwork - automated patch tracking system
 # Copyright (C) 2015 Intel Corporation
 #
