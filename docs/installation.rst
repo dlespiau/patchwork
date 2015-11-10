@@ -14,7 +14,7 @@ You'll need the following (applications used for patchwork development
 are in brackets):
 
 -  A Python interpreter
--  `Django <https://www.djangoproject.com/>`__ >= 1.6. The latest
+-  `Django <https://www.djangoproject.com/>`__ >= 1.7. The latest
    version is recommended
 -  A webserver and suitable WSGI plugin. Options include
    `Apache <http://httpd.apache.org/>`__ with the
@@ -126,9 +126,9 @@ If you're using MySQL, only the ``ENGINE`` changes:
         },
     }
 
-**NOTE:** ``TEST_CHARSET`` (``TEST/CHARSET`` in Django >= 1.7) is used
-when creating tables for the test suite. Without it, tests checking for
-the correct handling of non-ASCII characters fail.
+**NOTE:** ``TEST/CHARSET`` is used when creating tables for the test
+suite. Without it, tests checking for the correct handling of non-ASCII
+characters fail.
 
 Django Setup
 ------------
@@ -145,7 +145,7 @@ Set up some initial directories in the patchwork base directory:
 ``lib/packages`` is for stuff we'll download, ``lib/python`` is to add
 to our Python path. We'll symlink Python modules into ``lib/python``.
 
-At the time of release, patchwork depends on Django version 1.6 or
+At the time of release, patchwork depends on Django version 1.7 or
 later. Where possible, try to use the latest stable version (currently
 1.8). Your distro probably provides this. If not, install it manually:
 
@@ -200,16 +200,7 @@ file:
 Configure Database Tables
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Then, get patchwork to create its tables in your configured database.
-For Django 1.6 and below:
-
-::
-
-    PYTHONPATH=../lib/python ./manage.py syncdb
-
-For Django 1.7+:
-
-::
+Then, get patchwork to create its tables in your configured database::
 
     PYTHONPATH=../lib/python ./manage.py migrate
 
