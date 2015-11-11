@@ -188,7 +188,7 @@ class GitPatchwork(object):
 
     def setup(self):
         try:
-            self.repo = git.Repo(os.getcwd(), search_parent_directories=True)
+            self.repo = git.Repo(os.getcwd())
         except git.exc.InvalidGitRepositoryError as e:
             if self.cmd.need_git_repo:
                 die('Not a git repository.')
