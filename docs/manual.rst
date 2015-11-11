@@ -185,8 +185,9 @@ the patchwork git repository_ has the list of required packages:
 Getting |git-pw|
 ................
 
-|git-pw| can be directly downloaded from patchwork's `git repository`__ and put
-it anywhere in your ``PATH``.
+|git-pw| can be directly downloaded from patchwork's `git repository`__, given
+execution permission (:command:`chmod +x`) and put it anywhere in your
+``PATH``.
 
 Because this tool is still very young and to easily get the latest version I
 would suggest cloning patchwork's repository_ and use a symlink. This way,
