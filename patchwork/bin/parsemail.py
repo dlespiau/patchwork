@@ -288,6 +288,7 @@ def find_content(project, mail):
     patchbuf = None
     commentbuf = ''
     pullurl = None
+    is_attachment = False
 
     for part in mail.walk():
         if part.get_content_maintype() != 'text':
@@ -325,6 +326,7 @@ def find_content(project, mail):
                 return None
 
         if subtype in ['x-patch', 'x-diff']:
+            is_attachment = True
             patchbuf = payload
 
         elif subtype == 'plain':
@@ -350,7 +352,8 @@ def find_content(project, mail):
     is_patch = patchbuf is not None
     is_git_send_email = mail.get('X-Mailer', '').startswith('git-send-email ')
 
-    drop_patch = project.git_send_email_only and not is_git_send_email
+    drop_patch = not is_attachment and \
+                 project.git_send_email_only and not is_git_send_email
 
     if pullurl or (is_patch and not drop_patch):
         ret.patch_order = x or 1

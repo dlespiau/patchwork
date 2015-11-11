@@ -610,8 +610,13 @@ class MailFromPatchTest(TestCase):
     patch_filename = '0001-add-line.patch'
     msgid = '<1@example.com>'
 
-    def get_email(self):
-        email = create_email(self.patch)
+    def get_email(self, multipart=False):
+        if multipart:
+            email = create_email('See attached patch!', multipart=multipart)
+            attachment = MIMEText(self.patch, _subtype='x-patch')
+            email.attach(attachment)
+        else:
+            email = create_email(self.patch)
         del email['List-ID']
         email['List-ID'] = '<' + self.p1.listid + '>'
         email['Message-Id'] = self.msgid
@@ -708,6 +713,19 @@ class GitSendEmailTest(MailFromPatchTest):
         email = self.get_email()
         parse_mail(email)
         self._assertNPatches(0)
+
+    def testAttachment(self):
+        """Attachments can be patches even with git_send_email_only true"""
+
+        self.p1.git_send_email_only = True
+        self.p1.save()
+        email = self.get_email(multipart=True)
+
+        content = find_content(self.p1, email)
+        self.assertTrue(content.patch is not None)
+        self.assertEquals(content.patch.content, self.patch)
+        self.assertTrue(content.comment is not None)
+        self.assertEquals(content.comment.content, 'See attached patch!')
 
 class ParseInitialTagsTest(PatchTest):
     patch_filename = '0001-add-line.patch'
