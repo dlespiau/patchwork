@@ -163,14 +163,16 @@ Requirements
 |git-pw| uses GitPython and requests, so those dependencies need to be
 installed. Using the distribution packages should work.
 
-On Fedora:
-
-::
+On Fedora::
 
     $ sudo dnf install GitPython python-requests
 
-It's also possible to use |pip|. :file:`git-pw/requirements.txt` in the
-patchwork git repository_ has the list of required packages:
+On Debian/Ubuntu::
+
+    $ sudo apt-get install python-git python-requests
+
+Alternatively it's possible to use |pip|. :file:`git-pw/requirements.txt` in
+the patchwork git repository_ has the list of required packages:
 
 ::
 
