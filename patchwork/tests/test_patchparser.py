@@ -40,7 +40,7 @@ from patchwork.bin.parsemail import find_content, find_author, find_project, \
 
 class InlinePatchTest(PatchTest):
     patch_filename = '0001-add-line.patch'
-    test_comment = 'Test for attached patch'
+    test_comment = 'Test for inlined patch'
 
     def setUp(self):
         self.orig_patch = read_patch(self.patch_filename)
