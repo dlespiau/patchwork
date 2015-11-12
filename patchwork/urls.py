@@ -82,7 +82,7 @@ urlpatterns = patterns('',
     (r'^patch/msgid/(?P<msgid>[^/]+)/$', 'patchwork.views.patch.msgid'),
 
     # logged-in user stuff
-    (r'^user/$', 'patchwork.views.user.profile'),
+    url(r'^user/$', 'patchwork.views.user.profile', name='user'),
     (r'^user/todo/$', 'patchwork.views.user.todo_lists'),
     (r'^user/todo/(?P<project_id>[^/]+)/$', 'patchwork.views.user.todo_list'),
 

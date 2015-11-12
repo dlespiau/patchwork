@@ -77,7 +77,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 #
 
 LOGIN_URL = '/user/login/'
-LOGIN_REDIRECT_URL = '/user/'
+LOGIN_REDIRECT_URL = 'user'
 
 
 #
