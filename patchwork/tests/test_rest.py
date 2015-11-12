@@ -81,10 +81,10 @@ entry_points = {
 }
 
 
-class APITest(test_series.Series0010):
+class APITestBase(test_series.Series0010):
 
     def setUp(self):
-        super(APITest, self).setUp()
+        super(APITestBase, self).setUp()
         self.series = Series.objects.all()[0]
         self.patch = Patch.objects.all()[2]
 
@@ -114,6 +114,9 @@ class APITest(test_series.Series0010):
 
     def get_json(self, url, params={}):
         return json.loads(self.get(url, params).content)
+
+
+class APITest(APITestBase):
 
     def testEntryPointPresence(self):
         for entry_point in entry_points:
