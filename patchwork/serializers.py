@@ -23,7 +23,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
-                             State, EventLog
+                             State, EventLog, Test, TestResult
 from rest_framework import serializers
 from rest_framework import fields
 from enum import Enum
@@ -181,3 +181,53 @@ class EventLogSerializer(PatchworkModelSerializer):
             'series': SeriesSerializer,
             'user': UserSerializer,
         }
+
+class ValueChoiceField(serializers.ChoiceField):
+    def to_native(self, value):
+        for k, v in self.choices:
+            if value == k:
+                return v
+
+    def from_native(self, value):
+        for k, v in self.choices:
+            if value == v:
+                return k
+        msg = self.error_messages['invalid_choice'] % {'value': value}
+        raise ValidationError(msg)
+
+class TestResultSerializer(serializers.Serializer):
+    test_name = serializers.CharField(source='test.name')
+    state = ValueChoiceField(choices=TestResult.STATE_CHOICES)
+    url = serializers.URLField(required=False)
+    summary = serializers.CharField(required=False)
+
+    def resolve_fields(self, validated_data):
+        project = self.context['project']
+        assert project
+        user = self.context['user']
+        assert user
+
+        test_name = validated_data.pop('test.name')
+        test, _ = Test.objects.get_or_create(project=project, name=test_name)
+        validated_data['test'] = test
+        validated_data['user'] = user
+        validated_data['revision'] = self.context.get('revision', None)
+        validated_data['patch'] = self.context.get('patch', None)
+
+    def create(self, validated_data):
+        self.resolve_fields(validated_data)
+        return TestResult.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        self.resolve_fields(validated_data)
+        instance.test = validated_data.get('test', instance.test)
+        instance.state = validated_data.get('state', instance.state)
+        instance.url = validated_data.get('url', instance.url)
+        instance.summary = validated_data.get('summary', instance.summary)
+        instance.save()
+        return instance
+
+    def restore_object(self, validated_data, instance=None):
+        if instance:
+            return self.update(instance, validated_data)
+        return self.create(validated_data)

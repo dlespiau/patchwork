@@ -45,9 +45,20 @@ series_router.register(r'series', api.SeriesViewSet)
 revisions_router = routers.NestedSimpleRouter(series_router, 'series',
                                              lookup='series')
 revisions_router.register(r'revisions', api.RevisionViewSet)
+# /series/$id/revisions/$rev/test-results/
+revision_results_router = routers.NestedSimpleRouter(revisions_router,
+                                                     'revisions',
+                                                     lookup='version')
+revision_results_router.register(r'test-results', api.RevisionResultViewSet,
+                                 base_name='revision-results')
 # /patches/$id/
 patches_router = routers.SimpleRouter()
 patches_router.register(r'patches', api.PatchViewSet)
+# /patches/$id/test-restults/
+patch_results_router = routers.NestedSimpleRouter(patches_router, 'patches',
+                                          lookup='patch')
+patch_results_router.register(r'test-results', api.PatchResultViewSet,
+                              base_name='patch-results')
 
 admin.autodiscover()
 
@@ -60,7 +71,9 @@ urlpatterns = patterns('',
     (r'^api/1.0/', include(series_list_router.urls)),
     (r'^api/1.0/', include(series_router.urls)),
     (r'^api/1.0/', include(revisions_router.urls)),
+    (r'^api/1.0/', include(revision_results_router.urls)),
     (r'^api/1.0/', include(patches_router.urls)),
+    (r'^api/1.0/', include(patch_results_router.urls)),
     (r'^api/1.0/', include(event_router.urls)),
 
     # project view:

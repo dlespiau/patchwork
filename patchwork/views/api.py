@@ -22,17 +22,20 @@ try:
     from django.core.exceptions import FieldDoesNotExist
 except:
     from django.db.models.fields import FieldDoesNotExist
+from django.db.models import Q
 from django.http import HttpResponse
-from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog
-from rest_framework import views, viewsets, mixins, generics, filters, permissions
-from rest_framework.decorators import api_view, renderer_classes, \
-                                      permission_classes, detail_route
+from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
+                             TestResult
+from rest_framework import views, viewsets, mixins, generics, filters, \
+                           permissions, status
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import api_view, renderer_classes, detail_route
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
                                   RevisionSerializer, PatchSerializer, \
-                                  EventLogSerializer
+                                  EventLogSerializer, TestResultSerializer
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
 import django_filters
@@ -180,10 +183,52 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
         rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
         return series_mbox(rev)
 
+class ResultMixin(object):
+    def handle_test_results(self, request, obj, check_obj, q, ctx):
+        if not 'test_name' in request.DATA:
+            return Response({'test_name': ['This field is required.', ]},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        self.check_object_permissions(request, check_obj)
+
+        try:
+            test = request.DATA['test_name']
+            instance = TestResult.objects.get(q, test__name=test)
+        except TestResult.DoesNotExist:
+            instance = None
+
+        ctx.update({
+            'project': check_obj.project,
+            'user': request.user,
+        })
+        result = TestResultSerializer(instance, data=request.DATA, context=ctx)
+        if not result.is_valid():
+            return Response(result.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        result.save()
+        return Response(result.data, status=status.HTTP_201_CREATED)
+
+class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
+    permission_classes = (MaintainerPermission, )
+    authentication_classes = (BasicAuthentication, )
+
+    def create(self, request, series_pk, version_pk):
+        rev = get_object_or_404(SeriesRevision, series=series_pk,
+                                version=version_pk)
+        return self.handle_test_results(request, rev, rev.series,
+                                        Q(revision=rev), {'revision': rev})
+
+def endpoint(endpoint):
+    """Used to rename a method on a ViewSet"""
+
+    def decorator(func):
+        func.endpoint = endpoint
+        return func
+    return decorator
 
 class PatchViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
-                   ListMixin,
+                   ListMixin, ResultMixin,
                    viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = Patch.objects.all()
@@ -192,6 +237,15 @@ class PatchViewSet(mixins.ListModelMixin,
     @detail_route(methods=['get'])
     def mbox(self, request, pk=None):
         return patch_mbox(request, pk)
+
+class PatchResultViewSet(viewsets.ViewSet, ResultMixin):
+    permission_classes = (MaintainerPermission, )
+    authentication_classes = (BasicAuthentication, )
+
+    def create(self, request, patch_pk=None):
+        patch = get_object_or_404(Patch, pk=patch_pk)
+        return self.handle_test_results(request, patch, patch, Q(patch=patch),
+                                        {'patch': patch})
 
 class EventTimeFilter(django_filters.FilterSet):
 

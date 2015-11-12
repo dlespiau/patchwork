@@ -17,6 +17,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import base64
 from django.test import TestCase
 from django.core import mail
 from django.core.urlresolvers import reverse
@@ -39,6 +40,15 @@ class TestUser(object):
         self.password = User.objects.make_random_password()
         self.user = User.objects.create_user(
             self.username, self.email, self.password)
+
+    def basic_auth_header(self):
+        userpass = "%s:%s" % (self.username, self.password)
+        return 'Basic ' + base64.b64encode(userpass)
+
+    def add_to_maintainers(self, project):
+        profile = self.user.profile
+        profile.maintainer_projects.add(project)
+        profile.save()
 
 
 class UserPersonRequestTest(TestCase):
