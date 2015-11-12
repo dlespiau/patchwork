@@ -63,10 +63,10 @@ entry_points = {
     '/series/%(series_id)s/revisions/': {
         'flags': ('is_list',),
     },
-    '/series/%(series_id)s/revisions/%(revision_version)s/': {
+    '/series/%(series_id)s/revisions/%(version)s/': {
         'flags': (),
     },
-    '/series/%(series_id)s/revisions/%(revision_version)s/mbox/': {
+    '/series/%(series_id)s/revisions/%(version)s/mbox/': {
         'flags': ('not_json',),
     },
     '/patches/': {
@@ -108,7 +108,7 @@ class APITest(test_series.Series0010):
                 'project_id': self.project.pk,
                 'project_linkname': self.project.linkname,
                 'series_id': self.series.pk,
-                'revision_version': 1,
+                'version': 1,
                 'patch_id': self.patch.pk,
         }, params)
 
