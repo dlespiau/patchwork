@@ -125,7 +125,7 @@ class UserLoginRedirectTest(TestCase):
     def testUserLoginRedirect(self):
         url = '/user/'
         response = self.client.get(url)
-        self.assertRedirects(response, settings.LOGIN_URL + '?next=' + url)
+        self.assertRedirects(response, reverse('auth_login') + '?next=' + url)
 
 class UserProfileTest(TestCase):
 
