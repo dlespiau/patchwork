@@ -64,7 +64,7 @@ urlpatterns = patterns('',
     (r'^api/1.0/', include(event_router.urls)),
 
     # project view:
-    (r'^$', 'patchwork.views.projects'),
+    url(r'^$', 'patchwork.views.projects', name='root'),
     (r'^project/(?P<project_id>[^/]+)/list/$', 'patchwork.views.patch.list'),
     url(r'^project/(?P<project_id>[^/]+)/patches/$',
         'patchwork.views.patch.list', name='patches_list'),

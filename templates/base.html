@@ -27,7 +27,7 @@
   <script type="text/javascript">
     $(function () {
         pw.init({
-            api_base_url: '{% url 'api-root' %}'
+            base_url: '{% url 'root' %}'
 {% if user.is_authenticated %}
             , user: {
                 items_per_page: {{ user.profile.patches_per_page }}

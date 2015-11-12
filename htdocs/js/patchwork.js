@@ -47,6 +47,7 @@ var pw = (function() {
 
     var exports = {},
         ctx = {
+            base_url: '',
             api_base_url: '/api/1.0',
             project: null,
             user : {
@@ -68,7 +69,8 @@ var pw = (function() {
      * *_writer() functions */
 
     function series_writer(record) {
-        return '<a href="/series/' + record.id + '/">' +
+        var link = ctx.base_url + '/series/' + record.id + '/';
+        return '<a href="' + link + '">' +
                record[this.id] + // jshint ignore:line
                '</a>';
     }
@@ -94,8 +96,9 @@ var pw = (function() {
 
         this.amend_context(init_ctx);
 
-        if (ctx.api_base_url.endsWith('/'))
-            ctx.api_base_url = ctx.api_base_url.slice(0, -1);
+        if (ctx.base_url.endsWith('/'))
+            ctx.base_url = ctx.base_url.slice(0, -1);
+        ctx.api_base_url = ctx.base_url + '/api/1.0';
 
         $.dynatableSetup({
             features: {
