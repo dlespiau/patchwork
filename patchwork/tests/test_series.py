@@ -116,6 +116,11 @@ class BasicGeneratedSeriesTests(GeneratedSeriesTest):
         revision = series.revisions()[0]
         self.assertEquals(str(revision), 'Revision 1')
 
+class SeriesViewTest(GeneratedSeriesTest):
+    def testSeriesIdNotInteger(self):
+        response = self.client.get('/series/foo/')
+        self.assertEqual(response.status_code, 404)
+
 class IntelGfxTest(SeriesTest):
     project = Project(linkname = 'intel-gfx',
                       name = 'Intel Gfx',

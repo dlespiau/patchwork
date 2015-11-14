@@ -73,7 +73,7 @@ urlpatterns = patterns('',
     # series views
     url(r'^project/(?P<project>[^/]+)/series/$', SeriesListView.as_view(),
      name='series_list'),
-    (r'^series/(?P<series>[^/]+)/$', SeriesView.as_view()),
+    (r'^series/(?P<series>\d+)/$', SeriesView.as_view()),
 
     # patch views
     (r'^patch/(?P<patch_id>\d+)/$', 'patchwork.views.patch.patch'),
