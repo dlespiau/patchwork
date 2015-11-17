@@ -288,7 +288,7 @@ class GitPatchwork(object):
         except HttpError as e:
             if e.status_code != 404:
                 raise
-            die('No patch with id %d.' % self.cmd.series_id)
+            die('No patch with id %d.' % self.cmd.patch_id)
 
     def run(self):
         self.setup()
