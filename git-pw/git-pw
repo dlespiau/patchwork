@@ -214,10 +214,12 @@ class GitPatchwork(object):
         if not self.cmd.config:
             self.cmd.config = 'default'
 
+        section = 'patchwork "%s"' % self.cmd.config
+
         # Grab that config 'url' and 'project' fields. 'project' is actually
         # optional, not all commands need one and we allow not setting it.
         try:
-            web_root = config.get('patchwork "%s"' % self.cmd.config, 'url')
+            web_root = config.get(section, 'url')
         except:
             die("git-pw isn't configured.\n\n"
                 "Please set up the patchwork url and project, e.g.:\n\n"
@@ -226,7 +228,7 @@ class GitPatchwork(object):
 
         project = None
         try:
-            project = config.get('patchwork "%s"' % self.cmd.config, 'project')
+            project = config.get(section, 'project')
         except:
             pass
 
