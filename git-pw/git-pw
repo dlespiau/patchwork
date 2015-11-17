@@ -223,8 +223,10 @@ class GitPatchwork(object):
         except:
             die("git-pw isn't configured.\n\n"
                 "Please set up the patchwork url and project, e.g.:\n\n"
-                "   git config patchwork.default.url https://patchwork.freedesktop.org\n"
-                "   git config patchwork.default.project intel-gfx\n")
+                "   git config patchwork.%(config)s.url https://patchwork.freedesktop.org\n"
+                "   git config patchwork.%(config)s.project intel-gfx\n" % {
+                    'config': self.cmd.config,
+                })
 
         project = None
         try:
@@ -235,7 +237,9 @@ class GitPatchwork(object):
         if not project and self.cmd.need_project:
             die('No project configured.\n\n'
                 "Please set up the patchwork project, e.g.:\n\n"
-                "   git config patchwork.default.project intel-gfx\n")
+                "   git config patchwork.%(config)s.project intel-gfx\n" % {
+                    'config': self.cmd.config,
+                })
 
         self.pw = Patchwork(web_root, project)
         self.pw.setup()
