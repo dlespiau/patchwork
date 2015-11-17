@@ -104,6 +104,9 @@ class RestObject(object):
     def absolute_url(self, url='/'):
         return self.pw.api_base + self.url(url)
 
+    def __getattr__(self, name):
+        return self.get()[name]
+
 class Revision(RestObject):
 
     def __init__(self, series, rev):
@@ -246,19 +249,23 @@ class GitPatchwork(object):
         p.wait()
         return p.returncode
 
-    def do_apply(self):
+    def cmd_get_series_revision(self):
         series = self.pw.get_series(self.cmd.series_id)
         revision = series.get_revision(self.cmd.revision)
 
-        data = series.get()
         if self.cmd.revision and (self.cmd.revision < 1 or
-                                  self.cmd.revision > data['version']):
+                                  self.cmd.revision > series.version):
             die("Invalid revision: %d.\n"
                 "Series %d has %d revision(s) (from 1 to %d)" %
-                (self.cmd.revision, series.id, data['version'],
-                 data['version']))
+                (self.cmd.revision, series.id, series.version,
+                 series.version))
 
-        print('Applying series: %s (rev %d)' % (data['name'], data['version']))
+        return (series, revision)
+
+    def do_apply(self):
+        (series, revision) = self.cmd_get_series_revision()
+
+        print('Applying series: %s (rev %d)' % (series.name, series.version))
 
         try:
             return self.am(revision.absolute_url('/mbox/'))
