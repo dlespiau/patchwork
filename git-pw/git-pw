@@ -324,7 +324,11 @@ class GitPatchwork(object):
         if r.status_code is not 200:
             raise HttpError(r.status_code)
 
-        p = subprocess.Popen(['git', 'am', '-3'], stdin=subprocess.PIPE)
+        args = []
+        if self.cmd.signoff:
+            args += ['-s']
+
+        p = subprocess.Popen(['git', 'am', '-3'] + args, stdin=subprocess.PIPE)
         p.communicate(r.content)
         return p.returncode
 
@@ -472,6 +476,9 @@ if __name__ == '__main__':
     # apply
     apply_series_parser = subparsers.add_parser('apply', aliases=('as',),
         help='apply a series to the current branch')
+    apply_series_parser.add_argument('--signoff', '-s', action="store_true",
+        help='Add Signed-off-by line by the committer at the end of the '
+             'commit log message')
     apply_series_parser.add_argument('--revision', '-r', metavar='revision',
         type=int, help='the revision to apply, latest if omitted')
     apply_series_parser.add_argument('series_id', metavar='series_id',
@@ -480,6 +487,10 @@ if __name__ == '__main__':
     # apply-patch
     apply_patch_parser = subparsers.add_parser('apply-patch', aliases=('ap',),
         help='apply a patch to the current branch')
+    apply_patch_parser.add_argument('--signoff', '-s', action="store_true",
+        help='Add Signed-off-by line by the committer at the end of the '
+             'commit log message')
+
     apply_patch_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
 
