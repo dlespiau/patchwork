@@ -63,6 +63,10 @@ def die(message):
 class HttpError(Exception):
     def __init__(self, status_code):
         self.status_code = status_code
+        self.response = None
+
+    def set_response(self, response):
+        self.response = response
 
 
 class Command(object):
@@ -70,11 +74,18 @@ class Command(object):
         'apply': {
             'need_git_repo': True,
             'need_project' : False,
+            'need_auth'    : False,
         },
         'apply-patch': {
             'need_git_repo': True,
             'need_project' : False,
-        }
+            'need_auth'    : False,
+        },
+        'post-result': {
+            'need_git_repo': True,
+            'need_project' : False,
+            'need_auth'    : True,
+        },
     }
     aliases = {
         'as': 'apply',
@@ -107,6 +118,9 @@ class RestObject(object):
 
     def get(self, url='/'):
         return self.pw.get(self.url(url))
+
+    def post(self, url='/', data={}):
+        return self.pw.post(self.url(url), data)
 
     def absolute_url(self, url='/'):
         return self.pw.api_base + self.url(url)
@@ -178,6 +192,17 @@ class Patchwork(object):
         json = r.json()
         self.json_cache[absolute_url] = json
         return json
+
+    def post(self, url, data):
+        absolute_url = self.api_base + url
+        credentials = (self.user.username, self.user.password)
+
+        r = requests.post(absolute_url, data=data, auth=credentials)
+        if r.status_code < 200 or r.status_code >= 300:
+            e = HttpError(r.status_code)
+            e.set_response(r)
+            raise e
+        return r.json()
 
     def setup(self):
         try:
@@ -316,6 +341,35 @@ class GitPatchwork(object):
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
 
+    def do_post_result(self):
+        (series, revision) = self.cmd_get_series_revision()
+
+        try:
+            data = {
+                'test_name': self.cmd.test_name,
+                'state': self.cmd.state,
+            }
+            if self.cmd.url:
+                data['url'] = self.cmd.url
+            if self.cmd.summary:
+                data['summary'] = self.cmd.summary
+            r = revision.post('/test-results/', data=data)
+            print("Posted result: %s: %s" % (r['test_name'], r['state']))
+        except HttpError as e:
+            if e.status_code == 404:
+                die("Couldn't post test results for series %d" %
+                    self.cmd.series_id)
+            elif e.status_code == 401 or e.status_code == 403:
+                die("Not authorized: %s" % e.response.json()['detail'])
+            elif e.status_code == 400:
+                data = e.response.json()
+                for field in data:
+                    print(field + ':')
+                    for reason in data[field]:
+                        print('  ' + reason)
+                die("Invalid input")
+            raise
+
     def run(self):
         self.setup()
         method = 'do_' + self.cmd.method_name()
@@ -381,6 +435,23 @@ if __name__ == '__main__':
         help='apply a patch to the current branch')
     apply_patch_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
+
+    # post-result
+    post_result_parser = subparsers.add_parser('post-result',
+        help='post test results for a given series revision')
+    post_result_parser.add_argument('--revision', '-r', metavar='revision',
+        type=int, help='the revision tested, latest if omitted')
+    post_result_parser.add_argument('--url', '-u', metavar='url',
+        type=str, help='the URL where to get full test results')
+    post_result_parser.add_argument('--summary', '-s', metavar='summary',
+        type=str, help='a summary of the test results')
+    post_result_parser.add_argument('series_id', metavar='series_id',
+        type=int, help='the series id to report test results for')
+    post_result_parser.add_argument('test_name', metavar='test_name',
+        type=str, help='the name of the test')
+    post_result_parser.add_argument('state', metavar='state',
+        type=str, help='the state of the test. One of pending, success, '
+                       'warning, failure')
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
