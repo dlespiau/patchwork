@@ -93,6 +93,13 @@ class Command(object):
         return self.canonical_name().replace('-', '_')
 
 
+class User(object):
+
+   def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+
 class RestObject(object):
 
     def __init__(self, patchwork):
@@ -150,12 +157,13 @@ class Patch(RestObject):
 
 class Patchwork(object):
 
-    def __init__(self, web_root, project):
+    def __init__(self, web_root, project, user):
         if not web_root.endswith('/'):
             web_root += '/'
         self.api_base = web_root + 'api/1.0'
         self.web_root = web_root
         self.project = project
+        self.user = user
         self.json_cache = {}
 
     def get(self, url):
@@ -241,7 +249,27 @@ class GitPatchwork(object):
                     'config': self.cmd.config,
                 })
 
-        self.pw = Patchwork(web_root, project)
+        # username/password + HTTP basic auth. Prefer using the Token based
+        # auth mechanism. In any case, using HTTPS is a must.
+        username = None
+        password = None
+        user = None
+        try:
+            username = config.get(section, 'user')
+            password = config.get(section, 'password')
+            user = User(username, password)
+        except:
+            pass
+
+        if not user and self.cmd.need_auth:
+            die('No authentication configured.\n\n'
+                "Please set up credentials, e.g.:\n\n"
+                "   git config patchwork.%(config)s.user myusername\n"
+                "   git config patchwork.%(config)s.password mypassword\n" % {
+                    'config': self.cmd.config,
+                })
+
+        self.pw = Patchwork(web_root, project, user)
         self.pw.setup()
 
     def am(self, mailbox_url):
