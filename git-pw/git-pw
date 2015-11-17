@@ -338,9 +338,9 @@ if __name__ == '__main__':
         type=int, help='the series id to apply')
 
     # apply-patch
-    apply_pach_parser = subparsers.add_parser('apply-patch', aliases=('ap',),
+    apply_patch_parser = subparsers.add_parser('apply-patch', aliases=('ap',),
         help='apply a patch to the current branch')
-    apply_pach_parser.add_argument('patch_id', metavar='patch_id',
+    apply_patch_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
 
     git_pw = GitPatchwork()
