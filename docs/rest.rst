@@ -430,6 +430,41 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
     $ curl -s http://patchwork.example.com/api/1.0/series/42/revisions/2/mbox/ | git am -3
 
 
+.. http:post:: /api/1.0/series/(int: series_id)/revisions/(int: version)/test-results/
+
+     Post test results for this revision.
+
+    .. sourcecode:: http
+
+        POST /api/1.0/series/47/test-results/ HTTP/1.1
+
+        {
+            "test_name": "checkpatch.pl",
+            "state": "success",
+            "url": "http://jenkins.example.com/logs/47/checkpatch.log",
+            "summary": "total: 0 errors, 0 warnings, 10 lines checked"
+        }
+
+    :<json test_name: Required. The name of the test we're reporting results
+                      for. This uniquely identifies the test. Any subsequent
+                      data sent through this entry point with the same
+                      ``test_name`` will be conflated into the same object.
+                      It's thus possible to create a test result with a
+                      ``pending`` state when a CI system picks up patches to
+                      indicate testing has started and then update the result
+                      with the final (``state``, ``url``, ``summary``) when
+                      finished.
+    :<json state: Required. State of the test results. One of ``pending``,
+                  ``success``, ``warning`` or ``failure``
+    :<json url: Optional. A URL where to find the detailed logs of the test
+                run.
+    :<json summary: Optional. A summary with some details about the results.
+                    If set, this will be displayed along with the test result
+                    to provide some detailed about the failure. It's suggested
+                    to use ``summary`` for something short while ``url`` can
+                    be used for full logs, which can be rather large.
+
+
 Patches
 ~~~~~~~
 
@@ -510,6 +545,12 @@ Patches
 
 API Revisions
 -------------
+
+**Revision 3**
+
+- Add test results entry points:
+
+  - /series/${id}/revisions/${version}/test-results/
 
 **Revision 2**
 
