@@ -57,14 +57,15 @@ $(function () {
 </div>
 
 {% endif %}
-<h2>Patches</h2>
+
+<h2>Revisions</h2>
 
 <div>
 
-  <ul class="nav nav-tabs" data-tabs="tabs" role="tablist">
+  <ul class="nav nav-pills small-pills" data-tabs="tabs" role="tablist">
 {% for revision in revisions %}
     <li role="presentation"{% if forloop.last %} class="active"{%endif%}>
-      <a data-toggle="tab" href="#rev{{ revision.version }}">rev {{ revision.version }}</a>
+      <a data-toggle="pill" href="#rev{{ revision.version }}">rev {{ revision.version }}</a>
     </li>
 {% endfor %}
   </ul>
@@ -73,27 +74,33 @@ $(function () {
 {% for revision in revisions %}
     <div role="tabpanel" id="rev{{ revision.version }}"
          class="tab-pane fade{% if forloop.last %} in active{% endif %}">
-      <table class="table table-hover table-condensed pw-list" id="series-patchlist">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Submitter</th>
-            <th>State</th>
-          </tr>
-        </thead>
-        <tbody>
-      {% for patch in revision.patch_list %}
-          <tr>
-            <td></td>
-            <td><a href="{% url 'patchwork.views.patch.patch' patch_id=patch.id %}"
-              >{{ patch.name|default:"[no subject]"|truncatechars:100 }}</a></td>
-            <td>{{ patch.submitter|personify:project }}</td>
-            <td>{{ patch.state }}</td>
-          <tr>
-      {% endfor %}
-        </tbody>
-      </table>
+
+    <h3>Patches</h3>
+
+      <div class="well transparent">
+        <table class="table table-hover table-condensed pw-list" id="series-patchlist">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Submitter</th>
+              <th>State</th>
+            </tr>
+          </thead>
+          <tbody>
+        {% for patch in revision.patch_list %}
+            <tr>
+              <td></td>
+              <td><a href="{% url 'patchwork.views.patch.patch' patch_id=patch.id %}"
+                >{{ patch.name|default:"[no subject]"|truncatechars:100 }}</a></td>
+              <td>{{ patch.submitter|personify:project }}</td>
+              <td>{{ patch.state }}</td>
+            <tr>
+        {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
     </div>
 {% endfor %}
   </div>
