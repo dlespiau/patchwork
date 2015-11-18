@@ -245,9 +245,12 @@ class GitPatchwork(object):
         self.pw.setup()
 
     def am(self, mailbox_url):
-        p = subprocess.Popen('curl -s -S %s | git am -3' % mailbox_url,
-                             shell=True)
-        p.wait()
+        r = requests.get(mailbox_url)
+        if r.status_code is not 200:
+            raise HttpError(r.status_code)
+
+        p = subprocess.Popen(['git', 'am', '-3'], stdin=subprocess.PIPE)
+        p.communicate(r.content)
         return p.returncode
 
     def cmd_get_series_revision(self):
