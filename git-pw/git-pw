@@ -246,12 +246,7 @@ class GitPatchwork(object):
 
     def am(self, mailbox_url):
         p = subprocess.Popen('curl -s -S %s | git am -3' % mailbox_url,
-                             stdout=subprocess.PIPE,
-                             stderr=sys.stdout.fileno(),
                              shell=True)
-        lines = iter(p.stdout.readline, b"")
-        for line in lines:
-            sys.stdout.write(line)
         p.wait()
         return p.returncode
 
