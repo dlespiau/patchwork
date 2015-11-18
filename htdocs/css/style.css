@@ -27,6 +27,13 @@ pre {
 	border-radius: 0;
 }
 
+.cursor-pointer {
+	color: #fff;
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+	cursor: pointer;
+}
+
 .floaty {
 	position: fixed;
 	left: 0.1em;
@@ -121,6 +128,10 @@ ul.small-pills > li > a {
 
 div.well > table {
     margin-bottom: 0px;
+}
+
+div.small-panel-heading {
+	padding: 5px;
 }
 
 /* messages */
@@ -493,4 +504,30 @@ div.box table.vertical {
 .rightcol {
 	float: right;
 	width: 49%;
+}
+
+/* test resuts */
+.result-pending {
+	margin: 0px 8px;
+	background-color: #5bc0de;
+}
+
+.result-warning {
+	margin: 0px 8px;
+	background-color: #f0ad4e;
+}
+
+.result-failure {
+	margin: 0px 8px;
+	background-color: #d9534f;
+}
+
+.result-success {
+	margin: 0px 8px;
+	background-color: #5cb85c;
+}
+
+pre.test-result {
+        margin: 0px;
+	border: 0px;
 }

@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-from patchwork.models import Patch, Project, Bundle
+from patchwork.models import Patch, Project, Bundle, TestResult
 from patchwork.forms import PatchForm, CreateBundleForm
 from patchwork.requestcontext import PatchworkRequestContext
 from django.shortcuts import render_to_response, get_object_or_404, redirect
@@ -80,6 +80,9 @@ def patch(request, patch_id):
     context['patchform'] = form
     context['createbundleform'] = createbundleform
     context['project'] = patch.project
+    context['test_results'] = TestResult.objects \
+                    .filter(revision=None, patch=patch) \
+                    .order_by('test__name').select_related('test')
 
     return render_to_response('patchwork/patch.html', context)
 

@@ -101,6 +101,19 @@ $(function () {
         </table>
       </div>
 
+    {% if revision.test_results %}
+    <h3>Tests</h3>
+
+    <div class="well transparent">
+      <div class="panel-group" id="test-accordion" role="tablist" aria-multiselectable="true">
+        {% for test_result in revision.test_results %}
+        {% include "patchwork/test-result.html" %}
+        {% endfor %}
+      </div>
+    </div>
+
+    {% endif %}
+
     </div>
 {% endfor %}
   </div>

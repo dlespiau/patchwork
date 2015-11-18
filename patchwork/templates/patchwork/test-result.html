@@ -1,0 +1,23 @@
+        <div class="panel panel-default">
+        {% if test_result.summary %}
+          <div class="panel-heading small-panel-heading cursor-pointer" role="tab" data-toggle="collapse" href="#collapse-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}" id="heading-{{ forloop.counter }}">
+        {% else %}
+          <div class="panel-heading small-panel-heading" role="tab" id="heading-{{ forloop.counter }}">
+        {% endif %}
+            <span>{{ test_result.test.name }}</span>
+            <span class="label result-{{ test_result.get_state_display }}">
+              {{ test_result.get_state_display }}
+            </span>
+            {% if test_result.url %}
+            <span>
+              <a href="{{ test_result.url }}" onclick="(function(e){ e.stopPropagation(); })(event)">(See full logs)</a>
+            </span>
+            {% endif %}
+          </div>
+          {% if test_result.summary %}
+          <div id="collapse-{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ forloop.counter}}">
+            <pre class="panel-body test-result">
+{{ test_result.summary }}</pre>
+          </div>
+          {% endif %}
+        </div>

@@ -21,7 +21,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views.generic import View
-from patchwork.models import Project, Series, SeriesRevision
+from patchwork.models import Project, Series, SeriesRevision, TestResult
 
 class SeriesListView(View):
     def get(self, request, *args, **kwargs):
@@ -37,6 +37,9 @@ class SeriesView(View):
         for revision in revisions:
             revision.patch_list = revision.ordered_patches().\
                                         select_related('state', 'submitter')
+            revision.test_results = TestResult.objects \
+                    .filter(revision=revision, patch=None) \
+                    .order_by('test__name').select_related('test')
 
         return render(request, 'patchwork/series.html', {
             'series': series,
