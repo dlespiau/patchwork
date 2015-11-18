@@ -18,11 +18,11 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-PORT=8000
+ADDRESS=0.0.0.0:8000
 CFG=patchwork.settings.dev-sqlite
 
 cd $(dirname $0)/..
 . venv/bin/activate
 export DJANGO_SETTINGS_MODULE=$CFG
-./manage.py runserver ${PORT}
+./manage.py runserver ${ADDRESS}
 deactivate
