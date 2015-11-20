@@ -68,6 +68,23 @@ class HttpError(Exception):
     def set_response(self, response):
         self.response = response
 
+    def handle_error(self, msg_overrides={}):
+        msg = {
+            404: "Couldn't find object",
+        }
+        msg.update(msg_overrides)
+
+        if self.status_code == 401 or self.status_code == 403:
+            die("Not authorized: %s" % self.response.json()['detail'])
+        elif self.status_code == 400:
+            data = self.response.json()
+            for field in data:
+                print(field + ':')
+                for reason in data[field]:
+                    print('  ' + reason)
+            die("Invalid input")
+        elif self.status_code in msg:
+            die(msg[self.status_code])
 
 class Command(object):
     meta = {
@@ -82,6 +99,11 @@ class Command(object):
             'need_auth'    : False,
         },
         'post-result': {
+            'need_git_repo': True,
+            'need_project' : False,
+            'need_auth'    : True,
+        },
+        'post-result-patch': {
             'need_git_repo': True,
             'need_project' : False,
             'need_auth'    : True,
@@ -341,42 +363,47 @@ class GitPatchwork(object):
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
 
-    def do_post_result(self):
-        (series, revision) = self.cmd_get_series_revision()
+    def _prepare_result_data(self):
+        data = {
+            'test_name': self.cmd.test_name,
+            'state': self.cmd.state,
+        }
+        if self.cmd.url:
+            data['url'] = self.cmd.url
+        if self.cmd.summary:
+            data['summary'] = self.cmd.summary
+        if self.cmd.summary_from_file:
+            try:
+                with open(self.cmd.summary_from_file) as summary_file:
+                    data['summary'] = summary_file.read()
+            except IOError as e:
+                die(str(e))
 
+        return data
+
+    def _do_post_results(self, obj, msg_overrides):
         try:
-            data = {
-                'test_name': self.cmd.test_name,
-                'state': self.cmd.state,
-            }
-            if self.cmd.url:
-                data['url'] = self.cmd.url
-            if self.cmd.summary:
-                data['summary'] = self.cmd.summary
-            if self.cmd.summary_from_file:
-                try:
-                    with open(self.cmd.summary_from_file) as summary_file:
-                        data['summary'] = summary_file.read()
-                except IOError as e:
-                    die(str(e))
-
-            r = revision.post('/test-results/', data=data)
+            data = self._prepare_result_data()
+            r = obj.post('/test-results/', data=data)
 
             print("Posted result: %s: %s" % (r['test_name'], r['state']))
         except HttpError as e:
-            if e.status_code == 404:
-                die("Couldn't post test results for series %d" %
-                    self.cmd.series_id)
-            elif e.status_code == 401 or e.status_code == 403:
-                die("Not authorized: %s" % e.response.json()['detail'])
-            elif e.status_code == 400:
-                data = e.response.json()
-                for field in data:
-                    print(field + ':')
-                    for reason in data[field]:
-                        print('  ' + reason)
-                die("Invalid input")
+            e.handle_error(msg_overrides)
             raise
+
+    def do_post_result(self):
+        (series, revision) = self.cmd_get_series_revision()
+
+        self._do_post_results(revision, {
+                404: "No series with id %d" % self.cmd.series_id
+        })
+
+    def do_post_result_patch(self):
+        patch = self.pw.get_patch(self.cmd.patch_id)
+
+        self._do_post_results(patch, {
+                404: "No patch with id %d" % self.cmd.patch_id
+        })
 
     def run(self):
         self.setup()
@@ -418,6 +445,18 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
 
         return parser
 
+def parser_add_result_options(parser):
+    parser.add_argument('--url', '-u', metavar='url', type=str,
+        help='the URL where to get full test results')
+    parser.add_argument('--summary', '-s', metavar='summary', type=str,
+        help='a summary of the test results')
+    parser.add_argument('--summary-from-file', metavar='file', type=str,
+        help='a summary of the test results, taken from <file>')
+    parser.add_argument('test_name', metavar='test_name', type=str,
+        help='the name of the test')
+    parser.add_argument('state', metavar='state', type=str,
+        help='the state of the test. One of pending, success, warning or '
+             ' failure')
 
 if __name__ == '__main__':
 
@@ -449,19 +488,16 @@ if __name__ == '__main__':
         help='post test results for a given series revision')
     post_result_parser.add_argument('--revision', '-r', metavar='revision',
         type=int, help='the revision tested, latest if omitted')
-    post_result_parser.add_argument('--url', '-u', metavar='url',
-        type=str, help='the URL where to get full test results')
-    post_result_parser.add_argument('--summary', '-s', metavar='summary',
-        type=str, help='a summary of the test results')
-    post_result_parser.add_argument('--summary-from-file', metavar='file',
-        type=str, help='a summary of the test results, taken from <file>')
-    post_result_parser.add_argument('series_id', metavar='series_id',
-        type=int, help='the series id to report test results for')
-    post_result_parser.add_argument('test_name', metavar='test_name',
-        type=str, help='the name of the test')
-    post_result_parser.add_argument('state', metavar='state',
-        type=str, help='the state of the test. One of pending, success, '
-                       'warning, failure')
+    post_result_parser.add_argument('series_id', metavar='series_id', type=int,
+        help='the series id to report test results for')
+    parser_add_result_options(post_result_parser)
+
+    # post-result-patch
+    post_patch_result_parser = subparsers.add_parser('post-result-patch',
+        help='post test results for a given patch')
+    post_patch_result_parser.add_argument('patch_id', metavar='patch_id',
+        type=int, help='the patch id to report test results for')
+    parser_add_result_options(post_patch_result_parser)
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
