@@ -11,7 +11,7 @@ h2 {
 	margin: 18px 0 18px 0;
 }
 
-h2 a, h2 span {
+h2 a, h2 span, h3 a, h3 span {
 	font-size: 14px;
 	padding-left: 5px;
 	font-weight: normal;

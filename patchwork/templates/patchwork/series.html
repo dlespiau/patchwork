@@ -75,7 +75,7 @@ $(function () {
     <div role="tabpanel" id="rev{{ revision.version }}"
          class="tab-pane fade{% if forloop.last %} in active{% endif %}">
 
-    <h3>Patches</h3>
+    <h3>Patches <a href="{% url 'seriesrevision-mbox' series.pk revision.version %}" >download mbox</a></h3>
 
       <div class="well transparent">
         <table class="table table-hover table-condensed pw-list" id="series-patchlist">
