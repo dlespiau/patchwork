@@ -567,8 +567,34 @@ class EventLog(models.Model):
         ordering = ['-event_time']
 
 class Test(models.Model):
+    # no mail, default so test systems/scripts can have a grace period to
+    # settle down and give useful results
+    RECIPIENT_NONE = 0
+    # send mail only to submitter
+    RECIPIENT_SUBMITTER = 1
+    # send mail to submitter and mailing-list in Cc
+    RECIPIENT_MAILING_LIST = 2
+    RECIPIENT_CHOICES = (
+        (RECIPIENT_NONE, 'none'),
+        (RECIPIENT_SUBMITTER, 'submitter'),
+        (RECIPIENT_MAILING_LIST, 'mailing list'),
+    )
+
+    # send result mail on any state (but pending)
+    CONDITION_ALWAYS = 0
+    # only send result on warning/failure
+    CONDITION_ON_FAILURE = 1
+    CONDITION_CHOICES = (
+        (CONDITION_ALWAYS, 'always'),
+        (CONDITION_ON_FAILURE, 'on failure'),
+    )
+
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=255)
+    mail_recipient = models.SmallIntegerField(choices=RECIPIENT_CHOICES,
+                                              default=RECIPIENT_NONE)
+    mail_condition = models.SmallIntegerField(choices=CONDITION_CHOICES,
+                                              default=CONDITION_ALWAYS)
 
     class Meta:
         unique_together = [('project', 'name')]
