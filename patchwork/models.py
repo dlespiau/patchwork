@@ -47,6 +47,12 @@ class Person(models.Model):
         else:
             return self.email
 
+    def email_name(self):
+        if (self.name):
+            return "%s <%s>" % (self.name, self.email)
+        else:
+            return self.email
+
     def __unicode__(self):
         return self.display_name()
 
