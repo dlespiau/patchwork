@@ -1,5 +1,7 @@
 # Patchwork - automated patch tracking system
-# Copyright (C) 2014 Intel Corporation
+# coding=utf-8
+#
+# Copyright (C) 2014,2015 Intel Corporation
 #
 # This file is part of the Patchwork package.
 #
@@ -22,10 +24,12 @@ try:
     from django.core.exceptions import FieldDoesNotExist
 except:
     from django.db.models.fields import FieldDoesNotExist
+from django.conf import settings
+from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-                             TestResult
+                             Test, TestResult
 from rest_framework import views, viewsets, mixins, generics, filters, \
                            permissions, status
 from rest_framework.authentication import BasicAuthentication
@@ -184,13 +188,37 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
         return series_mbox(rev)
 
 class ResultMixin(object):
+    def _prepare_mail(self, result):
+        if result.state == TestResult.STATE_SUCCESS:
+            tick = u"✓"
+        else:
+            tick = u"✗"
+        subject = tick + u" %s: %s" % (result.get_state_display(),
+                                       result.test.name)
+        body = ''
+        if result.summary:
+            body += "== Summary ==\n\n"
+            body += result.summary
+            if body.endswith('\n'):
+                body += "\n"
+            else:
+                body += "\n\n"
+        if result.url:
+            body += "== Logs ==\n\n"
+            body += "For more details see: " + result.url
+            body += "\n"
+
+        return (subject, body)
+
     def handle_test_results(self, request, obj, check_obj, q, ctx):
+        # auth
         if not 'test_name' in request.DATA:
             return Response({'test_name': ['This field is required.', ]},
                             status=status.HTTP_400_BAD_REQUEST)
 
         self.check_object_permissions(request, check_obj)
 
+        # update test result and prepare the JSON response
         try:
             test = request.DATA['test_name']
             instance = TestResult.objects.get(q, test__name=test)
@@ -205,7 +233,34 @@ class ResultMixin(object):
         if not result.is_valid():
             return Response(result.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        result.save()
+        instance = result.save()
+
+        # mailing, done synchronously with the request, for now
+        to = []
+        cc = []
+        if instance.test.mail_recipient == Test.RECIPIENT_SUBMITTER:
+            to.append(check_obj.submitter.email_name())
+        elif instance.test.mail_recipient == Test.RECIPIENT_MAILING_LIST:
+            to.append(check_obj.submitter.email_name())
+            cc.append(check_obj.project.listemail)
+
+        if to:
+            # never send mail on pending
+            if instance.state == TestResult.STATE_PENDING:
+                to = []
+
+            if (instance.test.mail_condition == Test.CONDITION_ON_FAILURE and
+                instance.state not in (TestResult.STATE_WARNING,
+                                       TestResult.STATE_FAILURE)):
+                to = []
+
+        if to:
+            subject, body = self._prepare_mail(instance)
+            email = mail.EmailMessage(subject, body,
+                                      settings.DEFAULT_FROM_EMAIL,
+                                      to=to, cc=cc)
+            email.send()
+
         return Response(result.data, status=status.HTTP_201_CREATED)
 
 class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):

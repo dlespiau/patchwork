@@ -1,4 +1,6 @@
 # Patchwork - automated patch tracking system
+# coding=utf-8
+#
 # Copyright (C) 2015 Intel Corporation
 #
 # This file is part of the Patchwork package.
@@ -17,6 +19,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from django.core import mail
 from django.test import Client
 import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
@@ -227,6 +230,17 @@ class TestResultTest(APITestBase):
     result_url = 'http://example.org/logs/foo.txt'
     result_summary = 'This contains a summary of the test results'
 
+    def _post_result(self, entry, test_name, state, summary=None, url=None):
+        data = {
+            'test_name': test_name,
+            'state': state,
+        }
+        if summary:
+            data['summary'] = summary
+        if url:
+            data['url'] = url
+        return self.post_json(entry, data=data, user=self.maintainer)
+
     def testNoTestResults(self):
         return
         for url in self.test_urls:
@@ -280,6 +294,7 @@ class TestResultTest(APITestBase):
     def _cleanup_tests(self):
         TestResult.objects.all().delete()
         Test.objects.all().delete()
+        mail.outbox = []
 
     def testInvalidSubmissions(self):
         """test_name and state are required fields"""
@@ -392,3 +407,80 @@ class TestResultTest(APITestBase):
             self.assertEqual(result.summary, self.result_summary)
 
             self._cleanup_tests()
+
+    def testNoMailByDefault(self):
+        for url in self.test_urls:
+            self._post_result(url, 'new test', 'success')
+            self.assertEqual(len(mail.outbox), 0)
+            self._cleanup_tests()
+
+    def _configure_test(self, url, test_name, recipient, condition):
+        """Create test_name and configure it"""
+        self._post_result(url, test_name, 'pending')
+        tests = Test.objects.all()
+        self.assertEqual(len(tests), 1)
+        test = tests[0]
+        test.mail_recipient = recipient
+        test.mail_condition = condition
+        test.save()
+
+    def testMailRecipient(self):
+        for url in self.test_urls:
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, [self.series.submitter.email_name()])
+            self.assertEqual(email.cc, [])
+
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, [self.series.submitter.email_name()])
+            self.assertEqual(email.cc, [self.project.listemail])
+
+            self._cleanup_tests()
+
+    def testMailCondition(self):
+        for url in self.test_urls:
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._post_result(url, 'super test', 'pending')
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
+            self._post_result(url, 'super test', 'pending')
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
+            self._post_result(url, 'super test', 'warning')
+            self.assertEqual(len(mail.outbox), 1)
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
+            self._post_result(url, 'super test', 'failure')
+            self.assertEqual(len(mail.outbox), 1)
+            mail.outbox = []
