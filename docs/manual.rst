@@ -220,7 +220,7 @@ git tree is now a single command away:
 
 ::
 
-    $ git pw apply 122
+    $ git pw apply -s 122
     Applying series: DP refactoring v2 (rev 1)
     Applying: drm/i915: Don't pass *DP around to link training functions
     Applying: drm/i915: Split write of pattern to DP reg from intel_dp_set_link_train
