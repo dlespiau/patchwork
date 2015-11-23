@@ -72,21 +72,26 @@ or::
 
     (django-1.8)$ pip install -r docs/requirements-dev-postgresql.txt
 
-5. Export the ``DJANGO_SETTINGS_MODULE`` path
+5. Export the ``DJANGO_SETTINGS_MODULE`` variable
 
-If you are using the provided :file:`settings/dev.py` file, you can simply
-export the path to this file (in Python module format) like so::
+Django needs to be told which settings to use. By default it will try to load
+settings from the :file:`patchwork/settings/production.py` file. This can be
+overridden with the ``DJANGO_SETTINGS_MODULE`` environment variable.
+
+Patchwork provides a convenience settings template suitable for development in
+:file:`patchwork/settings/dev.py`. To use it, you can simply export the path to
+this file (in Python module format) like so::
 
     (django-1.8)$ export DJANGO_SETTINGS_MODULE=patchwork.settings.dev
 
-If you do so, you may also need to configure you database configuration. See
-the `Environment Variables`_ section below for details on the specific
-variables to export. For example::
+And adjust your database settings through environment variables. See the
+`Environment Variables`_ section below for details. For example::
 
     (django-1.8)$ export PW_TEST_DB_USER=root
+    (django-1.8)$ export PW_TEST_DB_PASS=password
 
-You can also provide your own :file:`settings.py` file. Simply change the path
-used for ``DJANGO_SETTINGS_MODULE`` above and omit the ``PW_`` related steps.
+You may also provide your own settings file and have ``DJANGO_SETTINGS_MODULE``
+point to that file.
 
 
 6. Run the development server
