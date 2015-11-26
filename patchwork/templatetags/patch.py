@@ -23,8 +23,8 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.template.defaultfilters import stringfilter
 
-register = template.Library()
 
+register = template.Library()
 
 @register.filter(name='patch_tags')
 def patch_tags(patch, tag):

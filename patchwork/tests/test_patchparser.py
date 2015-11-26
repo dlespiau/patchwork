@@ -17,16 +17,21 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os
 from email import message_from_string
-from email.utils import make_msgid
-from django.test import TestCase
-from patchwork.models import Project, Person, Patch, Comment, State, \
-         get_default_initial_patch_state
-from patchwork.tests.utils import read_patch, read_mail, create_email, \
-         defaults, create_user
-
 from email.mime.text import MIMEText
+from email.utils import make_msgid
+import os
+
+from django.test import TestCase
+
+from patchwork.bin.parsemail import (find_content, find_author, find_project,
+                                     parse_mail, split_prefixes, clean_subject,
+                                     parse_series_marker)
+from patchwork.models import (Project, Person, Patch, Comment, State,
+                              get_default_initial_patch_state)
+from patchwork.tests.utils import (read_patch, read_mail, create_email,
+                                   defaults, create_user)
+
 
 class PatchTest(TestCase):
     fixtures = ['default_states', 'default_events']
@@ -34,9 +39,6 @@ class PatchTest(TestCase):
     default_subject = defaults.subject
     project = defaults.project
 
-from patchwork.bin.parsemail import find_content, find_author, find_project, \
-                                    parse_mail, split_prefixes, clean_subject, \
-                                    parse_series_marker
 
 class InlinePatchTest(PatchTest):
     patch_filename = '0001-add-line.patch'

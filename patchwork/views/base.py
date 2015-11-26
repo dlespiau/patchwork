@@ -21,15 +21,16 @@ from __future__ import absolute_import
 
 import json
 
-from patchwork.models import Patch, Project, Person, EmailConfirmation, User, \
-                             user_name
-from django.shortcuts import render_to_response, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from patchwork.requestcontext import PatchworkRequestContext
-from django.core import urlresolvers
-from django.template.loader import render_to_string
 from django.conf import settings
+from django.core import urlresolvers
 from django.db.models import Q
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import render_to_response, get_object_or_404
+from django.template.loader import render_to_string
+
+from patchwork.models import (Patch, Project, Person, EmailConfirmation, User,
+                              user_name)
+from patchwork.requestcontext import PatchworkRequestContext
 
 def projects(request):
     context = PatchworkRequestContext(request)

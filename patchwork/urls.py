@@ -17,8 +17,8 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.conf.urls import patterns, url, include
 from django.conf import settings
+from django.conf.urls import patterns, url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from rest_framework_nested import routers
@@ -59,6 +59,7 @@ patch_results_router = routers.NestedSimpleRouter(patches_router, 'patches',
                                           lookup='patch')
 patch_results_router.register(r'test-results', api.PatchResultViewSet,
                               base_name='patch-results')
+
 
 admin.autodiscover()
 
