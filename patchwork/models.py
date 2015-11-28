@@ -126,6 +126,21 @@ auth.models.User.add_to_class('name', user_name)
 
 
 @python_2_unicode_compatible
+class DelegationRule(models.Model):
+    user = models.ForeignKey(User)
+    path = models.CharField(max_length=255)
+    project = models.ForeignKey(Project)
+    priority = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.path
+
+    class Meta:
+        ordering = ['-priority', 'path']
+        unique_together = (('path', 'project'))
+
+
+@python_2_unicode_compatible
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, related_name='profile')
     primary_project = models.ForeignKey(Project, null=True, blank=True)
