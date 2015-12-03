@@ -12,7 +12,9 @@
             <span>
               <a href="{{ test_result.url }}" onclick="(function(e){ e.stopPropagation(); })(event)">(See full logs)</a>
             </span>
+            <span class="pull-right">Updated {{ test_result.date }}</span>
             {% endif %}
+            <span class="pull-right">Updated {{ test_result.date }}</span>
           </div>
           {% if test_result.summary %}
           <div id="collapse-{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ forloop.counter}}">
