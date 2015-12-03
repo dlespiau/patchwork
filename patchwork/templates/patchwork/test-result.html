@@ -1,6 +1,6 @@
         <div class="panel panel-default">
         {% if test_result.summary %}
-          <div class="panel-heading small-panel-heading cursor-pointer" role="tab" data-toggle="collapse" href="#collapse-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}" id="heading-{{ forloop.counter }}">
+          <div class="panel-heading small-panel-heading cursor-pointer" role="tab" data-toggle="collapse" href="#collapse-{{ revision.version }}-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ revision.version}}-{{ forloop.counter }}" id="heading-{{ forloop.counter }}">
         {% else %}
           <div class="panel-heading small-panel-heading" role="tab" id="heading-{{ forloop.counter }}">
         {% endif %}
@@ -17,7 +17,7 @@
             <span class="pull-right">Updated {{ test_result.date }}</span>
           </div>
           {% if test_result.summary %}
-          <div id="collapse-{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ forloop.counter}}">
+          <div id="collapse-{{ revision.version }}-{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading-{{ forloop.counter}}">
             <pre class="panel-body test-result">
 {{ test_result.summary }}</pre>
           </div>
