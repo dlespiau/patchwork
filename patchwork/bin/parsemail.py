@@ -45,7 +45,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.utils.log import AdminEmailHandler
 
 list_id_headers = ['List-ID', 'X-Mailing-List', 'X-list']
-whitespace_re = re.compile('\s+')
+whitespace_re = re.compile(r'\s+')
 
 
 def normalise_space(str):
@@ -68,8 +68,8 @@ def clean_header(header):
 
 def find_project(mail):
     project = None
-    listid_res = [re.compile('.*<([^>]+)>.*', re.S),
-                  re.compile('^([\S]+)$', re.S)]
+    listid_res = [re.compile(r'.*<([^>]+)>.*', re.S),
+                  re.compile(r'^([\S]+)$', re.S)]
 
     for header in list_id_headers:
         if header in mail:
@@ -125,13 +125,13 @@ def find_author(mail):
     #    from re.match().groups()
     from_res = [
         # for "Firstname Lastname" <example@example.com> style addresses
-       (re.compile('"?(.*?)"?\s*<([^>]+)>'), (lambda g: (g[0], g[1]))),
+        (re.compile(r'"?(.*?)"?\s*<([^>]+)>'), (lambda g: (g[0], g[1]))),
 
-       # for example@example.com (Firstname Lastname) style addresses
-       (re.compile('"?(.*?)"?\s*\(([^\)]+)\)'), (lambda g: (g[1], g[0]))),
+        # for example@example.com (Firstname Lastname) style addresses
+        (re.compile(r'"?(.*?)"?\s*\(([^\)]+)\)'), (lambda g: (g[1], g[0]))),
 
-       # everything else
-       (re.compile('(.*)'), (lambda g: (None, g[0]))),
+        # everything else
+        (re.compile(r'(.*)'), (lambda g: (None, g[0]))),
     ]
 
     for regex, fn in from_res:
@@ -173,10 +173,10 @@ def mail_headers(mail):
 
 
 def find_pull_request(content):
-    git_re = re.compile('^The following changes since commit.*' +
-                        '^are available in the git repository at:\n'
-                        '^\s*([\S]+://[^\n]+)$',
-                           re.DOTALL | re.MULTILINE)
+    git_re = re.compile(r'^The following changes since commit.*' +
+                        r'^are available in the git repository at:\n'
+                        r'^\s*([\S]+://[^\n]+)$',
+                        re.DOTALL | re.MULTILINE)
     match = git_re.search(content)
     if match:
         return match.group(1)
@@ -529,7 +529,7 @@ def find_patch_for_comment(project, refs):
     return None
 
 
-split_re = re.compile('[,\s]+')
+split_re = re.compile(r'[,\s]+')
 
 
 def split_prefixes(prefix):
@@ -539,8 +539,8 @@ def split_prefixes(prefix):
     return [s for s in matches if s != '']
 
 
-re_re = re.compile('^(re|fwd?)[:\s]\s*', re.I)
-prefix_re = re.compile('^\[([^\]]*)\]\s*(.*)$')
+re_re = re.compile(r'^(re|fwd?)[:\s]\s*', re.I)
+prefix_re = re.compile(r'^\[([^\]]*)\]\s*(.*)$')
 
 
 def clean_subject(subject, drop_prefixes=None):
@@ -586,14 +586,14 @@ def clean_subject(subject, drop_prefixes=None):
     return (subject, prefixes)
 
 
-prefixes_re = re.compile('^\[[^\]]*\]\s*')
+prefixes_re = re.compile(r'^\[[^\]]*\]\s*')
 
 
 def strip_prefixes(subject):
     return prefixes_re.sub('', subject)
 
 
-sig_re = re.compile('^(-- |_+)\n.*', re.S | re.M)
+sig_re = re.compile(r'^(-- |_+)\n.*', re.S | re.M)
 
 
 def clean_content(str):
@@ -622,7 +622,7 @@ def get_delegate(delegate_email):
     return None
 
 
-series_name_re = re.compile('[, \(]*(v|take)[\) 0-9]+$', re.I)
+series_name_re = re.compile(r'[, \(]*(v|take)[\) 0-9]+$', re.I)
 
 
 def clean_series_name(str):
