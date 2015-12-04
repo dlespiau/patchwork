@@ -98,6 +98,16 @@ class Command(object):
             'need_project' : False,
             'need_auth'    : False,
         },
+        'mbox': {
+            'need_git_repo': True,
+            'need_project' : False,
+            'need_auth'    : False,
+        },
+        'mbox-patch': {
+            'need_git_repo': True,
+            'need_project' : False,
+            'need_auth'    : False,
+        },
         'post-result': {
             'need_git_repo': True,
             'need_project' : False,
@@ -367,6 +377,32 @@ class GitPatchwork(object):
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
 
+    def _print_mbox(self, mailbox_url):
+        r = requests.get(mailbox_url)
+        if r.status_code is not 200:
+            raise HttpError(r.status_code)
+        print r.content
+
+    def do_mbox(self):
+        (series, revision) = self.cmd_get_series_revision()
+
+        try:
+            return self._print_mbox(revision.absolute_url('/mbox/'))
+        except HttpError as e:
+            if e.status_code != 404:
+                raise
+            die('No series with id %d.' % self.cmd.series_id)
+
+    def do_mbox_patch(self):
+        patch = self.pw.get_patch(self.cmd.patch_id)
+
+        try:
+            return self._print_mbox(patch.absolute_url('/mbox/'))
+        except HttpError as e:
+            if e.status_code != 404:
+                raise
+            die('No patch with id %d.' % self.cmd.patch_id)
+
     def _prepare_result_data(self):
         data = {
             'test_name': self.cmd.test_name,
@@ -492,6 +528,20 @@ if __name__ == '__main__':
              'commit log message')
 
     apply_patch_parser.add_argument('patch_id', metavar='patch_id',
+        type=int, help='the patch id to apply')
+
+    # mbox
+    mbox_parser = subparsers.add_parser('mbox',
+        help='retrieve a mbox file of the series and print it on stdout')
+    mbox_parser.add_argument('--revision', '-r', metavar='revision',
+        type=int, help='the revision to retrieve, latest if omitted')
+    mbox_parser.add_argument('series_id', metavar='series_id',
+        type=int, help='the series id to retrieve')
+
+    # mbox-patch
+    mbox_parser = subparsers.add_parser('mbox-patch',
+        help='retrieve a mbox file of the patch and print it on stdout')
+    mbox_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
 
     # post-result
