@@ -150,9 +150,9 @@ def find_author(mail):
     new_person = False
 
     try:
-        person = Person.objects.get(email__iexact = email)
+        person = Person.objects.get(email__iexact=email)
     except Person.DoesNotExist:
-        person = Person(name = name, email = email)
+        person = Person(name=name, email=email)
         new_person = True
 
     return (person, new_person)
@@ -370,8 +370,8 @@ def find_content(project, mail):
 
     if pullurl or (is_patch and not drop_patch):
         ret.patch_order = x or 1
-        ret.patch = Patch(name = name, pull_url = pullurl, content = patchbuf,
-                    date = mail_date(mail), headers = mail_headers(mail))
+        ret.patch = Patch(name=name, pull_url=pullurl, content=patchbuf,
+                    date=mail_date(mail), headers=mail_headers(mail))
 
     # Create/update the Series and SeriesRevision objects
     if is_cover_letter or is_patch:
@@ -401,7 +401,7 @@ def find_content(project, mail):
         # If this is a new patch, we defer setting comment.patch until
         # patch has been saved by the caller
         if ret.patch:
-            ret.comment = Comment(date = mail_date(mail),
+            ret.comment = Comment(date=mail_date(mail),
                     content = clean_content(commentbuf),
                     headers = mail_headers(mail))
 
@@ -409,7 +409,7 @@ def find_content(project, mail):
             cpatch = find_patch_for_comment(project, refs)
             if not cpatch:
                 return ret
-            ret.comment = Comment(patch = cpatch, date = mail_date(mail),
+            ret.comment = Comment(patch=cpatch, date=mail_date(mail),
                     content = clean_content(commentbuf),
                     headers = mail_headers(mail))
 
@@ -503,7 +503,7 @@ def find_series_for_mail(project, name, msgid, is_patch, order, refs):
         if not name:
             name = SERIES_DEFAULT_NAME
         series = Series(name=name)
-        revision = SeriesRevision(root_msgid = root_msgid)
+        revision = SeriesRevision(root_msgid=root_msgid)
 
     return (series, revision, order)
 
@@ -514,7 +514,7 @@ def find_patch_for_comment(project, refs):
 
         # first, check for a direct reply
         try:
-            patch = Patch.objects.get(project = project, msgid = ref)
+            patch = Patch.objects.get(project=project, msgid=ref)
             return patch
         except Patch.DoesNotExist:
             pass
@@ -543,7 +543,7 @@ re_re = re.compile('^(re|fwd?)[:\s]\s*', re.I)
 prefix_re = re.compile('^\[([^\]]*)\]\s*(.*)$')
 
 
-def clean_subject(subject, drop_prefixes = None):
+def clean_subject(subject, drop_prefixes=None):
     """ Clean a Subject: header from an incoming patch.
 
     Removes Re: and Fwd: strings, as well as [PATCH]-style prefixes. By
