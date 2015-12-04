@@ -22,7 +22,6 @@
 import sys
 import re
 import datetime
-import time
 import operator
 import codecs
 import weakref
@@ -37,10 +36,8 @@ from patchwork.lock import release
 from patchwork.parser import parse_patch
 from patchwork.models import Patch, Project, Person, Comment, State, Series, \
         SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state, \
-        get_default_initial_patch_state, series_revision_complete, \
-        SERIES_DEFAULT_NAME
+        series_revision_complete, SERIES_DEFAULT_NAME
 import django
-from django import dispatch
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -48,10 +45,12 @@ from django.core.exceptions import MultipleObjectsReturned
 from django.utils.log import AdminEmailHandler
 
 list_id_headers = ['List-ID', 'X-Mailing-List', 'X-list']
-
 whitespace_re = re.compile('\s+')
+
+
 def normalise_space(str):
     return whitespace_re.sub(' ', str).strip()
+
 
 def clean_header(header):
     """ Decode (possibly non-ascii) headers """
@@ -65,6 +64,7 @@ def clean_header(header):
     fragments = map(decode, decode_header(header))
 
     return normalise_space(u' '.join(fragments))
+
 
 def find_project(mail):
     project = None
@@ -114,6 +114,7 @@ def find_project(mail):
 
     return project
 
+
 def find_author(mail):
 
     from_header = clean_header(mail.get('From'))
@@ -156,17 +157,20 @@ def find_author(mail):
 
     return (person, new_person)
 
+
 def mail_date(mail):
     t = parsedate_tz(mail.get('Date', ''))
     if not t:
         return datetime.datetime.utcnow()
     return datetime.datetime.utcfromtimestamp(mktime_tz(t))
 
+
 def mail_headers(mail):
     return reduce(operator.__concat__,
-            ['%s: %s\n' % (k, Header(v, header_name = k, \
-                    continuation_ws = '\t').encode()) \
+            ['%s: %s\n' % (k, Header(v, header_name = k,
+                    continuation_ws = '\t').encode())
                 for (k, v) in mail.items()])
+
 
 def find_pull_request(content):
     git_re = re.compile('^The following changes since commit.*' +
@@ -186,6 +190,7 @@ def try_decode(payload, charset):
         return None
     return payload
 
+
 class MailContent:
     def __init__(self):
         self.patch = None
@@ -193,6 +198,7 @@ class MailContent:
         self.series = None
         self.revision = None
         self.patch_order = 1    # place of the patch in the series
+
 
 def build_references_from_headers(in_reply_to, references):
     refs = []
@@ -209,6 +215,7 @@ def build_references_from_headers(in_reply_to, references):
 
     return refs
 
+
 def get_object_by_msgid(cls, msgid):
     try:
         return cls.objects.get(msgid=msgid)
@@ -220,10 +227,12 @@ def get_object_by_msgid(cls, msgid):
         # not.
         return cls.objects.filter(msgid=msgid).order_by('-date')[0]
 
+
 def find_header_in_text(headers, name):
     parser = HeaderParser()
     headers = parser.parsestr(headers)
     return headers[name]
+
 
 def build_references_from_db(msgid):
     # msgid belongs to either a patch or a comment
@@ -250,9 +259,11 @@ def build_references_from_db(msgid):
     ancestor_msgid = refs[-1]
     return refs + build_references_from_db(ancestor_msgid)
 
+
 def build_references_from_mail(mail):
     return build_references_from_headers(mail.get('In-Reply-To', None),
                                          mail.get('References', None))
+
 
 def build_references_list(mail):
     """Construct the list of msgids from 'mail' to the root of the thread"""
@@ -272,6 +283,7 @@ def build_references_list(mail):
     parent_msgid = refs[-1]
     return refs + build_references_from_db(parent_msgid)
 
+
 def parse_series_marker(subject_prefixes):
     """If this patch is part a of multi-patches series, ie has x/n in its
        subject, return (x, n). Otherwise, return (None, None)."""
@@ -283,6 +295,7 @@ def parse_series_marker(subject_prefixes):
             continue
         return (int(m.group(1)), int(m.group(2)))
     return (None, None)
+
 
 def find_content(project, mail):
     patchbuf = None
@@ -304,7 +317,7 @@ def find_content(project, mail):
             # ignore it and fallback to our standard set.
             if charset is not None:
                 try:
-                    codec = codecs.lookup(charset)
+                    codecs.lookup(charset)
                 except LookupError:
                     charset = None
 
@@ -407,6 +420,7 @@ def find_content(project, mail):
 
     return ret
 
+
 def find_previous_patch(revision, order, refs):
     if not refs:
         return None
@@ -442,6 +456,7 @@ def find_previous_patch(revision, order, refs):
 
     return None
 
+
 def find_patch_order(revisions, previous_patch, order):
     # cycle through revisions starting by the more recent one and find
     # the revision where previous_patch is
@@ -454,6 +469,7 @@ def find_patch_order(revisions, previous_patch, order):
             continue
     assert order is not None
     return order
+
 
 # The complexity here is because:
 #   - patches can be received out of order: If we receive a patch, part of
@@ -491,6 +507,7 @@ def find_series_for_mail(project, name, msgid, is_patch, order, refs):
 
     return (series, revision, order)
 
+
 def find_patch_for_comment(project, refs):
     for ref in refs:
         patch = None
@@ -504,24 +521,27 @@ def find_patch_for_comment(project, refs):
 
         # see if we have comments that refer to a patch
         try:
-            comment = Comment.objects.get(patch__project = project, msgid = ref)
+            comment = Comment.objects.get(patch__project=project, msgid=ref)
             return comment.patch
         except Comment.DoesNotExist:
             pass
 
-
     return None
 
+
 split_re = re.compile('[,\s]+')
+
 
 def split_prefixes(prefix):
     """ Turn a prefix string into a list of prefix tokens """
 
     matches = split_re.split(prefix)
-    return [ s for s in matches if s != '' ]
+    return [s for s in matches if s != '']
+
 
 re_re = re.compile('^(re|fwd?)[:\s]\s*', re.I)
 prefix_re = re.compile('^\[([^\]]*)\]\s*(.*)$')
+
 
 def clean_subject(subject, drop_prefixes = None):
     """ Clean a Subject: header from an incoming patch.
@@ -536,7 +556,7 @@ def clean_subject(subject, drop_prefixes = None):
     if drop_prefixes is None:
         drop_prefixes = []
     else:
-        drop_prefixes = [ s.lower() for s in drop_prefixes ]
+        drop_prefixes = [s.lower() for s in drop_prefixes]
 
     drop_prefixes.append('patch')
 
@@ -551,7 +571,7 @@ def clean_subject(subject, drop_prefixes = None):
 
     while match:
         prefix_str = match.group(1)
-        prefixes += [ p for p in split_prefixes(prefix_str) \
+        prefixes += [p for p in split_prefixes(prefix_str)
                         if p.lower() not in drop_prefixes]
 
         subject = match.group(2)
@@ -565,15 +585,22 @@ def clean_subject(subject, drop_prefixes = None):
 
     return (subject, prefixes)
 
+
 prefixes_re = re.compile('^\[[^\]]*\]\s*')
+
+
 def strip_prefixes(subject):
     return prefixes_re.sub('', subject)
 
+
 sig_re = re.compile('^(-- |_+)\n.*', re.S | re.M)
+
+
 def clean_content(str):
     """ Try to remove signature (-- ) and list footer (_____) cruft """
     str = sig_re.sub('', str)
     return str.strip()
+
 
 def get_state(state_name):
     """ Return the state with the given name or the default State """
@@ -584,6 +611,7 @@ def get_state(state_name):
             pass
     return get_default_initial_patch_state()
 
+
 def get_delegate(delegate_email):
     """ Return the delegate with the given email or None """
     if delegate_email:
@@ -593,11 +621,15 @@ def get_delegate(delegate_email):
             pass
     return None
 
+
 series_name_re = re.compile('[, \(]*(v|take)[\) 0-9]+$', re.I)
+
+
 def clean_series_name(str):
     """Try to remove 'v2' and 'take 28' markers in cover letters subjects"""
     str = series_name_re.sub('', str)
     return str.strip()
+
 
 def on_revision_complete(sender, revision, **kwargs):
     # Brand new series (revision.version == 1) may be updates to a Series
@@ -616,7 +648,6 @@ def on_revision_complete(sender, revision, **kwargs):
     if len(previous_series) != 1:
         return
 
-
     previous_series = previous_series[0]
     new_revision = previous_series.latest_revision().duplicate_meta()
     new_revision.root_msgid = revision.root_msgid
@@ -629,6 +660,7 @@ def on_revision_complete(sender, revision, **kwargs):
 
     revision.delete()
     new_series.delete()
+
 
 def parse_mail(mail):
 
@@ -706,6 +738,7 @@ def parse_mail(mail):
 
     return 0
 
+
 extra_error_message = '''
 == Mail
 
@@ -715,6 +748,7 @@ extra_error_message = '''
 == Traceback
 
 '''
+
 
 # Send emails to settings.ADMINS when encountering errors
 def setup_error_handler():
@@ -730,7 +764,10 @@ def setup_error_handler():
 
     return logger
 
+
 _lockref = None
+
+
 def lock():
     global _lockref
 
@@ -742,6 +779,7 @@ def lock():
     l = lockmod.lock("/tmp/patchwork.parsemail.lock", timeout=30)
     _lockref = weakref.ref(l)
     return l
+
 
 def main(args):
     django.setup()
@@ -759,6 +797,7 @@ def main(args):
         raise
     finally:
         release(parse_lock)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
