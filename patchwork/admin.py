@@ -21,8 +21,8 @@ from django.contrib import admin
 
 from patchwork.models import (
     Project, Person, UserProfile, State, Patch, Comment, Bundle, Tag, Test,
-    TestResult
-)
+    TestResult)
+
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'linkname', 'listid', 'listemail')
