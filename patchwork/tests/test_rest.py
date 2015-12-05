@@ -96,7 +96,7 @@ class APITestBase(test_series.Series0010):
 
     def check_mbox(self, api_url, filename, md5sum):
         response = self.client.get('/api/1.0' + api_url)
-        s = re.search("filename=([\w\.\-_]+)",
+        s = re.search(r"filename=([\w\.\-_]+)",
                       response["Content-Disposition"]).group(1)
         self.assertEqual(s, filename)
 
@@ -369,7 +369,7 @@ class TestResultTest(APITestBase):
 
     def testUpdateTestResult(self):
         for url in self.test_urls:
-            (r, data) = self.post_json(url, data={
+            (r, _) = self.post_json(url, data={
                 'test_name': 'test/bar',
                 'state': 'pending',
             }, user=self.maintainer)
@@ -383,7 +383,7 @@ class TestResultTest(APITestBase):
             self.assertEqual(result.url, None)
             self.assertEqual(result.summary, None)
 
-            (r, data) = self.post_json(url, data={
+            (r, _) = self.post_json(url, data={
                 'test_name': 'test/bar',
                 'state': 'success',
                 'url': self.result_url,
