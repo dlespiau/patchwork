@@ -19,30 +19,31 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import sys
-import re
-import datetime
-import operator
 import codecs
-import weakref
+import datetime
 from email import message_from_file
 from email.header import Header, decode_header
 from email.parser import HeaderParser
 from email.utils import parsedate_tz, mktime_tz
 import logging
+import operator
+import re
+import sys
+import weakref
 
-from patchwork import lock as lockmod
-from patchwork.lock import release
-from patchwork.parser import parse_patch
-from patchwork.models import Patch, Project, Person, Comment, State, Series, \
-        SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state, \
-        series_revision_complete, SERIES_DEFAULT_NAME
 import django
-from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned
+from django.db.models import Q
 from django.utils.log import AdminEmailHandler
+
+from patchwork import lock as lockmod
+from patchwork.lock import release
+from patchwork.models import (Patch, Project, Person, Comment, State, Series,
+    SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state,
+    series_revision_complete, SERIES_DEFAULT_NAME)
+from patchwork.parser import parse_patch
 
 list_id_headers = ['List-ID', 'X-Mailing-List', 'X-list']
 whitespace_re = re.compile(r'\s+')
