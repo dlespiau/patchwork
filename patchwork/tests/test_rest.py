@@ -240,12 +240,6 @@ class TestResultTest(APITestBase):
             data['url'] = url
         return self.post_json(entry, data=data, user=self.maintainer)
 
-    def testNoTestResults(self):
-        return
-        for url in self.test_urls:
-            results = self.get_json(url)
-            self.assertEqual(results['count'], 0)
-
     def testSubmitTestResultAnonymous(self):
         for url in self.test_urls:
             (r, data) = self.post_json(url, data={
