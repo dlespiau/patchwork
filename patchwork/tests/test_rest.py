@@ -20,7 +20,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.core import mail
-from django.test import Client
 import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.models import Series, Patch, SeriesRevision, Test, TestResult
@@ -96,7 +95,7 @@ class APITestBase(test_series.Series0010):
         self.maintainer.add_to_maintainers(self.project)
 
     def check_mbox(self, api_url, filename, md5sum):
-        response = self.client.get(api_url)
+        response = self.client.get('/api/1.0' + api_url)
         s = re.search("filename=([\w\.\-_]+)",
                       response["Content-Disposition"]).group(1)
         self.assertEqual(s, filename)
@@ -174,12 +173,12 @@ class APITest(APITestBase):
             i += 1
 
     def testSeriesMbox(self):
-        self.check_mbox("/api/1.0/series/%s/revisions/1/mbox/" % self.series.pk,
+        self.check_mbox("/series/%s/revisions/1/mbox/" % self.series.pk,
                         'for_each_-intel_-crtc-v2.mbox',
                         '42e2b2c9eeccf912c998be41683f50d7')
 
     def testPatchMbox(self):
-        self.check_mbox("/api/1.0/patches/%s/mbox/" % self.patch.pk,
+        self.check_mbox("/patches/%s/mbox/" % self.patch.pk,
                         '3-4-drm-i915-Introduce-a-for_each_crtc-macro.patch',
                         'b951af09618c6360516f16ed97a30753')
 

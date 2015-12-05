@@ -7,6 +7,7 @@ patchwork=$root_dir/patchwork
 files=$(cat <<-END
     $patchwork/bin/parsemail.py
     $patchwork/admin.py
+    $patchwork/tests/test_rest.py
 END
 )
 
