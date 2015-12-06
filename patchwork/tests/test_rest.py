@@ -401,6 +401,39 @@ class TestResultTest(APITestBase):
 
             self._cleanup_tests()
 
+    def testDeleteOptionalFields(self):
+        for url in self.test_urls:
+            (r, _) = self.post_json(url, data={
+                'test_name': 'test/bar',
+                'state': 'pending',
+                'url': self.result_url,
+                'summary': self.result_summary,
+            }, user=self.maintainer)
+            self.assertEqual(r.status_code, 201)
+
+            self.assertEqual(Test.objects.all().count(), 1)
+            results = TestResult.objects.all()
+            self.assertEqual(len(results), 1)
+            result = results[0]
+            self.assertEqual(result.state, TestResult.STATE_PENDING)
+            self.assertEqual(result.url, self.result_url)
+            self.assertEqual(result.summary, self.result_summary)
+
+            (r, _) = self.post_json(url, data={
+                'test_name': 'test/bar',
+                'state': 'pending',
+                'url': None,
+                'summary': None,
+            }, user=self.maintainer)
+            self.assertEqual(r.status_code, 201)
+
+            result = TestResult.objects.all()[0]
+            self.assertEqual(result.state, TestResult.STATE_PENDING)
+            self.assertEqual(result.url, None)
+            self.assertEqual(result.summary, None)
+
+            self._cleanup_tests()
+
     def testNoMailByDefault(self):
         for url in self.test_urls:
             self._post_result(url, 'new test', 'success')

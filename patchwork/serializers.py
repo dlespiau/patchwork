@@ -198,8 +198,8 @@ class ValueChoiceField(serializers.ChoiceField):
 class TestResultSerializer(serializers.Serializer):
     test_name = serializers.CharField(source='test.name')
     state = ValueChoiceField(choices=TestResult.STATE_CHOICES)
-    url = serializers.URLField(required=False)
-    summary = serializers.CharField(required=False)
+    url = serializers.URLField(required=False, allow_none=True)
+    summary = serializers.CharField(required=False, allow_none=True)
 
     def resolve_fields(self, validated_data):
         project = self.context['project']
