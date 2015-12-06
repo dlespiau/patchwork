@@ -229,7 +229,7 @@ class Patchwork(object):
         absolute_url = self.api_base + url
         credentials = (self.user.username, self.user.password)
 
-        r = requests.post(absolute_url, data=data, auth=credentials)
+        r = requests.post(absolute_url, json=data, auth=credentials)
         if r.status_code < 200 or r.status_code >= 300:
             e = HttpError(r.status_code)
             e.set_response(r)
@@ -409,8 +409,12 @@ class GitPatchwork(object):
             'state': self.cmd.state,
         }
         if self.cmd.url:
+            if self.cmd.url in ('none', 'null'):
+                self.cmd.url = None
             data['url'] = self.cmd.url
         if self.cmd.summary:
+            if self.cmd.summary in ('none', 'null'):
+                self.cmd.summary = None
             data['summary'] = self.cmd.summary
         if self.cmd.summary_from_file:
             try:
