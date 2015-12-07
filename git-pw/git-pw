@@ -163,6 +163,17 @@ class RestObject(object):
     def __getattr__(self, name):
         return self.get()[name]
 
+
+class Project(RestObject):
+
+    def __init__(self, patchwork, linkname):
+        super(Project, self).__init__(patchwork)
+        self.linkname = linkname
+
+    def url(self, url='/'):
+        return '/projects/' + self.linkname + url
+
+
 class Revision(RestObject):
 
     def __init__(self, series, rev):
@@ -206,12 +217,12 @@ class Patch(RestObject):
 
 class Patchwork(object):
 
-    def __init__(self, web_root, project, user):
+    def __init__(self, web_root, project_linkname, user):
         if not web_root.endswith('/'):
             web_root += '/'
         self.api_base = web_root + 'api/1.0'
         self.web_root = web_root
-        self.project = project
+        self.project = Project(self, project_linkname)
         self.user = user
         self.json_cache = {}
 
@@ -270,6 +281,9 @@ class Patchwork(object):
             self.api = self.get('/')
         except HttpError:
             die("%s doesn't seem to be a patchwork instance." % self.web_root)
+
+    def get_project(self):
+        return self.project
 
     def get_series(self, series_id):
         return Series(self, series_id)
