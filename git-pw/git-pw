@@ -148,8 +148,8 @@ class RestObject(object):
     def __init__(self, patchwork):
         self.pw = patchwork
 
-    def get(self, url='/'):
-        return self.pw.get(self.url(url))
+    def get(self, url='/', params=None):
+        return self.pw.get(self.url(url), params)
 
     def post(self, url='/', data={}):
         return self.pw.post(self.url(url), data)
@@ -212,12 +212,12 @@ class Patchwork(object):
         self.user = user
         self.json_cache = {}
 
-    def get(self, url):
+    def get(self, url, params=None):
         absolute_url = self.api_base + url
         if absolute_url in self.json_cache:
             return self.json_cache[absolute_url]
 
-        r = requests.get(absolute_url)
+        r = requests.get(absolute_url, params=params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
 
