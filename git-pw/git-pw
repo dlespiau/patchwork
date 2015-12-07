@@ -47,6 +47,7 @@
 #   git config patchwork.default.project intel-gfx
 
 import argparse
+import json
 import os
 import subprocess
 import sys
@@ -106,6 +107,11 @@ class Command(object):
         'mbox-patch': {
             'need_git_repo': True,
             'need_project' : False,
+            'need_auth'    : False,
+        },
+        'poll-events': {
+            'need_git_repo': True,
+            'need_project' : True,
             'need_auth'    : False,
         },
         'post-result': {
@@ -446,6 +452,45 @@ class GitPatchwork(object):
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
 
+    def do_poll_events(self):
+        project = self.pw.get_project()
+        ts_filename = '.git-pw.%s.poll.timestamp' % project.linkname
+        params = {
+            'ordering': 'event_time',
+        }
+
+        # find out if we have a 'since' GET parameter
+        since = None
+        try:
+            with open(ts_filename) as ts_file:
+                since = ts_file.read()
+        except IOError as e:
+            pass
+
+        if self.cmd.since:
+            since = self.cmd.since
+
+        # if we don't have a 'since' parameter, default to retrieving 20 items
+        n_items = 20
+
+        if since:
+            params['since'] = since
+            n_items = -1
+
+        # list the events, older first. We limit ourselves to 20 events, the
+        # number of items per page the API will return by default.
+        try:
+            for event in project.get_list('/events/', params=params,
+                                          n_items=n_items):
+                print(json.dumps(event))
+                with open(ts_filename, 'w+') as ts_file:
+                    ts_file.write(event['event_time'])
+
+        except HttpError as e:
+            if e.status_code != 404:
+                raise
+            die('No project with link name %s.' % project.linkname)
+
     def _prepare_result_data(self):
         data = {
             'test_name': self.cmd.test_name,
@@ -590,6 +635,12 @@ if __name__ == '__main__':
         help='retrieve a mbox file of the patch and print it on stdout')
     mbox_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
+
+    # poll-events
+    poll_events_parser = subparsers.add_parser('poll-events',
+        help='list events since the last invocation')
+    poll_events_parser.add_argument('--since', '-s', metavar='timestamp',
+        type=str, help='retrieve patches newer than the given ISO 8601 time')
 
     # post-result
     post_result_parser = subparsers.add_parser('post-result',
