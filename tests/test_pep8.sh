@@ -3,12 +3,14 @@
 script_dir=$(cd `dirname $0`; pwd)
 root_dir=`dirname $script_dir`
 patchwork=$root_dir/patchwork
+gitpw=$root_dir/git-pw
 
 files=$(cat <<-END
     $patchwork/bin/parsemail.py
     $patchwork/admin.py
     $patchwork/tests/test_rest.py
     $patchwork/views/xmlrpc.py
+    $gitpw/git-pw
 END
 )
 

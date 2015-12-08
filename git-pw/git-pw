@@ -88,6 +88,7 @@ class HttpError(Exception):
         elif self.status_code in msg:
             die(msg[self.status_code])
 
+
 class Command(object):
     meta = {
         'apply': {
@@ -145,7 +146,7 @@ class Command(object):
 
 class User(object):
 
-   def __init__(self, username, password):
+    def __init__(self, username, password):
         self.username = username
         self.password = password
 
@@ -307,7 +308,7 @@ class GitPatchwork(object):
     def setup(self):
         try:
             self.repo = git.Repo(os.getcwd())
-        except git.exc.InvalidGitRepositoryError as e:
+        except git.exc.InvalidGitRepositoryError:
             if self.cmd.need_git_repo:
                 die('Not a git repository.')
 
@@ -338,7 +339,8 @@ class GitPatchwork(object):
         except:
             die("git-pw isn't configured.\n\n"
                 "Please set up the patchwork url and project, e.g.:\n\n"
-                "   git config patchwork.%(config)s.url https://patchwork.freedesktop.org\n"
+                "   git config patchwork.%(config)s.url "
+                        "https://patchwork.freedesktop.org\n"
                 "   git config patchwork.%(config)s.project intel-gfx\n" % {
                     'config': self.cmd.config,
                 })
@@ -564,7 +566,8 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
         else:
             aliases = []
 
-        parser = super(AliasedSubParsersAction, self).add_parser(name, **kwargs)
+        parser = super(AliasedSubParsersAction, self). \
+                    add_parser(name, **kwargs)
 
         # Make the aliases work.
         for alias in aliases:
@@ -577,6 +580,7 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
             self._choices_actions.append(pseudo_action)
 
         return parser
+
 
 def parser_add_result_options(parser):
     parser.add_argument('--url', '-u', metavar='url', type=str,
