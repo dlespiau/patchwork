@@ -25,6 +25,7 @@ import random
 import re
 import threadlocalrequest
 
+import django
 from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
@@ -33,10 +34,10 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 import django.dispatch
-from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
-from django.utils.six import add_metaclass
+from django.utils import six
+from django.utils.six.moves import filter
 
 from patchwork.parser import hash_patch, extract_tags
 
@@ -220,8 +221,13 @@ class State(models.Model):
         ordering = ['ordering']
 
 
-@add_metaclass(models.SubfieldBase)
-class HashField(models.CharField):
+if django.VERSION < (1, 8):
+    HashFieldBase = six.with_metaclass(models.SubfieldBase, models.CharField)
+else:
+    HashFieldBase = models.CharField
+
+
+class HashField(HashFieldBase):
 
     def __init__(self, algorithm='sha1', *args, **kwargs):
         self.algorithm = algorithm
@@ -246,6 +252,9 @@ class HashField(models.CharField):
 
         kwargs['max_length'] = self.n_bytes
         super(HashField, self).__init__(*args, **kwargs)
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
 
     def db_type(self, connection=None):
         return 'char(%d)' % self.n_bytes
