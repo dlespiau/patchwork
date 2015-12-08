@@ -50,6 +50,7 @@ import argparse
 import json
 import os
 import subprocess
+import signal
 import sys
 
 import git
@@ -591,6 +592,14 @@ def parser_add_result_options(parser):
              ' failure')
 
 if __name__ == '__main__':
+    # on SIGINT, return back to the directory the script was launched from
+    start_directory = os.getcwd()
+
+    def sigint_handler(signal, frame):
+        os.chdir(start_directory)
+        sys.exit(1)
+
+    signal.signal(signal.SIGINT, sigint_handler)
 
     parser = argparse.ArgumentParser()
     parser.register('action', 'parsers', AliasedSubParsersAction)
@@ -598,6 +607,8 @@ if __name__ == '__main__':
     # arguments common to all commands
     parser.add_argument('--config', '-c', metavar='config',
         type=str, help="configuration to use, 'default' if omitted")
+    parser.add_argument("-C", dest="directory", default='.',
+        help="change to directory")
 
     subparsers = parser.add_subparsers(dest='name', metavar='command')
 
@@ -660,5 +671,9 @@ if __name__ == '__main__':
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
+
+    os.chdir(git_pw.cmd.directory)
     ret = git_pw.run()
+    os.chdir(start_directory)
+
     sys.exit(ret)
