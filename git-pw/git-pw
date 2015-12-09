@@ -151,6 +151,9 @@ class RestObject(object):
     def get(self, url='/', params=None):
         return self.pw.get(self.url(url), params)
 
+    def get_list(self, url='/', params=None, n_items=-1):
+        return self.pw.get_list(self.url(url), params, n_items)
+
     def post(self, url='/', data={}):
         return self.pw.post(self.url(url), data)
 
@@ -224,6 +227,32 @@ class Patchwork(object):
         json = r.json()
         self.json_cache[absolute_url] = json
         return json
+
+    def _compute_perpage(self, params, n_items):
+        # always respect what we've been asked to do
+        if 'perpage' in params:
+            return params['perpage']
+        # 100 is the perpage limit the API allows
+        if n_items >= 0 and n_items <= 100:
+            return n_items
+        return 100
+
+    def get_list(self, url, params=None, n_items=-1):
+        absolute_url = self.api_base + url
+        params['perpage'] = self._compute_perpage(params, n_items)
+
+        while absolute_url and n_items != 0:
+            r = requests.get(absolute_url, params=params)
+            if r.status_code is not 200:
+                raise HttpError(r.status_code)
+
+            data = r.json()
+            for element in data['results']:
+                n_items -= 1
+                yield element
+
+            # fetch next page
+            absolute_url = data['next']
 
     def post(self, url, data):
         absolute_url = self.api_base + url
