@@ -65,7 +65,9 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
         self.field_mapping[models.DateTimeField] = Iso8601DateTimeField
 
         self._pw_related = RelatedMode.primary_key
-        related = self.context['request'].QUERY_PARAMS.get('related')
+        related = None
+        if 'request' in self.context:
+            related = self.context['request'].QUERY_PARAMS.get('related')
         if not related:
             return
 

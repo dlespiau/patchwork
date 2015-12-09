@@ -322,7 +322,7 @@ class EventLogViewSet(mixins.ListModelMixin,
     permission_classes = (MaintainerPermission, )
     queryset = EventLog.objects.all().select_related('event')
     serializer_class = EventLogSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = EventTimeFilter
 
     def get_queryset(self):

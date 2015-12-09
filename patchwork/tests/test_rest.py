@@ -50,6 +50,7 @@ entry_points = {
     },
     '/projects/%(project_id)s/events/': {
         'flags': ('is_list',),
+        'ordering': ('event_time', ),
     },
     '/projects/%(project_linkname)s/series/': {
         'flags': ('is_list',),
@@ -160,6 +161,19 @@ class APITest(APITestBase):
             self.assertTrue('next' in json)
             self.assertTrue('previous' in json)
             self.assertTrue('results' in json)
+
+    def testListOrdering(self):
+        '''Test that we can at least give that GET parameter without triggering
+           an exception'''
+        for entry_point in entry_points:
+            meta = entry_points[entry_point]
+            if 'ordering' not in meta:
+                continue
+
+            ordering_params = meta['ordering']
+            for param in ordering_params:
+                json = self.get_json(entry_point, params={'ordering': param})
+                self.assertTrue('count' in json)
 
     def testRevisionPatchOrdering(self):
         revision = self.get_json('/series/%(series_id)s/revisions/1/')
