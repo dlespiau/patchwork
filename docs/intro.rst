@@ -25,7 +25,7 @@ The latest version of Patchwork is available with git. To download:
 
 ::
 
-    $ git clone git://ozlabs.org/home/jk/git/patchwork
+    $ git clone https://github.com/dlespiau/patchwork.git
 
 Patchwork is distributed under the `GNU General Public
 License <http://www.gnu.org/licenses/gpl-2.0.html>`__.
@@ -71,5 +71,5 @@ guides for information on how to get to work with patchwork.
 Support
 -------
 
-All questions and contributions should be sent to the `patchwork mailing
-list <https://ozlabs.org/mailman/listinfo/patchwork>`__.
+For questions and contributions, please use the `GitHub project
+<https://github.com/dlespiau/patchwork>`__.
