@@ -111,6 +111,11 @@ class Command(object):
             'need_project' : False,
             'need_auth'    : False,
         },
+        'list': {
+            'need_git_repo': True,
+            'need_project' : True,
+            'need_auth'    : False,
+        },
         'poll-events': {
             'need_git_repo': True,
             'need_project' : True,
@@ -435,6 +440,20 @@ class GitPatchwork(object):
             raise HttpError(r.status_code)
         print r.content
 
+    def _print_series(self, series_list):
+        fields = []
+        if not self.cmd.json:
+            fields = self.cmd.fields.split()
+
+        for series in series_list:
+            r = series.get()
+            if self.cmd.json:
+                print(json.dumps(r))
+            else:
+                for field in fields:
+                    print("%s\t" % r[field]),
+                print
+
     def do_mbox(self):
         (series, revision) = self.cmd_get_series_revision()
 
@@ -455,7 +474,18 @@ class GitPatchwork(object):
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
 
+    def do_list(self):
+        series_list = []
+        for event in self._do_poll_events():
+            series_list.append(self.pw.get_series(event['series']))
+
+        self._print_series(series_list)
+
     def do_poll_events(self):
+        for event in self._do_poll_events():
+            print(json.dumps(event))
+
+    def _do_poll_events(self):
         project = self.pw.get_project()
         ts_filename = '.git-pw.%s.poll.timestamp' % project.linkname
         params = {
@@ -485,7 +515,7 @@ class GitPatchwork(object):
         try:
             for event in project.get_list('/events/', params=params,
                                           n_items=n_items):
-                print(json.dumps(event))
+                yield event
                 with open(ts_filename, 'w+') as ts_file:
                     ts_file.write(event['event_time'])
 
@@ -672,6 +702,18 @@ if __name__ == '__main__':
     post_patch_result_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to report test results for')
     parser_add_result_options(post_patch_result_parser)
+
+    # list
+    default_fields_order = ("id project name n_patches submitter submitted last_updated "
+                           "version reviewer")
+    list_parser = subparsers.add_parser('list',
+        help='list series since the last invocation')
+    list_parser.add_argument('--since', '-s', metavar='timestamp',
+        type=str, help='retrieve series newer than the given ISO 8601 time')
+    list_parser.add_argument('--json', '-j', action="store_true",
+        help='print the series in json format')
+    list_parser.add_argument('--fields', '-f', dest='fields', default=default_fields_order,
+                             type=str, help='print fields in certain order (does not work with --json)')
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
