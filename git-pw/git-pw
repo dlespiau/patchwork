@@ -111,6 +111,11 @@ class Command(object):
             'need_project' : False,
             'need_auth'    : False,
         },
+        'list': {
+            'need_git_repo': True,
+            'need_project' : True,
+            'need_auth'    : False,
+        },
         'poll-events': {
             'need_git_repo': True,
             'need_project' : True,
@@ -435,6 +440,22 @@ class GitPatchwork(object):
             raise HttpError(r.status_code)
         print r.content
 
+    def _print_series(self, series_list, spacing_size=1):
+        fields = []
+        if not self.cmd.json:
+            fields = self.cmd.fields.split()
+
+        for series in series_list:
+            if self.cmd.json:
+                print(json.dumps(series))
+            else:
+                spacing = ''
+                for field in fields:
+                    print("%s%s" % (spacing, series[field])),
+                    # include spaces after the first field
+                    spacing = ' ' * spacing_size if not spacing else spacing
+                print
+
     def do_mbox(self):
         (series, revision) = self.cmd_get_series_revision()
 
@@ -454,6 +475,33 @@ class GitPatchwork(object):
             if e.status_code != 404:
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
+
+    def do_list(self):
+        project = self.pw.get_project()
+        params, n_items = {}, -1
+
+        # since related parameters
+        if self.cmd.submitted_since:
+            params['ordering'] = 'submitted'
+            params['submitted_since'] = self.cmd.submitted_since
+        elif self.cmd.updated_since:
+            params['ordering'] = 'last_updated'
+            params['updated_since'] = self.cmd.updated_since
+
+        # get the series, older first.
+        series_list = []
+        try:
+            for series in project.get_list('/series/',
+                                           params=params,
+                                           n_items=n_items):
+                series_list.append(series)
+        except HttpError as e:
+            if e.status_code != 404:
+                raise
+            die('No project with link name %s.' % project.linkname)
+
+        # list the series
+        self._print_series(series_list)
 
     def do_poll_events(self):
         project = self.pw.get_project()
@@ -672,6 +720,23 @@ if __name__ == '__main__':
     post_patch_result_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to report test results for')
     parser_add_result_options(post_patch_result_parser)
+
+    # list
+    default_fields_order = ("id project name n_patches submitter submitted last_updated "
+                           "version reviewer")
+    list_parser = subparsers.add_parser('list', help='list series')
+
+    since_group = list_parser.add_mutually_exclusive_group(required=False)
+    since_group.add_argument('--submitted-since', '-s', metavar='timestamp',
+        type=str, help='retrieve submitted series newer than the given ISO 8601 time')
+    since_group.add_argument('--updated-since', '-u', metavar='timestamp',
+        type=str, help='retrieve updated series newer than the given ISO 8601 time')
+
+    format_group = list_parser.add_mutually_exclusive_group(required=False)
+    format_group.add_argument('--json', '-j', action="store_true",
+        help='print the series in json format')
+    format_group.add_argument('--fields', '-f', dest='fields', default=default_fields_order,
+                              type=str, help='print fields in certain order separated by spaces')
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
