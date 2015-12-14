@@ -274,6 +274,11 @@ class ResultMixin(object):
             to.append(check_obj.submitter.email_name())
             cc.append(check_obj.project.listemail)
 
+        if instance.test.mail_recipient != Test.RECIPIENT_NONE and \
+           (instance.test.mail_to_list or instance.test.mail_cc_list):
+            to += instance.test.get_to_list()
+            cc += instance.test.get_cc_list()
+
         if to:
             # never send mail on pending
             if instance.state == TestResult.STATE_PENDING:

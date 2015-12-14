@@ -64,6 +64,8 @@ class Person(models.Model):
         verbose_name_plural = 'People'
 
 def get_comma_separated_field(value):
+    if not value:
+        return []
     tags = [v.strip() for v in value.split(',')]
     tags = [tag for tag in tags if tag]
     return tags
@@ -583,10 +585,13 @@ class Test(models.Model):
     RECIPIENT_SUBMITTER = 1
     # send mail to submitter and mailing-list in Cc
     RECIPIENT_MAILING_LIST = 2
+    # send mail to the addresses listed in the mail_to_list field only
+    RECIPIENT_TO_LIST = 3
     RECIPIENT_CHOICES = (
         (RECIPIENT_NONE, 'none'),
         (RECIPIENT_SUBMITTER, 'submitter'),
         (RECIPIENT_MAILING_LIST, 'mailing list'),
+        (RECIPIENT_TO_LIST, 'recipient list'),
     )
 
     # send result mail on any state (but pending)
@@ -602,11 +607,23 @@ class Test(models.Model):
     name = models.CharField(max_length=255)
     mail_recipient = models.SmallIntegerField(choices=RECIPIENT_CHOICES,
                                               default=RECIPIENT_NONE)
+    # email addresses in these lists are always added to the To: and Cc:fields,
+    # unless we don't want to send any email at all.
+    mail_to_list = models.CharField(max_length=255, blank=True, null=True,
+            help_text='Comma separated list of emails')
+    mail_cc_list = models.CharField(max_length=255, blank=True, null=True,
+            help_text='Comma separated list of emails')
     mail_condition = models.SmallIntegerField(choices=CONDITION_CHOICES,
                                               default=CONDITION_ALWAYS)
 
     class Meta:
         unique_together = [('project', 'name')]
+
+    def get_to_list(self):
+        return get_comma_separated_field(self.mail_to_list)
+
+    def get_cc_list(self):
+        return get_comma_separated_field(self.mail_cc_list)
 
     def __unicode__(self):
         return self.name

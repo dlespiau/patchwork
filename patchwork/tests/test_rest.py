@@ -454,7 +454,8 @@ class TestResultTest(APITestBase):
             self.assertEqual(len(mail.outbox), 0)
             self._cleanup_tests()
 
-    def _configure_test(self, url, test_name, recipient, condition):
+    def _configure_test(self, url, test_name, recipient, condition,
+                        to_list=None, cc_list=None):
         """Create test_name and configure it"""
         self._post_result(url, test_name, 'pending')
         tests = Test.objects.all()
@@ -462,6 +463,8 @@ class TestResultTest(APITestBase):
         test = tests[0]
         test.mail_recipient = recipient
         test.mail_condition = condition
+        test.mail_to_list = to_list
+        test.mail_cc_list = cc_list
         test.save()
 
     def testMailHeaders(self):
@@ -508,6 +511,93 @@ class TestResultTest(APITestBase):
             email = mail.outbox[0]
             self.assertEqual(email.to, [self.series.submitter.email_name()])
             self.assertEqual(email.cc, [self.project.listemail])
+
+            mail.outbox = []
+
+            to_list = 'Damien Lespiau <damien.lespiau@intel.com>,'\
+                      'Daniel Vetter <daniel@ffwll.ch>'
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_NONE, Test.CONDITION_ALWAYS,
+                    to_list=to_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
+                    to_list=to_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, [self.series.submitter.email_name()] +
+                                       to_list.split(','))
+            self.assertEqual(email.cc, [])
+
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
+                    to_list=to_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, [self.series.submitter.email_name()] +
+                                       to_list.split(','))
+            self.assertEqual(email.cc, [self.project.listemail])
+
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_TO_LIST, Test.CONDITION_ALWAYS,
+                    to_list=to_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, to_list.split(','))
+            self.assertEqual(email.cc, [])
+
+            mail.outbox = []
+
+            cc_list = 'ville.syrjala@linux.intel.com'
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_NONE, Test.CONDITION_ALWAYS,
+                    cc_list=cc_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
+                    cc_list=cc_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, [self.series.submitter.email_name()])
+            self.assertEqual(email.cc, cc_list.split(','))
+
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
+                    cc_list=cc_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, [self.series.submitter.email_name()])
+            self.assertEqual(email.cc, [self.project.listemail] +
+                                       cc_list.split(','))
+
+            mail.outbox = []
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_TO_LIST, Test.CONDITION_ALWAYS,
+                    to_list=to_list, cc_list=cc_list)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.to, to_list.split(','))
+            self.assertEqual(email.cc, cc_list.split(','))
+            mail.outbox = []
 
             self._cleanup_tests()
 
