@@ -134,12 +134,35 @@ class ProjectViewSet(mixins.ListModelMixin, ListMixin, viewsets.GenericViewSet):
         serializer = ProjectSerializer(queryset)
         return Response(serializer.data)
 
+class SeriesTimeFilter(django_filters.FilterSet):
+
+    def series_time_filter(parameter):
+        def _series_time_filter(query_set, date):
+            queryset = query_set
+            if date:
+                if parameter == 'submitted':
+                    queryset =  queryset.filter(submitted__gt=date)
+                elif parameter == 'last_updated':
+                    queryset =  queryset.filter(last_updated__gt=date)
+            return queryset
+        return _series_time_filter
+
+    submitted_since = django_filters.CharFilter(name='submitted',
+                                                action=series_time_filter('submitted'))
+    updated_since = django_filters.CharFilter(name='last_updated',
+                                                action=series_time_filter('last_updated'))
+    class Meta:
+        model = Series
+        fields = ['submitted_since', 'updated_since']
+
 class SeriesListViewSet(mixins.ListModelMixin,
                         SeriesListMixin,
                         SelectRelatedMixin,
                         viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     select_fields = ('project', 'submitter', 'reviewer')
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
+    filter_class = SeriesTimeFilter
 
     def get_queryset(self):
 
