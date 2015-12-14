@@ -163,6 +163,8 @@ A project is merely one of the projects defined for this patchwork instance.
             "webscm_url": ""
         }
 
+.. _rest-events:
+
 Events
 ~~~~~~
 

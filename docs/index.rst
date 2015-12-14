@@ -14,6 +14,7 @@ Contents:
    intro
    installation
    manual
+   testing
    rest
    development
 

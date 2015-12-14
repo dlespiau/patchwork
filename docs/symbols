@@ -1,7 +1,12 @@
+.. |CI| replace:: :abbr:`CI (Continuous Integration)`
+.. |UI| replace:: :abbr:`UI (User Interface)`
 .. |git| replace:: :command:`git`
 .. |git-pw| replace:: :command:`git-pw`
+.. |git pw poll-events| replace:: :command:`git pw poll-events`
+.. |git pw post-result| replace:: :command:`git pw post-result`
 .. |git send-email| replace:: :command:`git send-email`
 .. |pip| replace:: :command:`pip`
 
 .. _diff: https://en.wikipedia.org/wiki/Diff_utility
 .. _repository: https://github.com/dlespiau/patchwork
+.. _requests: http://docs.python-requests.org/en/master/

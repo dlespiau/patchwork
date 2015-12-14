@@ -147,6 +147,8 @@ cover letter subjects as new revisions:
   |                                 | - Awesome feature, take 6  |
   +---------------------------------+----------------------------+
 
+.. _git-pw:
+
 |git-pw|
 --------
 
