@@ -63,6 +63,11 @@ class Person(models.Model):
     class Meta:
         verbose_name_plural = 'People'
 
+def get_comma_separated_field(value):
+    tags = [v.strip() for v in value.split(',')]
+    tags = [tag for tag in tags if tag]
+    return tags
+
 class Project(models.Model):
     linkname = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
@@ -92,9 +97,7 @@ class Project(models.Model):
         return list(Tag.objects.all())
 
     def get_subject_prefix_tags(self):
-        tags = [t.strip() for t in self.subject_prefix_tags.split(',')]
-        tags = [tag for tag in tags if tag]
-        return tags
+        return get_comma_separated_field(self.subject_prefix_tags)
 
     class Meta:
         ordering = ['linkname']
