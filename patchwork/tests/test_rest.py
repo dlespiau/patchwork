@@ -476,6 +476,15 @@ class TestResultTest(APITestBase):
             headers = email.extra_headers
             self.assertEqual(headers['X-Patchwork-Hint'], 'ignore')
 
+            if url == self.rev_url:
+                revision = SeriesRevision.objects.get(series=self.series,
+                                                      version=1)
+                msgid = revision.root_msgid
+            else:
+                msgid = self.patch.msgid
+            self.assertEqual(headers['References'], msgid)
+            self.assertEqual(headers['In-Reply-To'], msgid)
+
             mail.outbox = []
 
     def testMailRecipient(self):

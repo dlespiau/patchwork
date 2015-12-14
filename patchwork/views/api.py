@@ -233,6 +233,13 @@ class ResultMixin(object):
 
         return (subject, body)
 
+    def _get_msgid(self, obj):
+        try:
+            return getattr(obj, 'root_msgid')
+        except AttributeError:
+            return getattr(obj, 'msgid')
+
+
     def handle_test_results(self, request, obj, check_obj, q, ctx):
         # auth
         if not 'test_name' in request.DATA:
@@ -279,8 +286,11 @@ class ResultMixin(object):
 
         if to:
             subject, body = self._prepare_mail(instance)
+            msgid = self._get_msgid(obj)
             headers = {
                 'X-Patchwork-Hint': 'ignore',
+                'References': msgid,
+                'In-Reply-To': msgid,
             }
             email = mail.EmailMessage(subject, body,
                                       settings.DEFAULT_FROM_EMAIL,
