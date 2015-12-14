@@ -644,7 +644,7 @@ class TestResult(models.Model):
     revision = models.ForeignKey(SeriesRevision, blank=True, null=True)
     patch = models.ForeignKey(Patch, blank=True, null=True)
     user = models.ForeignKey(User)
-    date = models.DateTimeField(default=datetime.datetime.now)
+    date = models.DateTimeField(auto_now=True)
     state = models.SmallIntegerField(choices=STATE_CHOICES)
     url = models.URLField(blank=True, null=True)
     summary = models.TextField(blank=True, null=True)
