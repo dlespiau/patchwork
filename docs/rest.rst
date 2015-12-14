@@ -290,6 +290,12 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
             ]
         }
 
+    :query submitted_since: Retrieve only submitted series newer than a
+                            specific time. Format is the same as ``submitted`` in response, an ISO 8601 date.
+
+    :query updated_since:   Retrieve only updated series newer than a
+                            specific time. Format is the same as ``last_updated`` in response, an ISO 8601 date.
+
 .. http:get:: /api/1.0/series/
 
     List of all Series known to patchwork.
