@@ -279,9 +279,12 @@ class ResultMixin(object):
 
         if to:
             subject, body = self._prepare_mail(instance)
+            headers = {
+                'X-Patchwork-Hint': 'ignore',
+            }
             email = mail.EmailMessage(subject, body,
                                       settings.DEFAULT_FROM_EMAIL,
-                                      to=to, cc=cc)
+                                      to=to, cc=cc, headers=headers)
             email.send()
 
         return Response(result.data, status=status.HTTP_201_CREATED)

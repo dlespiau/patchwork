@@ -464,6 +464,20 @@ class TestResultTest(APITestBase):
         test.mail_condition = condition
         test.save()
 
+    def testMailHeaders(self):
+        for url in self.test_urls:
+            self.assertEqual(len(mail.outbox), 0)
+
+            self._configure_test(url, 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._post_result(url, 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            headers = email.extra_headers
+            self.assertEqual(headers['X-Patchwork-Hint'], 'ignore')
+
+            mail.outbox = []
+
     def testMailRecipient(self):
         for url in self.test_urls:
             self.assertEqual(len(mail.outbox), 0)
