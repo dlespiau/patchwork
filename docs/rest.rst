@@ -436,7 +436,7 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
 
     .. sourcecode:: http
 
-        POST /api/1.0/series/47/test-results/ HTTP/1.1
+        POST /api/1.0/series/47/revisions/1/test-results/ HTTP/1.1
 
         {
             "test_name": "checkpatch.pl",
