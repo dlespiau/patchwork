@@ -47,11 +47,15 @@
 #   git config patchwork.default.project intel-gfx
 
 import argparse
+from collections import OrderedDict
+import fcntl
 import json
 import os
 import subprocess
 import signal
+import struct
 import sys
+import termios
 
 import git
 import requests
@@ -208,6 +212,38 @@ class Revision(RestObject):
 class Series(RestObject):
     FIELDS = ['id', 'project', 'name', 'n_patches', 'submitter',
               'submitted', 'last_updated', 'version', 'reviewer']
+    meta = {
+        'id': {
+            'header': 'ID',
+        },
+        'project': {
+            'header': 'Project',
+        },
+        'name': {
+            'header': 'Name',
+            'can_shrink': True,
+        } ,
+        'n_patches': {
+            'header': 'Patches',
+        } ,
+        'submitter': {
+            'header': 'Submitter',
+        } ,
+        'submitted': {
+            'header': 'Submitted',
+            'format': 'date',
+        } ,
+        'last_updated': {
+            'header': 'Updated',
+            'format': 'date',
+        } ,
+        'version': {
+            'header': 'Version',
+        } ,
+        'reviewer': {
+            'header': 'Reviewer',
+        },
+    }
 
     def __init__(self, patchwork, series_id):
         super(Series, self).__init__(patchwork)
@@ -305,6 +341,128 @@ class Patchwork(object):
 
     def get_patch(self, patch_id):
         return Patch(self, patch_id)
+
+
+class Terminal(object):
+    DEFAULT_WIDTH = 80
+    DEFAULT_HEIGHT = 24
+
+    def get_size(self):
+        try:
+            device = fcntl.ioctl(0, termios.TIOCGWINSZ, '\0' * 8)
+        except IOError:
+            return self.DEFAULT_WIDTH, self.DEFAULT_HEIGHT
+        size = struct.unpack('hhhh', device)[:2]
+        return size[::-1]
+
+
+class Table(object):
+    default_config = {
+        'column-spacing': 1,
+        'header-separator': '-',
+    }
+
+    def __init__(self, config):
+        self.config = {}
+        self.config.update(self.default_config)
+        self.config.update(config)
+
+    def _layout(self, items):
+        layout = {}
+        layout['__table__'] = {}  # table-global layout information
+        columns = self.config['columns']
+        last_column = list(columns)[-1]
+
+        # horizontal width of each column
+        for key, column in columns.iteritems():
+            layout[key] = {}
+            layout[key]['width'] = len(column['header'])
+
+        for key, column in columns.iteritems():
+            format = column.get('format', None)
+            if format == 'date':
+                layout[key]['width'] = 10
+                layout[key]['ellipsis'] = True
+                continue
+            for item in items:
+                layout[key]['width'] = max(layout[key]['width'],
+                                           len(str(item[key])))
+
+        # width of the table
+        width = 0
+        for key, _ in columns.iteritems():
+            width += layout[key]['width']
+        width += self.config['column-spacing'] * (len(columns) - 1)
+        layout['__table__']['width'] = width
+        table_width = width
+
+        # we allow one column to shrink to accomodate 'max_width'
+        shrinking_column = None
+        if ('max_width' in self.config and
+            table_width > self.config['max_width']):
+            for key, column in columns.iteritems():
+                if 'can_shrink' in column:
+                    shrinking_column = key
+                    break
+
+        if shrinking_column:
+            table_max_width = self.config['max_width']
+            column_old_width = layout[shrinking_column]['width']
+            column_min_width = len(columns[shrinking_column]['header'])
+            other_columns_width = table_width - column_old_width
+            column_new_width = table_max_width - other_columns_width
+            if column_new_width < column_min_width:
+                # Degenerate case, can't comply with the max_width being asked.
+                # Shrink the column to min_width.
+                column_new_width = column_min_width
+            layout[shrinking_column]['width'] = column_new_width
+            layout[shrinking_column]['ellipsis'] = True
+            layout['__table__']['width'] = other_columns_width + \
+                                           column_new_width
+
+        item = items[0]
+        for key, column in columns.iteritems():
+            # alignment of each column
+            align = '>'
+            if isinstance(item[key], basestring):
+                align = '<'
+            layout[key]['align'] = align
+
+            # format string of each column
+            spacing = ' ' * self.config['column-spacing']
+            if key == last_column:
+                spacing = ''
+            width = layout[key]['width']
+            ellipsis = layout[key].get('ellipsis', False)
+            precision = ('.' + str(width)) * int(ellipsis)
+            layout[key]['format'] = "{:%s%s%s}%s" % (layout[key]['align'],
+               width, precision, spacing)
+
+        return layout
+
+    def write(self, items):
+        layout = self._layout(items)
+        columns = self.config['columns']
+        last_column = list(columns)[-1]
+
+        # print headers
+        for key, column in columns.iteritems():
+            spacing = ' ' * self.config['column-spacing']
+            if key == last_column:
+                spacing = ''
+            fmt = "{:^%s}%s" % (layout[key]['width'], spacing)
+            sys.stdout.write(fmt.format(column['header']))
+        sys.stdout.write("\n")
+        sys.stdout.write(self.config['header-separator'] *
+                         layout['__table__']['width'])
+        sys.stdout.write("\n")
+
+        # print data
+        for item in items:
+            for key, _ in columns.iteritems():
+                fmt = layout[key]['format']
+                sys.stdout.write(fmt.format(item[key]))
+            sys.stdout.write("\n")
 
 
 class GitPatchwork(object):
@@ -462,14 +620,6 @@ class GitPatchwork(object):
                 raise
             die('No patch with id %d.' % self.cmd.patch_id)
 
-    def _print_series(self, series_list):
-        for series in series_list:
-            if self.cmd.json:
-                print(json.dumps(series))
-            else:
-                fields = [str(series[field]) for field in self.cmd.fields]
-                print(' '.join(fields))
-
     def do_list(self):
         project = self.pw.get_project()
         params, n_items = {}, -1
@@ -495,8 +645,25 @@ class GitPatchwork(object):
                 raise
             die('No project with link name %s.' % project.linkname)
 
-        # list the series
-        self._print_series(series_list)
+        # print the series
+
+        # JSON
+        if self.cmd.json:
+            for series in series_list:
+                print(json.dumps(series))
+            return
+
+        # Human readable
+        filtered_fields = {key: Series.meta[key] for key in self.cmd.fields}
+        columns = OrderedDict(sorted(filtered_fields.items(),
+                              key=lambda k: self.cmd.fields.index(k[0])))
+        config = {
+            'columns': columns,
+            'max_width': Terminal().get_size()[0],
+        }
+
+        table = Table(config=config)
+        table.write(series_list)
 
     def do_poll_events(self):
         project = self.pw.get_project()
