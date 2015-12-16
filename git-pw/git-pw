@@ -622,9 +622,9 @@ class GitPatchwork(object):
 
     def do_list(self):
         project = self.pw.get_project()
-        params, n_items = {}, -1
-
-        params['ordering'] = '-last_updated'
+        params = {
+            'ordering': '-last_updated'
+        }
 
         # since related parameters
         if self.cmd.submitted_since:
@@ -638,7 +638,7 @@ class GitPatchwork(object):
         try:
             for series in project.get_list('/series/',
                                            params=params,
-                                           n_items=n_items):
+                                           n_items=self.cmd.n):
                 series_list.append(series)
         except HttpError as e:
             if e.status_code != 404:
@@ -893,6 +893,8 @@ if __name__ == '__main__':
     since_group.add_argument('--updated-since', '-u', metavar='timestamp',
         type=str,
         help='retrieve updated series newer than the given ISO 8601 time')
+    since_group.add_argument('-n', metavar='n', type=int, default=-1,
+        help='number of series to retrieve')
 
     default_series_fields = ['id', 'name', 'n_patches', 'reviewer',
                               'submitter', 'last_updated']
