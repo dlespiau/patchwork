@@ -474,6 +474,8 @@ class GitPatchwork(object):
         project = self.pw.get_project()
         params, n_items = {}, -1
 
+        params['ordering'] = '-last_updated'
+
         # since related parameters
         if self.cmd.submitted_since:
             params['ordering'] = 'submitted'
