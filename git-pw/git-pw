@@ -896,8 +896,8 @@ if __name__ == '__main__':
     since_group.add_argument('-n', metavar='n', type=int, default=-1,
         help='number of series to retrieve')
 
-    default_series_fields = ['id', 'name', 'n_patches', 'reviewer',
-                              'submitter', 'last_updated']
+    default_series_fields = ['id', 'name', 'n_patches', 'submitter',
+                             'last_updated']
     format_group = list_parser.add_mutually_exclusive_group(required=False)
     format_group.add_argument('--json', '-j', action="store_true",
         help='print the series in json format')
