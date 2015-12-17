@@ -56,18 +56,41 @@
        {% block heading %}{% endblock %}</span>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse">
-{% block alternate_list %}{% endblock %}
-     <ul class="nav navbar-nav navbar-right">
 {% if project %}
-     <li><a href="{% url 'patchwork.views.project.project' project_id=project.linkname %}"
-      >Project Info</a></li>
-    <li><p class="navbar-text">|</p></li>
+      <ul class="nav navbar-nav">
+        <li class="{% block patch_active %}{% endblock %}">
+          <a href="{% url 'patches_list' project_id=project.linkname %}">
+            <span class="glyphicon glyphicon-file"></span>
+            Patches</a>
+        </li>
+        <li class="{% block series_active %}{% endblock %}">
+          <a href="{% url 'series_list' project=project.linkname %}">
+            <span class="glyphicon glyphicon-list"></span>
+            Series</a>
+        </li>
+        <li class="{% block bundle_active %}{% endblock %}">
+          <a href="{% url 'bundle_list' project_id=project.linkname %}">
+            <span class="glyphicon glyphicon-gift"></span>
+            Bundles</a>
+        </li>
+        <li class="{% block info_active %}{% endblock %}">
+          <a href="{% url 'patchwork.views.project.project' project_id=project.linkname %}">
+            <span class="glyphicon glyphicon-info-sign"></span>
+            About this project</a>
+        </li>
+        <li>
+          <a href="{% url 'patchwork.views.projects' %}">
+            <span class="glyphicon glyphicon-home"></span>
+            All projects</a>
+        </li>
+     </ul>
 {% endif %}
+     <ul class="nav navbar-nav navbar-right">
 {% if user.is_authenticated %}
-     <li><a href="{% url 'patchwork.views.user.todo_lists' %}">Todo
-      <span class="badge">{{ user.profile.n_todo_patches }}</span></a>
+     <li>
+         <a href="{% url 'patchwork.views.user.todo_lists' %}">Todo
+         <span class="badge">{{ user.profile.n_todo_patches }}</span></a>
      </li>
-     <li><a href="{% url 'patchwork.views.bundle.bundles' %}">Bundles</a></li>
 {% if user.is_staff %}
      <li><a href="{% url 'admin:index' %}">Admin</a></li>
 {% endif %}
@@ -85,22 +108,10 @@
      <li><a href="{% url 'patchwork.views.user.register' %}">Register</a></li>
      <li><a href="{% url 'patchwork.views.mail.settings' %}">Mail settings</a></li>
 {% endif %}
+     </ul>
     </div>
    </div>
   </nav>
-{% if project %}
-  <div id="breadcrumb">
-   <div id="breadcrumb-left">
-     <a href="{% url 'patchwork.views.projects' %}">All projects</a>
-     &#8594;
-     {% block breadcrumb %}
-      <a href="{% url 'patchwork.views.patch.list' project_id=project.linkname %}"
-       >{{ project.linkname }} patches</a>
-     {% endblock %}
-   </div>
-   <div style="clear: both"></div>
-  </div>
-{% endif %}
 {% if messages %}
   <div id="messages">
   {% for message in messages %}

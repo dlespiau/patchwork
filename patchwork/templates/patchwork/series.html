@@ -11,9 +11,6 @@ $(function () {
 });
 </script>
 {% endblock %}
-{% block breadcrumb %}
-<a href="{% url 'series_list' project=project.linkname %}">{{ project.linkname }} series</a> &#8594; {{ series.name }}
-{% endblock %}
 
 {% block body %}
 <h2>{{ series.name }}</h2>

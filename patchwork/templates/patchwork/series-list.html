@@ -11,15 +11,7 @@ $(function () {
 });
 </script>
 {% endblock %}
-{% block alternate_list %}
-   <div class="btn-group" role="group">
-     <a class="btn btn-default navbar-btn btn-primary" role="button"
-       href="{% url 'patches_list' project_id=project.linkname %}">Patches</a>
-     <a class="btn btn-default navbar-btn btn-primary active" role="button"
-        href="{% url 'series_list' project=project.linkname %}">Series</a>
-   </div>
-{% endblock %}
-{% block breadcrumb %}{{ project.name }} series{% endblock %}
+{% block series_active %}active{% endblock %}
 
 {% block body %}
 <h2>Incoming Series</h2>
