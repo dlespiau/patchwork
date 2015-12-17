@@ -103,7 +103,7 @@ def setbundle(request):
                 )
 
 @login_required
-def bundles(request):
+def bundles(request, project_id=None):
     context = PatchworkRequestContext(request)
 
     if request.method == 'POST':
@@ -116,12 +116,19 @@ def bundles(request):
                     id = form.cleaned_data['bundle_id'])
                 bundle.delete()
 
-    bundles = Bundle.objects.filter(owner = request.user)
+    if project_id is None:
+        project = None
+        bundles = Bundle.objects.filter(owner=request.user)
+    else:
+        project = get_object_or_404(Project, linkname=project_id)
+        bundles = Bundle.objects.filter(owner=request.user, project=project)
+    print(bundles)
     for bundle in bundles:
         bundle.delete_form = DeleteBundleForm(auto_id = False,
                 initial = {'bundle_id': bundle.id})
 
     context['bundles'] = bundles
+    context['project'] = project
 
     return render_to_response('patchwork/bundles.html', context)
 

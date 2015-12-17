@@ -94,6 +94,10 @@ urlpatterns = patterns('',
     (r'^patch/(?P<patch_id>\d+)/mbox/$', 'patchwork.views.patch.mbox'),
     (r'^patch/msgid/(?P<msgid>[^/]+)/$', 'patchwork.views.patch.msgid'),
 
+    # project bundles
+    url(r'^project/(?P<project_id>[^/]+)/bundles/$',
+        'patchwork.views.bundle.bundles', name='bundle_list'),
+
     # logged-in user stuff
     url(r'^user/$', 'patchwork.views.user.profile', name='user'),
     (r'^user/todo/$', 'patchwork.views.user.todo_lists'),
