@@ -116,8 +116,8 @@ var pw = (function() {
             },
             inputs: {
                 pageText: '',
-                paginationPrev: '« Previous',
-                paginationNext: 'Next »',
+                paginationPrev: '«',
+                paginationNext: '»',
                 paginationGap: [1,1,1,1],
             },
             writers: {
