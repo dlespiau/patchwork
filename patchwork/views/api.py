@@ -161,7 +161,7 @@ class SeriesListViewSet(mixins.ListModelMixin,
                         viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     select_fields = ('project', 'submitter', 'reviewer')
-    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
+    filter_backends = (filters.DjangoFilterBackend, RelatedOrderingFilter)
     filter_class = SeriesTimeFilter
 
     def get_queryset(self):
