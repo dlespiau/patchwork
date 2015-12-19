@@ -126,7 +126,6 @@ var pw = (function() {
             },
             writers: {
                 'name': series_writer,
-                'submitted': date_writer,
                 'last_updated': date_writer,
                 'reviewer.name': name_writer,
                 'submitter.name': name_writer
@@ -149,11 +148,11 @@ var pw = (function() {
 
         ctx.table = create_table({
             'columns': {
+                'ID': 'id',
                 'Series': 'name',
                 'Patches': 'n_patches',
                 'Submitter': 'submitter.name',
                 'Reviewer': 'reviewer.name',
-                'Submitted': 'submitted',
                 'Updated': 'last_updated'
             },
             'api_url': ctx.api_base_url + url,
