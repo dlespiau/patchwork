@@ -53,16 +53,20 @@ var pw = (function() {
             user : {
                 items_per_page: 100,
             },
+            table: null,
         };
 
-    var columnsMap = {
-        'Series': 'name',
-        'Patches': 'n_patches',
-        'Submitter': 'submitter.name',
-        'Reviewer': 'reviewer.name',
-        'Submitted': 'submitted',
-        'Updated': 'last_updated'
-    };
+    function create_table(config) {
+        var o = {};
+
+        $.extend(o, config);
+
+        o.url = function() {
+            return o.api_url + '?' + $.param(o.api_params);
+        };
+
+        return o;
+    }
 
     /* JShint is warning that 'this' may be undefined in strict mode. What it
      * doesn't know is that dynatable will bind this when calling those
@@ -142,14 +146,26 @@ var pw = (function() {
                 history.replaceState(null, null,
                                      '?' + $.param({ ordering: ordering }));
         }
-        url = ctx.api_base_url + url + '?' + $.param({
-            ordering: ordering,
-            related: 'expand'
+
+        ctx.table = create_table({
+            'columns': {
+                'Series': 'name',
+                'Patches': 'n_patches',
+                'Submitter': 'submitter.name',
+                'Reviewer': 'reviewer.name',
+                'Submitted': 'submitted',
+                'Updated': 'last_updated'
+            },
+            'api_url': ctx.api_base_url + url,
+            'api_params': {
+                ordering: ordering,
+                related: 'expand',
+            }
         });
 
         table.bind('dynatable:preinit', function(e, dynatable) {
             dynatable.utility.textTransform.PatchworkSeries = function(text) {
-                return columnsMap[text];
+                return ctx.table.columns[text];
             };
         }).dynatable({
             features: {
@@ -162,7 +178,7 @@ var pw = (function() {
             },
             dataset: {
                 ajax: true,
-                ajaxUrl: url,
+                ajaxUrl: ctx.table.url(),
                 ajaxOnLoad: true,
                 records: []
             }
