@@ -73,6 +73,7 @@ def get_comma_separated_field(value):
 class Project(models.Model):
     linkname = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(blank=True, null=True)
     listid = models.CharField(max_length=255)
     listemail = models.CharField(max_length=200)
     web_url = models.CharField(max_length=2000, blank=True)

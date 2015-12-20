@@ -17,6 +17,9 @@
           <span>|</span>
           <span><a href="{% url 'patches_list' project_id=p.linkname %}">View patches</a></span>
         </p>
+{% if p.description %}
+        <p>{{p.description}}</p>
+{% endif %}
 {% if p.web_url %}
         <p><a href="{{p.web_url}}">{{p.web_url}}</a></p>
 {% else %}
