@@ -52,7 +52,8 @@
       </button>
       <span class="navbar-brand"><a
          href="{% url 'patchwork.views.projects' %}">Patchwork</a>
-       {% block heading %}{% endblock %}</span>
+         {% block heading %}{% if project %}{{project.name}}{% endif %}{% endblock %}
+      </span>
     </div>
     <div class="collapse navbar-collapse" id="navbar-collapse">
 {% if project %}
