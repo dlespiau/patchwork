@@ -5,9 +5,11 @@
 
 {% block body %}
 
+<div style="margin-top:20px;"></div>
+
 {% if projects %}
-<div class="row" style="margin-top:20px;">
 {% for p in projects %}
+{% cycle '<div class="row">' '' '' %}
   <div class="col-sm-6 col-md-4">
     <div class="thumbnail">
       <div class="caption">
@@ -28,8 +30,12 @@
       </div>
     </div>
   </div>
-{% endfor %}
+{% if forloop.last %}
 </div>
+{% else %}
+{% cycle '' '' '</div>' %}
+{% endif %}
+{% endfor %}
 {% else %}
 <p>Patchwork doesn't have any projects to display!</p>
 {% endif %}
