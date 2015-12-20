@@ -350,10 +350,12 @@ table.form tr td.submitrow {
 }
 
 table.registerform, table.passwordform {
+	margin-top: 20px;
 	margin-left: auto;
 	margin-right: auto;
 }
 table.loginform {
+	margin-top: 20px;
 	margin-left: auto;
 	margin-right: auto;
 	width: 30em;
