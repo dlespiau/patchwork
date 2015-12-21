@@ -5,5 +5,6 @@ root_dir=`dirname $script_dir`
 js=$root_dir/htdocs/js
 tests=$root_dir/tests
 files="$js/patchwork.js $js/common.js $js/bundle.js $tests/test_*.js"
+files="$files $js/series-list.js"
 
 jshint $files

@@ -1,14 +1,11 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
 {% load person %}
 
 {% block title %}{{project.name}}{% endblock %}
 {% block headers %}
-<script type="text/javascript">
-$(function () {
-    pw.setup_series_list('#serieslist');
-});
-</script>
+  <script type="text/javascript" src="{% static "js/series-list.js" %}"></script>
 {% endblock %}
 {% block series_active %}active{% endblock %}
 
