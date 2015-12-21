@@ -32,6 +32,10 @@ pre {
 	top: 17em;
 }
 
+.navbar-brand>a {
+	color: white;
+}
+
 .navbar-patchwork {
 	border-radius: 0px;
 	margin-bottom: 0px;
