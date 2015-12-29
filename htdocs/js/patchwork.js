@@ -157,7 +157,6 @@ var pw = (function() {
             },
             'api_url': ctx.api_base_url + url,
             'api_params': {
-                ordering: ordering,
                 related: 'expand',
             }
         });
