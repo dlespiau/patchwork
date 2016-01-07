@@ -234,6 +234,15 @@ var pw = (function() {
             title = title.slice(0, 100) + '…';
         return '<a href="' + link + '">' + title + '</a>';
     }
+    
+    /*
+     * for custom test result 
+     */
+    function stat_writer(record) {
+        var text = record.series_test_state;
+        return "<span class='label result-" + text + "'>"
+        + text + "</span>";
+    }
 
     function date_writer(record) {
         return record[this.id].substr(0, 10);   // jshint ignore:line
@@ -380,7 +389,8 @@ var pw = (function() {
                 'Patches': 'n_patches',
                 'Submitter': 'submitter.name',
                 'Reviewer': 'reviewer.name',
-                'Updated': 'last_updated'
+                'Updated': 'last_updated',
+                'Test':'series_test_state'
             },
             'api_url': ctx.api_base_url + url,
             'api_params': {
@@ -408,6 +418,9 @@ var pw = (function() {
                 ajaxUrl: ctx.table.url(),
                 ajaxOnLoad: true,
                 records: []
+            },
+            writers: {
+                'series_test_state': stat_writer
             }
         });
 
