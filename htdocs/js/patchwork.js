@@ -240,8 +240,11 @@ var pw = (function() {
      */
     function stat_writer(record) {
         var text = record.series_test_state;
-        return "<span class='label result-" + text + "'>"
-        + text + "</span>";
+        if(text != "pending")
+            return "<span class='label result-" + text + "'>"
+            + text + "</span>";
+        else
+            return "";
     }
 
     function date_writer(record) {
