@@ -100,21 +100,19 @@ class ListMixin(object):
 
 class SeriesTimeFilter(django_filters.FilterSet):
 
-    def series_time_filter(parameter):
-        def _series_time_filter(query_set, date):
-            queryset = query_set
-            if date:
-                if parameter == 'submitted':
-                    queryset =  queryset.filter(submitted__gt=date)
-                elif parameter == 'last_updated':
-                    queryset =  queryset.filter(last_updated__gt=date)
-            return queryset
-        return _series_time_filter
+    def submitted_since_filter(queryset, date):
+        if date:
+            queryset = queryset.filter(submitted__gt=date)
+        return queryset
 
-    submitted_since = django_filters.CharFilter(name='submitted',
-                                                action=series_time_filter('submitted'))
-    updated_since = django_filters.CharFilter(name='last_updated',
-                                                action=series_time_filter('last_updated'))
+    def updated_since_filter(queryset, date):
+        if date:
+            queryset = queryset.filter(last_updated__gt=date)
+        return queryset
+
+    submitted_since = django_filters.CharFilter(action=submitted_since_filter)
+    updated_since = django_filters.CharFilter(action=updated_since_filter)
+
     class Meta:
         model = Series
         fields = ['submitted_since', 'updated_since']
