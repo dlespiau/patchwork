@@ -54,15 +54,15 @@ entry_points = {
         'ordering': ('event_time', ),
     },
     '/projects/%(project_linkname)s/series/': {
-        'flags': ('is_list',),
+        'flags': ('is_list', 'is_series_list', ),
         'ordering': ('last_updated', 'submitter.name', ),
     },
     '/projects/%(project_id)s/series/': {
-        'flags': ('is_list', ),
+        'flags': ('is_list', 'is_series_list', ),
         'ordering': ('last_updated', 'submitter.name', ),
     },
     '/series/': {
-        'flags': ('is_list',),
+        'flags': ('is_list', 'is_series_list', ),
         'ordering': ('last_updated', 'submitter.name', ),
     },
     '/series/%(series_id)s/': {
@@ -249,6 +249,21 @@ class APITest(APITestBase):
         with self.assertNumQueries(2):
             self.get('/projects/%(project_id)s/series/',
                      params={'related': 'expand'})
+
+    def testSeriesFilters(self):
+        filters = [
+            ('submitted_since', '2015-06-01', 1),
+            ('updated_since', self.series2.last_updated, 0),
+        ]
+
+        for entry_point in entry_points:
+            meta = entry_points[entry_point]
+            if 'is_series_list' not in meta['flags']:
+                continue
+
+            for f in filters:
+                json = self.get_json(entry_point, params={f[0]: f[1]})
+                self.assertEqual(json['count'], f[2])
 
 
 class TestResultTest(APITestBase):
