@@ -291,12 +291,20 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
         }
 
     :query submitted_since: Retrieve only submitted series newer than a
-                            specific time. Format is the same as ``submitted``
+                            specified time. Format is the same as ``submitted``
                             in response, an ISO 8601 date.
 
     :query updated_since:   Retrieve only updated series newer than a
-                            specific time. Format is the same as
+                            specified time. Format is the same as
                             ``last_updated`` in response, an ISO 8601 date.
+
+    :query submitted_before: Retrieve only submitted series older than the
+                             specified time. Format is the same as
+                             ``submitted`` in response, an ISO 8601 date.
+
+    :query updated_before:   Retrieve only updated series older than a
+                             specified time. Format is the same as
+                             ``last_updated`` in response, an ISO 8601 date.
 
 .. http:get:: /api/1.0/series/
 
@@ -560,8 +568,8 @@ API Revisions
 
   - /series/${id}/revisions/${version}/test-results/
 
-- Add the `submitted_since` and `updated_since` query parameters to the list of
-  series entry points.
+- Add the `submitted_since`, `updated_since`, `submitted_before` and
+  `updated_before`  query parameters to the list of series entry points.
 
 **Revision 2**
 

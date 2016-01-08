@@ -254,6 +254,8 @@ class APITest(APITestBase):
         filters = [
             ('submitted_since', '2015-06-01', 1),
             ('updated_since', self.series2.last_updated, 0),
+            ('submitted_before', '2015-06-01', 1),
+            ('updated_before', self.series2.last_updated, 2),
         ]
 
         for entry_point in entry_points:

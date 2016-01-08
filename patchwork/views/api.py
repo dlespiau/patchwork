@@ -110,8 +110,20 @@ class SeriesTimeFilter(django_filters.FilterSet):
             queryset = queryset.filter(last_updated__gt=date)
         return queryset
 
+    def submitted_before_filter(queryset, date):
+        if date:
+            queryset = queryset.filter(submitted__lte=date)
+        return queryset
+
+    def updated_before_filter(queryset, date):
+        if date:
+            queryset = queryset.filter(last_updated__lte=date)
+        return queryset
+
     submitted_since = django_filters.CharFilter(action=submitted_since_filter)
     updated_since = django_filters.CharFilter(action=updated_since_filter)
+    submitted_before = django_filters.CharFilter(action=submitted_before_filter)
+    updated_before = django_filters.CharFilter(action=updated_before_filter)
 
     class Meta:
         model = Series
