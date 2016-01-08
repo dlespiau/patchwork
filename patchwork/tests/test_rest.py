@@ -29,6 +29,7 @@ from django.core import mail
 
 import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
+from patchwork.tests.utils import TestSeries
 from patchwork.models import Series, Patch, SeriesRevision, Test, TestResult
 
 
@@ -54,12 +55,15 @@ entry_points = {
     },
     '/projects/%(project_linkname)s/series/': {
         'flags': ('is_list',),
+        'ordering': ('last_updated', 'submitter.name', ),
     },
     '/projects/%(project_id)s/series/': {
         'flags': ('is_list', ),
+        'ordering': ('last_updated', 'submitter.name', ),
     },
     '/series/': {
         'flags': ('is_list',),
+        'ordering': ('last_updated', 'submitter.name', ),
     },
     '/series/%(series_id)s/': {
         'flags': (),
@@ -94,6 +98,11 @@ class APITestBase(test_series.Series0010):
         self.user = TestUser(username='user')
         self.maintainer = TestUser(username='maintainer')
         self.maintainer.add_to_maintainers(self.project)
+
+        # a second series so we can test ordering/filtering
+        test_series = TestSeries(3, project=self.project)
+        test_series.insert()
+        self.series2 = Series.objects.all().order_by('submitted')[1]
 
     def check_mbox(self, api_url, filename, md5sum):
         response = self.client.get('/api/1.0' + api_url)
@@ -163,8 +172,7 @@ class APITest(APITestBase):
             self.assertTrue('results' in json)
 
     def testListOrdering(self):
-        '''Test that we can at least give that GET parameter without triggering
-           an exception'''
+        '''Test that ordering lists does change the order!'''
         for entry_point in entry_points:
             meta = entry_points[entry_point]
             if 'ordering' not in meta:
@@ -172,8 +180,16 @@ class APITest(APITestBase):
 
             ordering_params = meta['ordering']
             for param in ordering_params:
-                json = self.get_json(entry_point, params={'ordering': param})
-                self.assertTrue('count' in json)
+                json0 = self.get_json(entry_point, params={'ordering': param})
+                json1 = self.get_json(entry_point,
+                                      params={'ordering': '-' + param})
+                self.assertTrue('count' in json0)
+                self.assertTrue('count' in json1)
+                self.assertEqual(json0['count'], json1['count'])
+                self.assertTrue(json0['count'] > 1)
+                results1 = json1['results']
+                results1.reverse()
+                self.assertEqual(json0['results'], results1)
 
     def testRevisionPatchOrdering(self):
         revision = self.get_json('/series/%(series_id)s/revisions/1/')
@@ -199,7 +215,7 @@ class APITest(APITestBase):
     def testSeriesNewRevisionEvent(self):
         # no 'since' parameter
         events = self.get_json('/projects/%(project_id)s/events/')
-        self.assertEqual(events['count'], 1)
+        self.assertEqual(events['count'], 2)
         event = events['results'][0]
         self.assertEqual(event['parameters']['revision'], 1)
 
@@ -211,7 +227,7 @@ class APITest(APITestBase):
         # strictly inferior timestamp, should return the event
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'since': before})
-        self.assertEqual(events['count'], 1)
+        self.assertEqual(events['count'], 2)
         event = events['results'][0]
         self.assertEqual(event['parameters']['revision'], 1)
 
