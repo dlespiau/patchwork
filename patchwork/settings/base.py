@@ -39,11 +39,11 @@ MIDDLEWARE_CLASSES = [
     'patchwork.threadlocalrequest.ThreadLocalRequestMiddleware',
 ]
 
-if django.VERSION < (1, 7):
-    MIDDLEWARE_CLASSES.append('django.middleware.doc.XViewMiddleware')
-else:
+if django.VERSION >= (1, 7):
     MIDDLEWARE_CLASSES.append(
         'django.contrib.admindocs.middleware.XViewMiddleware')
+else:
+    MIDDLEWARE_CLASSES.append('django.middleware.doc.XViewMiddleware')
 
 # Globalization
 
