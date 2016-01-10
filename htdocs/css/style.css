@@ -148,6 +148,46 @@ div.patchforms {
 	margin-top: 2em;
 }
 
+ul.dropdown-menu {
+	white-space: nowrap;
+	min-width: 300px;
+	padding: 8px 20px;
+}
+
+.toolbar {
+	margin-top: 20px;
+	margin-bottom: 20px;
+	background-color: transparent;
+}
+
+@media screen and (min-width: 768px) {
+  .toolbar > .container-fluid > .navbar-collapse {
+    margin-left: -30px;
+    margin-right: -15px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .toolbar > .container-fluid .navbar-form {
+    margin: 0;
+  }
+}
+
+.navbar-default .btn-link {
+	color: #428bca;
+}
+
+.table-info {
+	padding: 6px 12px;
+	background-color: transparent;
+	color: #777;
+	border-color: #ddd;
+}
+
+.filter-applied {
+	background-color: #eee;
+}
+
 /* list order manipulation */
 
 table.patchlist tr.draghover {

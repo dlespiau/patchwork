@@ -57,16 +57,169 @@ var pw = (function() {
         };
 
     function create_table(config) {
-        var o = {};
+        var o = {
+            filters: [],
+        };
 
         $.extend(o, config);
+
+        o._dynatable = function() {
+            return $(this.selector).data('dynatable');
+        };
 
         o.url = function() {
             return o.api_url + '?' + $.param(o.api_params);
         };
 
+        o.set_filter = function (param, val) {
+            if (val === undefined || val === null || val === '') {
+                delete o.api_params[param];
+                return;
+            }
+
+            o.api_params[param] = val;
+        };
+
+        o.refresh = function() {
+            var dynatable = this._dynatable();
+
+            dynatable.paginationPage.set(1);
+            dynatable.settings.dataset.ajaxUrl = this.url();
+            dynatable.process();
+        };
+
+        o.add_filter = function(filter) {
+            this.filters.push(filter);
+        };
+
+        o.set_info = function(content) {
+            if (!content) {
+                $(this.selector + '-info-container').hide();
+                return;
+            }
+
+            $(this.selector + '-info-container').fadeIn();
+            $(this.selector + '-info').html(content);
+        };
+
+        o.count = function() {
+            return this._dynatable().settings.dataset.totalRecordCount;
+        };
+
+        o.refresh_info = function(content) {
+            var descriptions = [];
+
+            for (var i = 0; i < this.filters.length; i++) {
+                var filter = this.filters[i];
+
+                if (!filter.is_active)
+                    continue;
+
+                descriptions.push(filter.humanize());
+            }
+
+            var text, count = this.count();
+            if (descriptions.length === 0)
+                text = "Showing all " + count + " " + this.name;
+            else {
+                text = "Showing " + count + " " + this.name + ' ';
+                text += descriptions.join(', ');
+            }
+            this.set_info(text);
+        };
+
+        /* called when dynatable has finished populating the DOM */
+        o.on_update_finished = function() {
+            this.refresh_info();
+        };
+
         return o;
     }
+
+    /*
+     * table: the table the filter applies to
+     * name: name of the filter, used to lookup HTML elements
+     * init: setup the filter
+     * set_filter(table): set the filter(s) on 'table'
+     * clear_filter(table): clear the filter(s) on 'table' and reset the
+     *                      filter fields
+     * can_submit: are the filter fields populated in such a way one can
+     *             submit (apply) the filter?
+     * humanize: return a string with a description of the active filter for
+     *           humans to read
+     */
+    exports.create_filter = function(config) {
+        var o = {};
+
+        $.extend(o, config);
+
+        o.refresh_apply = function() {
+            var submit = $('#' + o.name + '-filter .apply-filter');
+            if (this.can_submit())
+                submit.removeAttr('disabled').focus();
+            else
+                submit.attr('disabled', '');
+        };
+
+        o.refresh_active = function() {
+            if (o.is_active) {
+                $('#clear-' + o.name + '-filter, ' +
+                  '#' + o.name + '-filter .btn-link').fadeIn();
+                $('#' + o.name + '-filter').addClass('filter-applied');
+            } else {
+                $('#clear-' + o.name + '-filter, ' +
+                  '#' + o.name + '-filter .btn-link').fadeOut();
+                $('#' + o.name + '-filter').removeClass('filter-applied');
+
+            }
+        };
+
+        o.set_active = function(val) {
+            if (val == o.is_active)
+                return;
+
+            o.is_active = val;
+            o.refresh_active();
+        };
+
+        /* initialize the filter */
+        o.init();
+
+        $('#' + o.name + '-form').submit(function(e) {
+            e.preventDefault();
+
+            o.set_filter(o.table);
+
+            o.table.refresh();
+            $('#' + o.name + '-filter-dropdown').dropdown('toggle');
+
+            o.set_active(true);
+        });
+
+        o._clear_filter = function() {
+            o.clear_filter(this.table);
+            this.table.refresh();
+            o.set_active(false);
+        };
+
+        $('#clear-' + o.name + '-filter').tooltip();
+        $('#clear-' + o.name + '-filter').click(function(e) {
+            e.stopPropagation();
+            o._clear_filter();
+        });
+        $('#' + o.name + '-filter .btn-link').click(function(e) {
+            e.preventDefault();
+            o._clear_filter();
+            $('#' + o.name + '-filter-dropdown').dropdown('toggle');
+        });
+
+        o.set_active(false);
+        o.refresh_apply();
+
+        o.table.add_filter(o);
+
+        return o;
+    };
 
     /* JShint is warning that 'this' may be undefined in strict mode. What it
      * doesn't know is that dynatable will bind this when calling those
@@ -146,7 +299,9 @@ var pw = (function() {
                                      '?' + $.param({ ordering: ordering }));
         }
 
-        ctx.table = create_table({
+        exports.table = ctx.table = create_table({
+            'selector': selector,
+            'name': 'series',
             'columns': {
                 'ID': 'id',
                 'Series': 'name',
@@ -165,6 +320,8 @@ var pw = (function() {
             dynatable.utility.textTransform.PatchworkSeries = function(text) {
                 return ctx.table.columns[text];
             };
+        }).bind('dynatable:afterUpdate', function(e, rows) {
+            ctx.table.on_update_finished();
         }).dynatable({
             features: {
                 search: false,
@@ -183,6 +340,8 @@ var pw = (function() {
         });
 
         table.stickyTableHeaders();
+
+        return ctx.table;
     };
 
     exports.patch_strip_series_marker = function(name) {
