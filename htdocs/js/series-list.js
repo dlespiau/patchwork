@@ -1,6 +1,7 @@
 $(function () {
     series_table = pw.setup_series_list('#serieslist');
 
+    /* date filter */
     date_filter = pw.create_filter({
         table: series_table,
         name: 'date',
@@ -42,6 +43,59 @@ $(function () {
 
     $('.input-group.date').datepicker().on('changeDate', function(e) {
         date_filter.refresh_apply();
+    });
+
+    /* submitter filter */
+    submitter_filter = pw.create_filter({
+        table: series_table,
+        name: 'submitter',
+        init: function() {
+            var _this = this;
+
+            this.me = $('#submitter-me');
+            this.by = $('#submitter-by');
+            this.clear_filter(series_table);
+            /* don't show the "submitted by me" option if there is no logged
+             * in user */
+            if (!pw.user.is_authenticated)
+                this.me.attr('disabled', '');
+
+            this.completion = pw.setup_autocompletion('#submitter-search',
+                                                      '/submitter');
+            this.completion.on('change', function() {
+                _this.refresh_apply();
+            });
+        },
+        set_filter: function(table) {
+            var filter = null;
+            var submitter = this.completion.getValue();
+
+            if (this.me.prop('checked'))
+                filter = 'self';
+            else if (this.by.prop('checked') && submitter)
+                filter = submitter;
+
+            table.set_filter('submitter', filter);
+        },
+        clear_filter: function(table) {
+            this.me.prop('checked', false);
+            this.by.prop('checked', true);
+            table.set_filter('submitter', null);
+        },
+        can_submit: function() {
+            return this.me.prop('checked') ||
+                   (this.by.prop('checked') && this.completion.getValue());
+        },
+        humanize: function() {
+            if (this.me.prop('checked'))
+                return 'submitted by me';
+            var submitter = this.completion.getValue();
+            return 'submitted by ' + this.completion.getItem(submitter).text();
+        },
+    });
+
+    $('#submitter-filter input:radio').change(function() {
+        submitter_filter.refresh_apply();
     });
 
 });

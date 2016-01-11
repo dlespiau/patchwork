@@ -51,6 +51,7 @@ var pw = (function() {
             api_base_url: '/api/1.0',
             project: null,
             user : {
+                is_authenticated: false,
                 items_per_page: 100,
             },
             table: null,
@@ -246,6 +247,8 @@ var pw = (function() {
 
     exports.amend_context = function(new_ctx) {
         $.extend(ctx, new_ctx);
+        exports.user = ctx.user;
+
     };
 
     exports.init = function(init_ctx) {

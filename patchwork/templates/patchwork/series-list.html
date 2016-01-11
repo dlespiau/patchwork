@@ -67,6 +67,39 @@
           </li>
         </ul>
       </li>
+      <li class="dropdown" id="submitter-filter">
+        <a data-toggle="dropdown" class="dropdown-toggle" id="submitter-filter-dropdown">
+          <button id="clear-submitter-filter" class="btn btn-default btn-xs" title="Clear submitter filter" style="display:none;">
+             <span class="glyphicon glyphicon-remove"></span>
+          </button>
+          Submitter
+          <span class="caret"></span>
+        </a>
+        <ul role="menu" class="dropdown-menu">
+           <li><span>Show series:</span></li>
+           <li>
+            <form id="submitter-form">
+             <div class="radio">
+               <label>
+                 <input id="submitter-me" type="radio" value="me" name="submitter-options">
+                 Submitted by me
+               </label>
+             </div>
+             <div class="radio">
+               <label>
+                 <input id="submitter-by" type="radio" value="by" name="submitter-options">
+                 Submitted by
+               </label>
+             </div>
+             <div class="form-group">
+               <input type="text" class="form-control" id="submitter-search" placeholder="Find submitter">
+             </div>
+             <button type="submit" class="btn btn-default apply-filter">Apply</button>
+             <button class="btn btn-link" style="display:none;">Clear submitter filter</button>
+           </form>
+          </li>
+         </ul>
+      </li>
     </ul>
   </div>
  </div>

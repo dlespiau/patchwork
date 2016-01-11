@@ -29,6 +29,7 @@
             base_url: '{% url 'root' %}'
 {% if user.is_authenticated %}
             , user: {
+                is_authenticated: true,
                 items_per_page: {{ user.profile.patches_per_page }}
             }
 {% endif  %}
