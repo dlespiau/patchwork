@@ -29,7 +29,7 @@ from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-                             Test, TestResult
+                             Test, TestResult, Person
 from rest_framework import views, viewsets, mixins, generics, filters, \
                            permissions, status
 from rest_framework.authentication import BasicAuthentication
@@ -86,6 +86,21 @@ class MaintainerPermission(permissions.BasePermission):
             return False
         return obj.project.is_editable(user)
 
+
+class RequestDjangoFilterBackend(filters.DjangoFilterBackend):
+    """A DjangoFilterBackend class that also includes the request"""
+
+    def filter_queryset(self, request, queryset, view):
+        filter_class = self.get_filter_class(view, queryset)
+
+        if filter_class:
+            filter = filter_class(request.QUERY_PARAMS, queryset=queryset)
+            filter.request = request
+            return filter.qs
+
+        return queryset
+
+
 class API(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
@@ -98,7 +113,7 @@ class ListMixin(object):
     max_paginate_by = 100
     filter_backends = (RelatedOrderingFilter, )
 
-class SeriesTimeFilter(django_filters.FilterSet):
+class SeriesFilter(django_filters.FilterSet):
 
     def submitted_since_filter(queryset, date):
         if date:
@@ -120,21 +135,32 @@ class SeriesTimeFilter(django_filters.FilterSet):
             queryset = queryset.filter(last_updated__lte=date)
         return queryset
 
+    def submitter_filter(self, queryset, submitter):
+        try:
+            submitter = int(submitter)
+            queryset = queryset.filter(submitter=submitter)
+        except ValueError:
+            if submitter == 'self' and self.request.user.is_authenticated():
+                people = Person.objects.filter(user=self.request.user)
+                queryset = queryset.filter(submitter__in=people)
+        return queryset
+
     submitted_since = django_filters.CharFilter(action=submitted_since_filter)
     updated_since = django_filters.CharFilter(action=updated_since_filter)
     submitted_before = django_filters.CharFilter(action=submitted_before_filter)
     updated_before = django_filters.CharFilter(action=updated_before_filter)
+    submitter = django_filters.MethodFilter(action='submitter_filter')
 
     class Meta:
         model = Series
-        fields = ['submitted_since', 'updated_since']
+        fields = []
 
 class SeriesListMixin(ListMixin):
     queryset = Series.objects.all()
     serializer_class = SeriesSerializer
     select_fields = ('project', 'submitter', 'reviewer')
-    filter_backends = (filters.DjangoFilterBackend, RelatedOrderingFilter)
-    filter_class = SeriesTimeFilter
+    filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
+    filter_class = SeriesFilter
 
 class SelectRelatedMixin(object):
     def select_related(self, queryset):
