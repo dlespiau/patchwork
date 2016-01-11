@@ -289,6 +289,69 @@ var pw = (function() {
         });
     };
 
+    Selectize.define('enter_key_submit', function (options) {
+        var self = this;
+
+        this.onKeyDown = (function (e) {
+            var original = self.onKeyDown;
+
+            return function (e) {
+                var wasOpened = this.isOpen;
+                original.apply(this, arguments);
+
+                if (e.keyCode === 13 &&
+                    (this.$control_input.val() !== '' || !wasOpened))
+                    self.trigger('submit');
+            };
+        })();
+    });
+
+    exports.setup_autocompletion = function(selector, url) {
+        return $(selector).selectize({
+            valueField: 'pk',
+            labelField: 'name',
+            searchField: ['name', 'email'],
+            plugins: ['enter_key_submit'],
+            maxItems: 1,
+            persist: false,
+            onInitialize: function() {
+                this.on('submit', function() {
+                    if (!this.items.length)
+                        this.$input.val(this.lastValue);
+                    this.$input.closest('form').submit();
+                }, this);
+            },
+            render: {
+                option: function(item, escape) {
+                    if (item.name)
+                        return '<div>' + escape(item.name) + ' &lt;' +
+                                         escape(item.email) + '&gt;' + '</div>';
+                    return '<div>' + escape(item.email) + '</div>';
+                },
+                item: function(item, escape) {
+                    if (item.name)
+                        return '<div>' + escape(item.name) + '</div>';
+                    return '<div>' + escape(item.email) + '</div>';
+                }
+            },
+            load: function(query, callback) {
+                if (query.length < 4)
+                    return callback();
+
+                $.ajax({
+                    url: ctx.base_url + url +
+                         '?q=' + encodeURIComponent(query) + '&l=10',
+                    error: function() {
+                        callback();
+                    },
+                    success: function(res) {
+                        callback(res);
+                    }
+                });
+            }
+        }).data('selectize');
+    };
+
     exports.setup_series_list = function(selector, url, ordering) {
         var table = $(selector);
 

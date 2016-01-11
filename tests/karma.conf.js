@@ -15,6 +15,8 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      '../htdocs/js/jquery-1.10.1.min.js',
+      '../htdocs/js/selectize.min.js',
       '../htdocs/js/patchwork.js',
       'test_patchwork.js'
     ],
