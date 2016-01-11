@@ -32,7 +32,7 @@ import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.tests.utils import TestSeries
 from patchwork.models import Series, Patch, SeriesRevision, Test, TestResult
-
+from patchwork.serializers import SeriesSerializer
 
 entry_points = {
     '/': {
@@ -704,3 +704,46 @@ class TestResultTest(APITestBase):
             self.assertEqual(email.subject,
                              u"✓ super test: success for " + test[1])
             mail.outbox = []
+			
+			
+    def _insertTestResult(self, testName, state):
+        (r, _) = self.post_json(self.rev_url, data={
+            'test_name': testName,
+            'state': state,
+        }, user=self.maintainer)
+        self.assertEqual(r.status_code, 201)
+
+    def testRevisionTestStatus(self):
+        tc = TestResult.STATE_CHOICES
+        ss = SeriesSerializer()
+        self.assertEqual(TestResult.objects.all().count(), 0, "0 tests results expected")
+        self.assertEqual(ss.get_test_state(self.series), tc[TestResult.STATE_PENDING][1], "'pending' expected for no test result")
+
+        self._insertTestResult("test1", tc[TestResult.STATE_PENDING][1])
+        self.assertEqual(ss.get_test_state(self.series), tc[TestResult.STATE_PENDING][1], "'pending' expected")
+
+        self._insertTestResult("test2", tc[TestResult.STATE_SUCCESS][1])
+        self.assertEqual(ss.get_test_state(self.series), tc[TestResult.STATE_SUCCESS][1], "'success' expected")
+
+        self._insertTestResult("test3", tc[TestResult.STATE_WARNING][1])
+        self.assertEqual(ss.get_test_state(self.series), tc[TestResult.STATE_WARNING][1], "'warning' expected")
+
+        self._insertTestResult("test4", tc[TestResult.STATE_FAILURE][1])
+        self.assertEqual(ss.get_test_state(self.series), tc[TestResult.STATE_FAILURE][1], "'failure' expected")
+
+        sr0 = SeriesRevision.objects.get(id=1)  # get the existing revision
+        self.assertNotEqual(sr0, None)
+
+        # create new revision
+        sr1 = SeriesRevision()
+        sr1.version = sr0.version + 1
+        sr1.series = sr0.series
+        sr1.save()
+
+        self.assertEqual(self.series.revisions().count(), 2, "expect 2 revisions for the series")
+        self.assertEqual(ss.get_test_state(self.series), tc[TestResult.STATE_PENDING][1], "'pending' expected cause we have a new revision")
+        self.series.revisions()
+
+        self._cleanup_tests()
+
+
