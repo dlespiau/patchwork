@@ -247,18 +247,18 @@ var pw = (function() {
 
     exports.amend_context = function(new_ctx) {
         $.extend(ctx, new_ctx);
-        exports.user = ctx.user;
 
+        if (ctx.base_url.endsWith('/'))
+            ctx.base_url = ctx.base_url.slice(0, -1);
+        ctx.api_base_url = ctx.base_url + '/api/1.0';
+
+        exports.user = ctx.user;
     };
 
     exports.init = function(init_ctx) {
         setup_polyfills();
 
         this.amend_context(init_ctx);
-
-        if (ctx.base_url.endsWith('/'))
-            ctx.base_url = ctx.base_url.slice(0, -1);
-        ctx.api_base_url = ctx.base_url + '/api/1.0';
 
         $.dynatableSetup({
             features: {
