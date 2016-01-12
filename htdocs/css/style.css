@@ -188,6 +188,13 @@ ul.dropdown-menu {
 	background-color: #eee;
 }
 
+/* completion */
+
+small.completion-details {
+    display: block;
+    color: #a0a0a0;
+}
+
 /* list order manipulation */
 
 table.patchlist tr.draghover {

@@ -324,9 +324,13 @@ var pw = (function() {
             render: {
                 option: function(item, escape) {
                     if (item.name)
-                        return '<div>' + escape(item.name) + ' &lt;' +
-                                         escape(item.email) + '&gt;' + '</div>';
-                    return '<div>' + escape(item.email) + '</div>';
+                        return '<div><span class="completion-title">' +
+                                    escape(item.name) + '</span>' +
+                               '<small class="completion-details">' +
+                                    escape(item.email) +
+                               '</small></div>';
+                    return '<div><span class="completion-title">' +
+                               escape(item.email) + '</span></div>';
                 },
                 item: function(item, escape) {
                     if (item.name)
