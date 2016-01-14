@@ -104,8 +104,17 @@ class APITestBase(test_series.Series0010):
         test_series.insert()
         self.series2 = Series.objects.all().order_by('submitted')[1]
 
+        # different user so sorting by submitter is a simple list reversal
+        series3_sender = 'Test Author 3 <test-author3@example.com>'
+
+        # no cover letter
+        test_series = TestSeries(3, project=self.project,
+                                 sender=series3_sender, has_cover_letter=False)
+        test_series.insert()
+        self.series3 = Series.objects.all().order_by('submitted')[2]
+
         self.n_series = Series.objects.all().count()
-        self.last_inserted_series = self.series2
+        self.last_inserted_series = self.series3
 
     def check_mbox(self, api_url, filename, md5sum):
         response = self.client.get('/api/1.0' + api_url)
@@ -673,4 +682,22 @@ class TestResultTest(APITestBase):
                     Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
             self._post_result(url, 'super test', 'failure')
             self.assertEqual(len(mail.outbox), 1)
+            mail.outbox = []
+
+    def testMailSubject(self):
+        sub_tests = [
+            (self.rev_url, "for_each_{intel_,}crtc v2"),
+            (self.patch_url,
+             "[3/4] drm/i915: Introduce a for_each_crtc() macro"),
+            ('/series/%s/revisions/1/test-results/' % self.series3.pk,
+             'series starting with [1/3] Test Patch'),
+        ]
+        for test in sub_tests:
+            self._configure_test(test[0], 'super test',
+                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._post_result(test[0], 'super test', 'success')
+            self.assertEqual(len(mail.outbox), 1)
+            email = mail.outbox[0]
+            self.assertEqual(email.subject,
+                             u"✓ super test: success for " + test[1])
             mail.outbox = []

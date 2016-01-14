@@ -29,7 +29,7 @@ from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-                             Test, TestResult, Person
+                             Test, TestResult, Person, SERIES_DEFAULT_NAME
 from rest_framework import views, viewsets, mixins, generics, filters, \
                            permissions, status
 from rest_framework.authentication import BasicAuthentication
@@ -247,13 +247,24 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
         return series_mbox(rev)
 
 class ResultMixin(object):
-    def _prepare_mail(self, result):
+    def _object_name(self, obj):
+        if isinstance(obj, SeriesRevision):
+            name = obj.series.name
+            if name == SERIES_DEFAULT_NAME:
+                name = "series starting with " + obj.ordered_patches()[0].name
+            if obj.version > 1:
+                name += " (rev%d)" % obj.version
+            return name
+        return obj.name
+
+    def _prepare_mail(self, result, obj):
         if result.state == TestResult.STATE_SUCCESS:
             tick = u"✓"
         else:
             tick = u"✗"
-        subject = tick + u" %s: %s" % (result.get_state_display(),
-                                       result.test.name)
+        subject = tick + u" %s: %s for %s" % (result.test.name,
+                                              result.get_state_display(),
+                                              self._object_name(obj))
         body = ''
         if result.summary:
             body += "== Summary ==\n\n"
@@ -326,7 +337,7 @@ class ResultMixin(object):
                 to = []
 
         if to:
-            subject, body = self._prepare_mail(instance)
+            subject, body = self._prepare_mail(instance, obj)
             msgid = self._get_msgid(obj)
             headers = {
                 'X-Patchwork-Hint': 'ignore',
