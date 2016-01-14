@@ -227,10 +227,12 @@ var pw = (function() {
      * *_writer() functions */
 
     function series_writer(record) {
-        var link = ctx.base_url + '/series/' + record.id + '/';
-        return '<a href="' + link + '">' +
-               record[this.id] + // jshint ignore:line
-               '</a>';
+        var link = ctx.base_url + '/series/' + record.id + '/',
+            title = record[this.id]; // jshint ignore:line
+
+        if (title.length > 100)
+            title = title.slice(0, 100) + '…';
+        return '<a href="' + link + '">' + title + '</a>';
     }
 
     function date_writer(record) {
