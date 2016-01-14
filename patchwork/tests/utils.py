@@ -156,18 +156,20 @@ def create_email(content, subject = None, sender = None, multipart = False,
     return msg
 
 class TestSeries(object):
-    def __init__(self, n_patches, has_cover_letter=True, project=None):
+    def __init__(self, n_patches, has_cover_letter=True, project=None,
+                 sender=None):
         if n_patches < 1:
             raise ValueError
         self.n_patches = n_patches
         self.has_cover_letter = has_cover_letter
         self.project = project
+        self.sender = sender
 
     def create_cover_letter(self):
         return create_email(defaults.series_cover_letter,
                             subject='[PATCH 0/%d] %s' % (self.n_patches,
                                                          defaults.series_name),
-                            project=self.project)
+                            project=self.project, sender=self.sender)
 
     # in_reply_to: a mail instance
     def create_patch(self, n=0, in_reply_to=None, references=None,
@@ -185,7 +187,7 @@ class TestSeries(object):
 
         mail = create_email(defaults.patch, subject=subject,
                             in_reply_to=in_reply_to_str, references=references,
-                            project=self.project)
+                            project=self.project, sender=self.sender)
         mail['X-Mailer'] = 'git-send-email 2.1.0'
         return mail
 
@@ -196,7 +198,7 @@ class TestSeries(object):
         return create_email(defaults.review,
                             subject='Re: ' + mail.get('Subject'),
                             references=references,
-                            project=self.project)
+                            project=self.project, sender=self.sender)
 
     def create_mails(self):
         mails = []
