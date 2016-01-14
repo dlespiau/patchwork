@@ -104,6 +104,9 @@ class APITestBase(test_series.Series0010):
         test_series.insert()
         self.series2 = Series.objects.all().order_by('submitted')[1]
 
+        self.n_series = Series.objects.all().count()
+        self.last_inserted_series = self.series2
+
     def check_mbox(self, api_url, filename, md5sum):
         response = self.client.get('/api/1.0' + api_url)
         s = re.search(r"filename=([\w\.\-_]+)",
@@ -215,7 +218,7 @@ class APITest(APITestBase):
     def testSeriesNewRevisionEvent(self):
         # no 'since' parameter
         events = self.get_json('/projects/%(project_id)s/events/')
-        self.assertEqual(events['count'], 2)
+        self.assertEqual(events['count'], self.n_series)
         event = events['results'][0]
         self.assertEqual(event['parameters']['revision'], 1)
 
@@ -227,7 +230,7 @@ class APITest(APITestBase):
         # strictly inferior timestamp, should return the event
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'since': before})
-        self.assertEqual(events['count'], 2)
+        self.assertEqual(events['count'], self.n_series)
         event = events['results'][0]
         self.assertEqual(event['parameters']['revision'], 1)
 
@@ -252,10 +255,11 @@ class APITest(APITestBase):
 
     def testSeriesFilters(self):
         filters = [
-            ('submitted_since', '2015-06-01', 1),
-            ('updated_since', self.series2.last_updated, 0),
+            ('submitted_since', '2015-06-01', self.n_series - 1),
+            ('updated_since', self.last_inserted_series.last_updated, 0),
             ('submitted_before', '2015-06-01', 1),
-            ('updated_before', self.series2.last_updated, 2),
+            ('updated_before', self.last_inserted_series.last_updated,
+                               self.n_series),
         ]
 
         for entry_point in entry_points:
