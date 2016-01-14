@@ -24,6 +24,7 @@ import dateutil.parser
 import hashlib
 import json
 import re
+import time
 
 from django.core import mail
 
@@ -101,6 +102,7 @@ class APITestBase(test_series.Series0010):
 
         # a second series so we can test ordering/filtering
         test_series = TestSeries(3, project=self.project)
+        time.sleep(1)
         test_series.insert()
         self.series2 = Series.objects.all().order_by('submitted')[1]
 
@@ -110,6 +112,7 @@ class APITestBase(test_series.Series0010):
         # no cover letter
         test_series = TestSeries(3, project=self.project,
                                  sender=series3_sender, has_cover_letter=False)
+        time.sleep(1)
         test_series.insert()
         self.series3 = Series.objects.all().order_by('submitted')[2]
 
