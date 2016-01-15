@@ -127,10 +127,20 @@ class StateSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class SeriesSerializer(PatchworkModelSerializer):
+    series_test_state = serializers.SerializerMethodField('get_test_state')
+
+    def get_test_state(self, obj):
+        result = TestResult.STATE_PENDING
+        lastRev = obj.latest_revision()
+        if lastRev:
+            result = lastRev.test_state
+
+        return dict(TestResult.STATE_CHOICES)[result]
+
     class Meta:
         model = Series
         fields = ('id', 'project', 'name', 'n_patches', 'submitter',
-                  'submitted', 'last_updated', 'version', 'reviewer')
+                  'submitted', 'last_updated', 'version', 'reviewer', 'series_test_state')
         read_only_fields = ('project', 'n_patches', 'submitter', 'submitted',
                             'last_updated', 'version')
         expand_serializers = {
@@ -138,6 +148,7 @@ class SeriesSerializer(PatchworkModelSerializer):
             'submitter': PersonSerializer,
             'reviewer': UserSerializer,
         }
+
 
 class PatchSerializer(PatchworkModelSerializer):
     class Meta:

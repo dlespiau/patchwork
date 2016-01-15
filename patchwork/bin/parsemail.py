@@ -43,7 +43,7 @@ from patchwork import lock as lockmod
 from patchwork.lock import release
 from patchwork.models import (Patch, Project, Person, Comment, State, Series,
     SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state,
-    series_revision_complete, SERIES_DEFAULT_NAME)
+    series_revision_complete, SERIES_DEFAULT_NAME, TestStates)
 from patchwork.parser import parse_patch
 
 LOGGER = logging.getLogger(__name__)
@@ -509,6 +509,7 @@ def find_series_for_mail(project, name, msgid, is_patch, order, refs):
             if previous_patch:
                 order = find_patch_order(revisions, previous_patch, order)
                 revision = revision.duplicate(exclude_patches=(order,))
+                revision.test_state = TestStates.STATE_PENDING # reset the status for a duplicate
                 # series has been updated, grab the new instance
                 series = revision.series
     except IndexError:
@@ -664,6 +665,7 @@ def on_revision_complete(sender, revision, **kwargs):
     new_revision = previous_series.latest_revision().duplicate_meta()
     new_revision.root_msgid = revision.root_msgid
     new_revision.cover_letter = revision.cover_letter
+    new_revision.test_state = TestStates.STATE_PENDING  # reset the status for a duplicate
     new_revision.save()
     i = 1
     for patch in revision.ordered_patches():

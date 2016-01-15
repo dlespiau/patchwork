@@ -29,7 +29,7 @@ from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-                             Test, TestResult, Person, SERIES_DEFAULT_NAME
+                             Test, TestResult, TestStates, Person, SERIES_DEFAULT_NAME
 from rest_framework import views, viewsets, mixins, generics, filters, \
                            permissions, status
 from rest_framework.authentication import BasicAuthentication
@@ -355,11 +355,28 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
     permission_classes = (MaintainerPermission, )
     authentication_classes = (BasicAuthentication, )
 
+    # update the status of the series
+    def update_series_status(self, series):
+        # Series.object.filter()
+        if isinstance(series, SeriesRevision): 
+            # find all test for the latest revision
+            testResults = TestResult.objects.filter(revision=series)
+            if testResults.count() == 0:
+                series.test_state = TestStates.STATE_PENDING
+            else:
+                series.test_state = max([tr.state for tr in testResults if tr])
+            series.save()
+
     def create(self, request, series_pk, version_pk):
         rev = get_object_or_404(SeriesRevision, series=series_pk,
                                 version=version_pk)
-        return self.handle_test_results(request, rev, rev.series,
+        result = self.handle_test_results(request, rev, rev.series,
                                         Q(revision=rev), {'revision': rev})
+
+        if result.status_code != status.HTTP_400_BAD_REQUEST:
+            self.update_series_status(rev)
+
+        return result
 
 def endpoint(endpoint):
     """Used to rename a method on a ViewSet"""
