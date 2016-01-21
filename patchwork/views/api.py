@@ -359,8 +359,13 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
     def create(self, request, series_pk, version_pk):
         rev = get_object_or_404(SeriesRevision, series=series_pk,
                                 version=version_pk)
-        return self.handle_test_results(request, rev, rev.series,
-                                        Q(revision=rev), {'revision': rev})
+        response = self.handle_test_results(request, rev, rev.series,
+                                            Q(revision=rev), {'revision': rev})
+
+        if response.status_code == status.HTTP_201_CREATED:
+            rev.refresh_test_state()
+
+        return response
 
 def endpoint(endpoint):
     """Used to rename a method on a ViewSet"""

@@ -518,6 +518,8 @@ class SeriesRevision(models.Model):
     root_msgid = models.CharField(max_length=255)
     cover_letter = models.TextField(null = True, blank = True)
     patches = models.ManyToManyField(Patch, through = 'SeriesRevisionPatch')
+    test_state = models.SmallIntegerField(choices=TestState.STATE_CHOICES,
+                                          null=True)
 
     class Meta:
         unique_together = [('series', 'version')]
@@ -545,6 +547,7 @@ class SeriesRevision(models.Model):
         new.pk = None
         new.cover_letter = None
         new.version = self.version + 1
+        new.test_state = None
         new.save()
 
         series = new.series
@@ -566,6 +569,12 @@ class SeriesRevision(models.Model):
                 continue
             new.add_patch(p, order)
         return new
+
+    def refresh_test_state(self):
+        results = TestResult.objects.filter(revision=self)
+        if results.count() > 0:
+            self.test_state = max([r.state for r in results])
+            self.save()
 
     def __unicode__(self):
         return "Revision " + str(self.version)

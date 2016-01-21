@@ -34,6 +34,7 @@ from patchwork.tests.utils import TestSeries
 from patchwork.models import (
         Series, Patch, SeriesRevision, Test, TestResult, TestState
 )
+from patchwork.serializers import SeriesSerializer
 
 entry_points = {
     '/': {
@@ -705,3 +706,29 @@ class TestResultTest(APITestBase):
             self.assertEqual(email.subject,
                              u"✓ super test: success for " + test[1])
             mail.outbox = []
+
+    def testRevisionTestStatus(self):
+        ss = SeriesSerializer()
+        self.assertEqual(TestResult.objects.all().count(), 0)
+        self.assertEqual(ss.get_test_state(self.series), None)
+
+        self._post_result(self.rev_url, "test1", 'pending')
+        self.assertEqual(ss.get_test_state(self.series), 'pending')
+
+        self._post_result(self.rev_url, "test2", 'success')
+        self.assertEqual(ss.get_test_state(self.series), 'success')
+
+        self._post_result(self.rev_url, "test3", 'warning')
+        self.assertEqual(ss.get_test_state(self.series), 'warning')
+
+        self._post_result(self.rev_url, "test4", 'failure')
+        self.assertEqual(ss.get_test_state(self.series), 'failure')
+
+        # Create a new revision
+        rev1 = SeriesRevision.objects.get(series=self.series, version=1)
+        rev2 = rev1.duplicate()
+        rev2.save()
+        self.assertEqual(self.series.revisions().count(), 2)
+
+        self.assertEqual(ss.get_test_state(self.series), None,
+             "'None' expected as a new revision must reset the testing state")
