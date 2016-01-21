@@ -235,6 +235,14 @@ var pw = (function() {
         return '<a href="' + link + '">' + title + '</a>';
     }
 
+    function test_state_writer(record) {
+        var state = record.test_state;
+
+        if (!state)
+            return '';
+        return "<span class='label result-" + state + "'>" + state + "</span>";
+    }
+
     function date_writer(record) {
         return record[this.id].substr(0, 10);   // jshint ignore:line
     }
@@ -286,7 +294,8 @@ var pw = (function() {
                 'name': series_writer,
                 'last_updated': date_writer,
                 'reviewer.name': name_writer,
-                'submitter.name': name_writer
+                'submitter.name': name_writer,
+                'test_state': test_state_writer,
             }
         });
     };
@@ -380,7 +389,8 @@ var pw = (function() {
                 'Patches': 'n_patches',
                 'Submitter': 'submitter.name',
                 'Reviewer': 'reviewer.name',
-                'Updated': 'last_updated'
+                'Updated': 'last_updated',
+                'Tests':'test_state',
             },
             'api_url': ctx.api_base_url + url,
             'api_params': {
