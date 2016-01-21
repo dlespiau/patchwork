@@ -31,8 +31,9 @@ from django.core import mail
 import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.tests.utils import TestSeries
-from patchwork.models import Series, Patch, SeriesRevision, Test, TestResult
-
+from patchwork.models import (
+        Series, Patch, SeriesRevision, Test, TestResult, TestState
+)
 
 entry_points = {
     '/': {
@@ -404,7 +405,7 @@ class TestResultTest(APITestBase):
                 self.assertEqual(result.revision, None)
                 self.assertEqual(result.patch, self.patch)
             self.assertEqual(result.user, self.maintainer.user)
-            self.assertEqual(result.state, TestResult.STATE_PENDING)
+            self.assertEqual(result.state, TestState.STATE_PENDING)
             self.assertEqual(result.url, None)
             self.assertEqual(result.summary, None)
 
@@ -442,7 +443,7 @@ class TestResultTest(APITestBase):
             results = TestResult.objects.all()
             self.assertEqual(len(results), 1)
             result = results[0]
-            self.assertEqual(result.state, TestResult.STATE_PENDING)
+            self.assertEqual(result.state, TestState.STATE_PENDING)
             self.assertEqual(result.url, None)
             self.assertEqual(result.summary, None)
 
@@ -458,7 +459,7 @@ class TestResultTest(APITestBase):
             results = TestResult.objects.all()
             self.assertEqual(len(results), 1)
             result = results[0]
-            self.assertEqual(result.state, TestResult.STATE_SUCCESS)
+            self.assertEqual(result.state, TestState.STATE_SUCCESS)
             self.assertEqual(result.url, self.result_url)
             self.assertEqual(result.summary, self.result_summary)
 
@@ -478,7 +479,7 @@ class TestResultTest(APITestBase):
             results = TestResult.objects.all()
             self.assertEqual(len(results), 1)
             result = results[0]
-            self.assertEqual(result.state, TestResult.STATE_PENDING)
+            self.assertEqual(result.state, TestState.STATE_PENDING)
             self.assertEqual(result.url, self.result_url)
             self.assertEqual(result.summary, self.result_summary)
 
@@ -491,7 +492,7 @@ class TestResultTest(APITestBase):
             self.assertEqual(r.status_code, 201)
 
             result = TestResult.objects.all()[0]
-            self.assertEqual(result.state, TestResult.STATE_PENDING)
+            self.assertEqual(result.state, TestState.STATE_PENDING)
             self.assertEqual(result.url, None)
             self.assertEqual(result.summary, None)
 

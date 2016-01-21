@@ -446,6 +446,20 @@ class BundlePatch(models.Model):
 
 SERIES_DEFAULT_NAME = "Series without cover letter"
 
+
+class TestState:
+    STATE_PENDING = 0
+    STATE_SUCCESS = 1
+    STATE_WARNING = 2
+    STATE_FAILURE = 3
+    STATE_CHOICES = (
+        (STATE_PENDING, 'pending'),
+        (STATE_SUCCESS, 'success'),
+        (STATE_WARNING, 'warning'),
+        (STATE_FAILURE, 'failure'),
+    )
+
+
 # This Model represents the "top level" Series, an object that doesn't change
 # with the various versions of patches sent to the mailing list.
 class Series(models.Model):
@@ -630,23 +644,13 @@ class Test(models.Model):
         return self.name
 
 class TestResult(models.Model):
-    STATE_PENDING = 0
-    STATE_SUCCESS = 1
-    STATE_WARNING = 2
-    STATE_FAILURE = 3
-    STATE_CHOICES = (
-        (STATE_PENDING, 'pending'),
-        (STATE_SUCCESS, 'success'),
-        (STATE_WARNING, 'warning'),
-        (STATE_FAILURE, 'failure'),
-    )
 
     test = models.ForeignKey(Test)
     revision = models.ForeignKey(SeriesRevision, blank=True, null=True)
     patch = models.ForeignKey(Patch, blank=True, null=True)
     user = models.ForeignKey(User)
     date = models.DateTimeField(auto_now=True)
-    state = models.SmallIntegerField(choices=STATE_CHOICES)
+    state = models.SmallIntegerField(choices=TestState.STATE_CHOICES)
     url = models.URLField(blank=True, null=True)
     summary = models.TextField(blank=True, null=True)
 

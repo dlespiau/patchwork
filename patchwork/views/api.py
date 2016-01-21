@@ -29,7 +29,8 @@ from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-                             Test, TestResult, Person, SERIES_DEFAULT_NAME
+                             Test, TestResult, TestState, Person, \
+                             SERIES_DEFAULT_NAME
 from rest_framework import views, viewsets, mixins, generics, filters, \
                            permissions, status
 from rest_framework.authentication import BasicAuthentication
@@ -258,7 +259,7 @@ class ResultMixin(object):
         return obj.name
 
     def _prepare_mail(self, result, obj):
-        if result.state == TestResult.STATE_SUCCESS:
+        if result.state == TestState.STATE_SUCCESS:
             tick = u"✓"
         else:
             tick = u"✗"
@@ -328,12 +329,12 @@ class ResultMixin(object):
 
         if to:
             # never send mail on pending
-            if instance.state == TestResult.STATE_PENDING:
+            if instance.state == TestState.STATE_PENDING:
                 to = []
 
             if (instance.test.mail_condition == Test.CONDITION_ON_FAILURE and
-                instance.state not in (TestResult.STATE_WARNING,
-                                       TestResult.STATE_FAILURE)):
+                instance.state not in (TestState.STATE_WARNING,
+                                       TestState.STATE_FAILURE)):
                 to = []
 
         if to:

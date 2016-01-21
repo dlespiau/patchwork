@@ -23,7 +23,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
-                             State, EventLog, Test, TestResult
+                             State, EventLog, Test, TestResult, TestState
 from rest_framework import serializers
 from rest_framework import fields
 from enum import Enum
@@ -199,7 +199,7 @@ class ValueChoiceField(serializers.ChoiceField):
 
 class TestResultSerializer(serializers.Serializer):
     test_name = serializers.CharField(source='test.name')
-    state = ValueChoiceField(choices=TestResult.STATE_CHOICES)
+    state = ValueChoiceField(choices=TestState.STATE_CHOICES)
     url = serializers.URLField(required=False, allow_none=True)
     summary = serializers.CharField(required=False, allow_none=True)
 
