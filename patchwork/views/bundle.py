@@ -122,7 +122,6 @@ def bundles(request, project_id=None):
     else:
         project = get_object_or_404(Project, linkname=project_id)
         bundles = Bundle.objects.filter(owner=request.user, project=project)
-    print(bundles)
     for bundle in bundles:
         bundle.delete_form = DeleteBundleForm(auto_id = False,
                 initial = {'bundle_id': bundle.id})
