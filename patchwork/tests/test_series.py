@@ -613,6 +613,10 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
     def testNewSeriesIgnoreCase(self):
         self._test_internal((3, 3), ('Awesome series', 'awesome series (V4)'))
 
+    def testNewSeriesDifferentNumberOfPatches(self):
+        self._test_internal((3, 7), ('Awesome series', 'Awesome series v2'))
+
+
 #
 # series-new-revision event tests
 #

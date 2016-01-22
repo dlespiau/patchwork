@@ -396,9 +396,9 @@ def find_content(project, mail):
         if is_cover_letter or n is None:
             series_name = strip_prefixes(name)
 
-        (ret.series, ret.revision, ret.patch_order) = \
+        (ret.series, ret.revision, ret.patch_order, n) = \
             find_series_for_mail(project, series_name, msgid, is_patch,
-                                 ret.patch_order, refs)
+                                 ret.patch_order, n, refs)
         ret.series.n_patches = n or 1
 
         date = mail_date(mail)
@@ -469,18 +469,20 @@ def find_previous_patch(revision, order, refs):
     return None
 
 
-def find_patch_order(revisions, previous_patch, order):
+def find_patch_order(revisions, previous_patch, order, n_patches):
     # cycle through revisions starting by the more recent one and find
     # the revision where previous_patch is
     for revision in revisions:
         try:
             order = SeriesRevisionPatch.objects.get(revision=revision,
                     patch=previous_patch).order
+            if n_patches is None:
+                n_patches = revision.series.n_patches
             break
         except SeriesRevisionPatch.DoesNotExist:
             continue
     assert order is not None
-    return order
+    return (order, n_patches)
 
 
 # The complexity here is because:
@@ -489,7 +491,8 @@ def find_patch_order(revisions, previous_patch, order):
 #     be updated once we receive the root message.
 #   - we need to create new revisions when the mail is actually a new version
 #     of a previous patch
-def find_series_for_mail(project, name, msgid, is_patch, order, refs):
+def find_series_for_mail(project, name, msgid, is_patch, order, n_patches,
+                         refs):
     if refs == []:
         root_msgid = msgid
     else:
@@ -507,7 +510,9 @@ def find_series_for_mail(project, name, msgid, is_patch, order, refs):
         if is_patch:
             previous_patch = find_previous_patch(revision, order, refs)
             if previous_patch:
-                order = find_patch_order(revisions, previous_patch, order)
+                (order, n_patches) = find_patch_order(revisions,
+                                                      previous_patch,
+                                                      order, n_patches)
                 revision = revision.duplicate(exclude_patches=(order,))
                 # series has been updated, grab the new instance
                 series = revision.series
@@ -517,7 +522,7 @@ def find_series_for_mail(project, name, msgid, is_patch, order, refs):
         series = Series(name=name)
         revision = SeriesRevision(root_msgid=root_msgid)
 
-    return (series, revision, order)
+    return (series, revision, order, n_patches)
 
 
 def find_patch_for_comment(project, refs):
