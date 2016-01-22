@@ -579,14 +579,16 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
 
     def _test_internal(self, n_patches, subjects):
 
-        (series1, series1_mails) = self._create_series(n_patches)
-        self._set_cover_letter_subject(series1_mails[0], n_patches, subjects[0])
+        (series1, series1_mails) = self._create_series(n_patches[0])
+        self._set_cover_letter_subject(series1_mails[0], n_patches[0],
+                                       subjects[0])
         self.series_name = subjects[0]
         series1.insert(series1_mails)
         self.commonInsertionChecks()
 
-        (series2,series2_mails) = self._create_series(n_patches)
-        self._set_cover_letter_subject(series2_mails[0], n_patches, subjects[1])
+        (series2,series2_mails) = self._create_series(n_patches[1])
+        self._set_cover_letter_subject(series2_mails[0], n_patches[1],
+                                        subjects[1])
         series2.insert(series2_mails)
 
         self.check(series1_mails, series2_mails)
@@ -606,10 +608,10 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
             self.assertEquals(clean_series_name(case[1]), case[0])
 
     def testNewSeries(self):
-        self._test_internal(3, ('Awesome series', 'Awesome series (v4)'))
+        self._test_internal((3, 3), ('Awesome series', 'Awesome series (v4)'))
 
     def testNewSeriesIgnoreCase(self):
-        self._test_internal(3, ('Awesome series', 'awesome series (V4)'))
+        self._test_internal((3, 3), ('Awesome series', 'awesome series (V4)'))
 
 #
 # series-new-revision event tests
