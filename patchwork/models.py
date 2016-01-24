@@ -475,6 +475,10 @@ class Series(models.Model):
     version = models.IntegerField(default=1)
     # This is the number of patches of the latest version.
     n_patches = models.IntegerField(default=0)
+    # direct access to the latest revision so we can get the latest revision
+    # information with a JOIN
+    last_revision = models.OneToOneField('SeriesRevision', null=True,
+                                         related_name='+')
 
     def __unicode__(self):
         return self.name
@@ -517,6 +521,7 @@ class SeriesRevision(models.Model):
     version = models.IntegerField(default=1)
     root_msgid = models.CharField(max_length=255)
     cover_letter = models.TextField(null = True, blank = True)
+    n_patches = models.IntegerField(default=0)
     patches = models.ManyToManyField(Patch, through = 'SeriesRevisionPatch')
     test_state = models.SmallIntegerField(choices=TestState.STATE_CHOICES,
                                           null=True)
@@ -538,7 +543,7 @@ class SeriesRevision(models.Model):
                                                 order=order)
         sp.save()
 
-        revision_complete = self.patches.count() == self.series.n_patches
+        revision_complete = self.patches.count() == self.n_patches
         if revision_complete:
             series_revision_complete.send(sender=self.__class__, revision=self)
 
@@ -549,10 +554,6 @@ class SeriesRevision(models.Model):
         new.version = self.version + 1
         new.test_state = None
         new.save()
-
-        series = new.series
-        series.version = new.version
-        series.save()
 
         return new
 
@@ -751,9 +752,16 @@ def _patch_change_callback(sender, instance, **kwargs):
 models.signals.pre_save.connect(_patch_change_callback, sender = Patch)
 
 def _on_revision_complete(sender, revision, **kwargs):
+    series = revision.series
+
+    # update series.last_revision
+    series.last_revision = series.latest_revision()
+    series.save()
+
+    # log event
     new_revision = Event.objects.get(name='series-new-revision')
-    log = EventLog(event=new_revision, series=revision.series,
-                   user=revision.series.submitter.user,
+    log = EventLog(event=new_revision, series=series,
+                   user=series.submitter.user,
                    parameters={'revision': revision.version})
     log.save()
 

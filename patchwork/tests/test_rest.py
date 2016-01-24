@@ -707,22 +707,25 @@ class TestResultTest(APITestBase):
                              u"✓ super test: success for " + test[1])
             mail.outbox = []
 
+    def _test_state(self, serializer, series):
+        return serializer.get_test_state(Series.objects.get(pk=series.pk))
+
     def testRevisionTestStatus(self):
         ss = SeriesSerializer()
         self.assertEqual(TestResult.objects.all().count(), 0)
-        self.assertEqual(ss.get_test_state(self.series), None)
+        self.assertEqual(self._test_state(ss, self.series), None)
 
         self._post_result(self.rev_url, "test1", 'pending')
-        self.assertEqual(ss.get_test_state(self.series), 'pending')
+        self.assertEqual(self._test_state(ss, self.series), 'pending')
 
         self._post_result(self.rev_url, "test2", 'success')
-        self.assertEqual(ss.get_test_state(self.series), 'success')
+        self.assertEqual(self._test_state(ss, self.series), 'success')
 
         self._post_result(self.rev_url, "test3", 'warning')
-        self.assertEqual(ss.get_test_state(self.series), 'warning')
+        self.assertEqual(self._test_state(ss, self.series), 'warning')
 
         self._post_result(self.rev_url, "test4", 'failure')
-        self.assertEqual(ss.get_test_state(self.series), 'failure')
+        self.assertEqual(self._test_state(ss, self.series), 'failure')
 
         # Create a new revision
         rev1 = SeriesRevision.objects.get(series=self.series, version=1)
@@ -730,5 +733,5 @@ class TestResultTest(APITestBase):
         rev2.save()
         self.assertEqual(self.series.revisions().count(), 2)
 
-        self.assertEqual(ss.get_test_state(self.series), None,
+        self.assertEqual(self._test_state(ss, self.series), None,
              "'None' expected as a new revision must reset the testing state")

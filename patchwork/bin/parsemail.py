@@ -399,7 +399,7 @@ def find_content(project, mail):
         (ret.series, ret.revision, ret.patch_order, n) = \
             find_series_for_mail(project, series_name, msgid, is_patch,
                                  ret.patch_order, n, refs)
-        ret.series.n_patches = n or 1
+        ret.revision.n_patches = n or 1
 
         date = mail_date(mail)
         if not ret.series.submitted or date < ret.series.submitted:
@@ -477,7 +477,7 @@ def find_patch_order(revisions, previous_patch, order, n_patches):
             order = SeriesRevisionPatch.objects.get(revision=revision,
                     patch=previous_patch).order
             if n_patches is None:
-                n_patches = revision.series.n_patches
+                n_patches = revision.n_patches
             break
         except SeriesRevisionPatch.DoesNotExist:
             continue

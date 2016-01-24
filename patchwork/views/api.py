@@ -159,18 +159,20 @@ class SeriesFilter(django_filters.FilterSet):
 class SeriesListMixin(ListMixin):
     queryset = Series.objects.all()
     serializer_class = SeriesSerializer
-    select_fields = ('project', 'submitter', 'reviewer')
+    select_fields = ('last_revision', )
+    select_fields__expand = ('project', 'submitter', 'reviewer')
     filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
     filter_class = SeriesFilter
 
 class SelectRelatedMixin(object):
     def select_related(self, queryset):
-        select_fields = getattr(self, 'select_fields', None)
-        if not select_fields:
-            return queryset
+        select_fields = getattr(self, 'select_fields', ())
 
         related = self.request.QUERY_PARAMS.get('related')
-        if not related:
+        if related:
+            select_fields += getattr(self, 'select_fields__expand', ())
+
+        if not select_fields:
             return queryset
 
         return queryset.select_related(*select_fields)

@@ -304,7 +304,7 @@ class Series0030(IntelGfxTest):
 class UpdatedPatchTest(Series0030):
     def testNewRevision(self):
         series = Series.objects.all()[0]
-        self.assertEquals(series.version, 2)
+        self.assertEquals(series.last_revision.version, 2)
 
         revisions = SeriesRevision.objects.all()
         self.assertEquals(revisions.count(), 2)
@@ -333,7 +333,7 @@ class SinglePatchUpdateTest(GeneratedSeriesTest):
     def check(self, original_mails, patch_v2_mail, n):
         self.assertEquals(Series.objects.count(), 1)
         series = Series.objects.all()[0]
-        self.assertEquals(series.version, 2)
+        self.assertEquals(series.last_revision.version, 2)
 
         revisions = SeriesRevision.objects.all()
         self.assertEquals(revisions.count(), 2)
@@ -437,7 +437,7 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
 
         self.assertEquals(Series.objects.count(), 1)
         series = Series.objects.all()[0]
-        self.assertEquals(series.version, 3)
+        self.assertEquals(series.last_revision.version, 3)
 
         revisions = SeriesRevision.objects.all()
         self.assertEquals(revisions.count(), 3)
@@ -474,7 +474,7 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
 
         self.assertEquals(Series.objects.count(), 1)
         series = Series.objects.all()[0]
-        self.assertEquals(series.version, 2)
+        self.assertEquals(series.last_revision.version, 2)
 
         revisions = SeriesRevision.objects.all()
         self.assertEquals(revisions.count(), 2)
@@ -565,7 +565,7 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
     def check(self, series1_mails, series2_mails):
         self.assertEquals(Series.objects.count(), 1)
         series = Series.objects.all()[0]
-        self.assertEquals(series.version, 2)
+        self.assertEquals(series.last_revision.version, 2)
 
         revisions = SeriesRevision.objects.all()
         self.assertEquals(revisions.count(), 2)
