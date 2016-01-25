@@ -470,11 +470,6 @@ class Series(models.Model):
                                  blank=True)
     submitted = models.DateTimeField(default=datetime.datetime.now)
     last_updated = models.DateTimeField(auto_now=True)
-    # Caches the latest version so we can display it without looking at the max
-    # of all SeriesRevision.version
-    version = models.IntegerField(default=1)
-    # This is the number of patches of the latest version.
-    n_patches = models.IntegerField(default=0)
     # direct access to the latest revision so we can get the latest revision
     # information with a JOIN
     last_revision = models.OneToOneField('SeriesRevision', null=True,
