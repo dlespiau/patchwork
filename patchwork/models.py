@@ -571,6 +571,7 @@ class SeriesRevision(models.Model):
         if results.count() > 0:
             self.test_state = max([r.state for r in results])
             self.save()
+            self.series.save()
 
     def __unicode__(self):
         return "Revision " + str(self.version)
