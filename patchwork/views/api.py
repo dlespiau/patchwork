@@ -346,6 +346,7 @@ class ResultMixin(object):
                 'X-Patchwork-Hint': 'ignore',
                 'References': msgid,
                 'In-Reply-To': msgid,
+                'Reply-To': check_obj.project.listemail,
             }
             email = mail.EmailMessage(subject, body,
                                       settings.DEFAULT_FROM_EMAIL,
