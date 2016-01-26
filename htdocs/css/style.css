@@ -148,7 +148,7 @@ div.patchforms {
 	margin-top: 2em;
 }
 
-ul.dropdown-menu {
+ul.dropdown-menu.table-toolbar {
 	white-space: nowrap;
 	min-width: 300px;
 	padding: 8px 20px;
