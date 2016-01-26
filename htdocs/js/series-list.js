@@ -1,8 +1,10 @@
 $(function () {
-    series_table = pw.setup_series_list('#serieslist');
+    'use strict';
+
+    var series_table = pw.setup_series_list('#serieslist');
 
     /* date filter */
-    date_filter = pw.create_filter({
+    var date_filter = pw.create_filter({
         table: series_table,
         name: 'date',
         init: function() {
@@ -46,7 +48,7 @@ $(function () {
     });
 
     /* submitter filter */
-    submitter_filter = pw.create_filter({
+    var submitter_filter = pw.create_filter({
         table: series_table,
         name: 'submitter',
         init: function() {
