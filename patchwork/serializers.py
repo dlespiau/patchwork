@@ -127,13 +127,23 @@ class StateSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class SeriesSerializer(PatchworkModelSerializer):
-    version = serializers.IntegerField(source='last_revision.version',
-                                      read_only=True)
-    n_patches = serializers.IntegerField(source='last_revision.n_patches',
-                                      read_only=True)
+    version = serializers.SerializerMethodField('get_version')
+    n_patches = serializers.SerializerMethodField('get_n_patches')
     test_state = serializers.SerializerMethodField('get_test_state')
 
+    def get_version(self, obj):
+        if not obj.last_revision:
+            return 1
+        return obj.last_revision.version
+
+    def get_n_patches(self, obj):
+        if not obj.last_revision:
+            return 0
+        return obj.last_revision.n_patches
+
     def get_test_state(self, obj):
+        if not obj.last_revision:
+            return None
         state = obj.last_revision.test_state
         if state is not None:
             return dict(TestState.STATE_CHOICES)[state]
