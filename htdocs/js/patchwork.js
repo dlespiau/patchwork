@@ -355,7 +355,7 @@ var pw = (function() {
 
                 $.ajax({
                     url: ctx.base_url + url +
-                         '?q=' + encodeURIComponent(query) + '&l=10',
+                         '/?q=' + encodeURIComponent(query) + '&l=10',
                     error: function() {
                         callback();
                     },
