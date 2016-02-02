@@ -98,4 +98,51 @@ $(function () {
         submitter_filter.refresh_apply();
     });
 
+    /* reviewer action */
+    var reviewer_action = pw.create_action({
+        table: series_table,
+        name: 'reviewer',
+        init: function() {
+            var _this = this;
+
+            this.me = $('#set-reviewer-me');
+            this.to = $('#set-reviewer-to');
+
+            /* don't allow the "assign to me" option if there is no logged in
+             * user */
+            if (!pw.user.is_authenticated)
+                this.me.attr('disabled', '');
+
+            this.completion = pw.setup_autocompletion('#set-reviewer-search',
+                                                      '/complete_user');
+            this.completion.on('change', function() {
+                _this.refresh_apply();
+            });
+        },
+        do_action: function(id) {
+            var reviewer = null;
+
+            if (this.me.prop('checked'))
+                reviewer = pw.user.pk;
+            else
+                reviewer = this.completion.getValue();
+
+            this.post_data('/series/' + id + '/', { reviewer: reviewer });
+        },
+        clear_action: function() {
+            this.me.prop('checked', false);
+            this.to.prop('checked', true);
+            this.completion.clearOptions();
+            this.completion.clear();
+        },
+        can_submit: function() {
+            return this.me.prop('checked') ||
+                   (this.to.prop('checked') && this.completion.getValue());
+        },
+
+    });
+
+    $('#reviewer-action input:radio').change(function() {
+        reviewer_action.refresh_apply();
+    });
 });

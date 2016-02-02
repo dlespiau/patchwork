@@ -93,6 +93,28 @@ div.small-panel-heading {
 	padding: 5px;
 }
 
+/* Yellow flash for updates */
+.flash {
+	-webkit-animation: target-fade 5s;
+	-moz-animation: target-fade 5s;
+	animation: target-fade 5s;
+}
+@-webkit-keyframes target-fade {
+	0% { background-color: #ff9; }
+	25% { background-color: #ff9; }
+	100% { background-color: transparent; }
+}
+@-moz-keyframes target-fade {
+	0% { background-color: #ff9; }
+	25% { background-color: #ff9; }
+	100% { background-color: transparent; }
+}
+@keyframes target-fade {
+	0% { background-color: #ff9; }
+	25% { background-color: #ff9; }
+	100% { background-color: transparent; }
+}
+
 /* messages */
 #messages {
 	background: #e0e0f0;

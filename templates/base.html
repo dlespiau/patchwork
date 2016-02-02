@@ -8,6 +8,9 @@
   <link rel="stylesheet" type="text/css" href="{% static "css/selectize.bootstrap3.css" %}"/>
   <link rel="stylesheet" type="text/css" href="{% static "css/jquery.dynatable.css" %}"/>
   <link rel="stylesheet" type="text/css" href="{% static "css/style.css" %}"/>
+  <style id="css-table-select" type="text/css">
+   .table-select { display: none; }
+  </style>
   <script type="text/javascript" src="{% static "js/common.js" %}"></script>
   <script type="text/javascript" src="{% static "js/jquery-1.10.1.min.js" %}"></script>
   <script type="text/javascript" src="{% static "js/jquery.stickytableheaders.min.js" %}"></script>
@@ -30,6 +33,7 @@
 {% if user.is_authenticated %}
             , user: {
                 is_authenticated: true,
+                pk: {{ user.pk }},
                 items_per_page: {{ user.profile.patches_per_page }}
             }
 {% endif  %}

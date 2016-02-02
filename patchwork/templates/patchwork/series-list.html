@@ -26,7 +26,7 @@
   </div>
 
   <div class="collapse navbar-collapse" id="series-toolbar">
-    <ul class="nav navbar-nav" id="filters">
+    <ul class="nav navbar-nav" id="serieslist-filters">
       <li>
         <p class="navbar-text">Filter by:</p>
       </li>
@@ -101,6 +101,36 @@
          </ul>
       </li>
     </ul>
+    <div class="btn-group navbar-btn" id="serieslist-actions" style="display:none;">
+      <div class="btn-group" style="margin-left: 20px">
+        <button data-toggle="dropdown" class="dropdown-toggle btn btn-default" id="reviewer-action-dropdown">
+          Set reviewer
+          <span class="caret"></span>
+        </button>
+        <ul role="menu" class="dropdown-menu table-toolbar stop-propagation" id="reviewer-action">
+          <li>
+            <form id="set-reviewer-form">
+              <div class="radio">
+                <label>
+                  <input id='set-reviewer-me' type="radio" value="me" name="set-reviewer-options">
+                  Assign to myself for review
+                </label>
+              </div>
+              <div class="radio">
+                <label>
+                  <input id='set-reviewer-to' type="radio" value="to" name="set-reviewer-options">
+                  Assign to
+                </label>
+              </div>
+              <div class="form-group">
+                <input id="set-reviewer-search" type="text" class="form-control" placeholder="Find reviewer">
+              </div>
+              <button type="submit" class="btn btn-default apply-action">Apply</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
  </div>
 </nav>

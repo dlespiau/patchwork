@@ -45,6 +45,22 @@ var pw = (function() {
         return obj;
     }
 
+    function get_cookie(name) {
+        var value = null;
+
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = $.trim(cookies[i]);
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    value = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return value;
+    }
+
     var exports = {},
         ctx = {
             base_url: '',
@@ -57,9 +73,30 @@ var pw = (function() {
             table: null,
         };
 
+    exports.post_data = function(url, data, success_cb, error_cb) {
+        $.ajax({
+            url: ctx.api_base_url + url,
+            headers: {
+                'X-HTTP-Method-Override': 'PATCH',
+                'X-CSRFToken': get_cookie('csrftoken'),
+            },
+            type: 'POST',
+            data: data,
+            success: function(response) {
+                if (success_cb) success_cb();
+            },
+            error: function(ctx, status, error) {
+                console.log("Couldn't patch " + " with " + JSON.stringify(data) + ": " + status, error);
+                if (error_cb) error_cb();
+            }
+        });
+    };
+
     function create_table(config) {
         var o = {
             filters: [],
+            /* list of object ids to highlight at refresh() */
+            _highlight_objects: [],
         };
 
         $.extend(o, config);
@@ -107,6 +144,27 @@ var pw = (function() {
             return this._dynatable().settings.dataset.totalRecordCount;
         };
 
+        o._refresh_select_checkboxes = function() {
+            if (!this.ctx.user.is_authenticated) {
+                $('#css-table-select').html('.table-select { display: none; }');
+                return;
+            }
+
+            $('#css-table-select').html('');
+
+            this._for_each_checkbox(function() {
+                $(this).click(function() {
+                    if ($(this).is(':checked'))
+                        o._select_row($(this));
+                    else
+                        o._deselect_row($(this));
+                });
+            });
+
+            /* clear the "check all" checkbox */
+            $(o.selector + '-select-all').prop('checked', false);
+        };
+
         o.refresh_info = function(content) {
             var descriptions = [];
 
@@ -129,10 +187,77 @@ var pw = (function() {
             this.set_info(text);
         };
 
+        o._refresh_highlight = function() {
+            this._for_each_checkbox(function() {
+                var id = o.id_from_checkbox($(this));
+                if (o._highlight_objects.indexOf(id) != -1)
+                    $(this).parent().parent().addClass('flash');
+            });
+            o._highlight_objects = [];
+        };
+
         /* called when dynatable has finished populating the DOM */
         o.on_update_finished = function() {
+            this._refresh_select_checkboxes();
             this.refresh_info();
+            this._refresh_highlight();
+            this._refresh_actions();
         };
+
+        o._for_each_checkbox = function(callback) {
+            $(o.selector + ' tbody tr td input:checkbox').each(callback);
+        };
+
+        o.id_from_checkbox = function(checkbox) {
+            return checkbox.parent().next().html();
+        };
+
+        o._refresh_actions = function() {
+            var n_selected = 0;
+
+            o._for_each_checkbox(function() {
+                if($(this).is(':checked'))
+                    n_selected++;
+            });
+
+            if (n_selected > 0) {
+                $(this.selector + '-filters').hide();
+                $(this.selector + '-actions').fadeIn();
+
+            } else {
+                $(this.selector + '-actions').hide();
+                $(this.selector + '-filters').fadeIn();
+            }
+        };
+
+        o._select_row = function(row) {
+           row.prop('checked', true);
+           row.parent().parent().css('background-color', '#f5f5f5');
+           this._refresh_actions();
+        };
+
+        o._deselect_row = function(row) {
+           row.prop('checked', false);
+           row.parent().parent().css('background-color', 'transparent');
+           this._refresh_actions();
+
+        };
+
+        o._highlight_next_refresh = function(objects) {
+            this._highlight_objects = objects;
+        };
+
+        /* setup the select-all check box */
+        $(o.selector + '-select-all').click(function() {
+            if ($(this).is(':checked'))
+                o._for_each_checkbox(function() {
+                    o._select_row($(this));
+                });
+            else
+                o._for_each_checkbox(function() {
+                    o._deselect_row($(this));
+                });
+        });
 
         return o;
     }
@@ -222,9 +347,99 @@ var pw = (function() {
         return o;
     };
 
+    /*
+     * table: the table the action applies to
+     * name: name of the action, used to lookup HTML elements
+     * init: setup the action
+     * do_action(id): Apply the action on the object with primary key 'id'
+     * clear_action: reset the action fields (optional)
+     * can_submit: are the fields fields populated in such a way one can
+     *             submit (apply) the filter? (optional)
+     */
+    exports.create_action = function(config) {
+        var o = {};
+
+        o._nop = function() {};
+        o.can_submit = o._nop;
+        o.clear_action = o._nop;
+        o._pending_posts = 0;
+
+        $.extend(o, config);
+
+        o.refresh_apply = function() {
+            var submit = $('#' + o.name + '-action .apply-action');
+            if (submit.length === 0)
+                return;
+            if (this.can_submit())
+                submit.removeAttr('disabled').focus();
+            else
+                submit.attr('disabled', '');
+        };
+
+        o._on_post_complete = function() {
+            if (o._pending_posts <= 0) {
+                console.log('error: received POST reply with none pending');
+                return;
+            }
+
+            o._pending_posts--;
+            if (o._pending_posts !== 0)
+                return;
+
+            o.table.refresh();
+        };
+
+        o._on_post_success = function(res) {
+            o._on_post_complete();
+        };
+
+        o._on_post_failure = function() {
+            o._on_post_complete();
+        };
+
+        o.post_data = function(url, data) {
+            exports.post_data(url, data,
+                              this._on_post_success, this._on_post_failure);
+        };
+
+        /* initialize the action */
+        o.init();
+        o.clear_action();
+        o.refresh_apply();
+
+        $('#set-' + o.name + '-form').submit(function(e) {
+            e.preventDefault();
+
+            var pending_objects = [];
+            o.table._for_each_checkbox(function() {
+                if (!$(this).is(':checked'))
+                    return;
+
+                var id = o.table.id_from_checkbox($(this));
+                pending_objects.push(id);
+            });
+            o._pending_posts += pending_objects.length;
+            o.table._highlight_next_refresh(pending_objects);
+
+            for (var i = 0; i < pending_objects.length; i++) {
+                o.do_action(pending_objects[i]);
+            }
+
+            $('#' + o.name + '-action-dropdown').dropdown('toggle');
+            o.clear_action();
+        });
+
+
+        return o;
+    };
+
     /* JShint is warning that 'this' may be undefined in strict mode. What it
      * doesn't know is that dynatable will bind this when calling those
      * *_writer() functions */
+
+    function select_writer(record) {
+        return '<input type="checkbox" class="table-select">';
+    }
 
     function series_writer(record) {
         var link = ctx.base_url + '/series/' + record.id + '/',
@@ -291,12 +506,18 @@ var pw = (function() {
                 paginationGap: [1,1,1,1],
             },
             writers: {
+                'select': select_writer,
                 'name': series_writer,
                 'last_updated': date_writer,
                 'reviewer.name': name_writer,
                 'submitter.name': name_writer,
                 'test_state': test_state_writer,
             }
+        });
+
+        /* stop event propagation on some menus to keep them opened on click */
+        $('.dropdown-menu.stop-propagation').click(function(e) {
+            e.stopPropagation();
         });
     };
 
@@ -381,6 +602,7 @@ var pw = (function() {
         }
 
         exports.table = ctx.table = create_table({
+            'ctx': ctx,
             'selector': selector,
             'name': 'series',
             'columns': {
