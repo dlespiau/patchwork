@@ -214,6 +214,7 @@ class SeriesListViewSet(mixins.ListModelMixin,
 
 class SeriesViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
                     SeriesListMixin,
                     viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
