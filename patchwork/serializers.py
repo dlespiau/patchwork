@@ -105,9 +105,10 @@ class JSONField(serializers.WritableField):
         return value
 
 class UserSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(read_only=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', )
+        fields = ('id', 'name')
 
 class PersonSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='display_name', read_only=True)
