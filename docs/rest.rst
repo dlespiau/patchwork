@@ -293,6 +293,9 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
     :query submitter: Filter series by submitter ``id``. ``self`` can be used
                       as a special value meaning the current logged in user.
 
+    :query reviewer: Filter series by reviewer ``id`` or ``null`` for no
+                     reviewer assigned.
+
     :query submitted_since: Retrieve only submitted series newer than a
                             specified time. Format is the same as ``submitted``
                             in response, an ISO 8601 date.
@@ -571,8 +574,9 @@ API Revisions
 
   - /series/${id}/revisions/${version}/test-results/
 
-- Add the `submitter`, `submitted_since`, `updated_since`, `submitted_before`
-  and `updated_before` query parameters to the list of series entry points.
+- Add the `submitter`, `reviewer`, `submitted_since`, `updated_since`,
+  `submitted_before` and `updated_before` query parameters to the list of
+  series entry points.
 
 **Revision 2**
 

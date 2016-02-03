@@ -146,11 +146,21 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(submitter__in=people)
         return queryset
 
+    def reviewer_filter(queryset, reviewer):
+        try:
+            reviewer = int(reviewer)
+            queryset = queryset.filter(reviewer=reviewer)
+        except ValueError:
+            if reviewer == 'null':
+                queryset = queryset.filter(reviewer__isnull=True)
+        return queryset
+
     submitted_since = django_filters.CharFilter(action=submitted_since_filter)
     updated_since = django_filters.CharFilter(action=updated_since_filter)
     submitted_before = django_filters.CharFilter(action=submitted_before_filter)
     updated_before = django_filters.CharFilter(action=updated_before_filter)
     submitter = django_filters.MethodFilter(action='submitter_filter')
+    reviewer = django_filters.MethodFilter(action=reviewer_filter)
 
     class Meta:
         model = Series
