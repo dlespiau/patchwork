@@ -54,7 +54,6 @@ $(function () {
 
             this.me = $('#submitter-me');
             this.by = $('#submitter-by');
-            this.clear_filter(series_table);
             /* don't show the "submitted by me" option if there is no logged
              * in user */
             if (!pw.user.is_authenticated)
@@ -81,6 +80,8 @@ $(function () {
             this.me.prop('checked', false);
             this.by.prop('checked', true);
             table.set_filter('submitter', null);
+            this.completion.clearOptions();
+            this.completion.clear();
         },
         can_submit: function() {
             return this.me.prop('checked') ||

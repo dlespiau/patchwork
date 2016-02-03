@@ -310,6 +310,7 @@ var pw = (function() {
 
         /* initialize the filter */
         o.init();
+        o.clear_filter(o.table);
 
         $('#' + o.name + '-form').submit(function(e) {
             e.preventDefault();
