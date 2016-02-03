@@ -547,10 +547,11 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
 
 class FullSeriesUpdateTest(GeneratedSeriesTest):
 
-    def check_revision(self, series, revision, mails):
+    def check_revision(self, series, revision, mails, ref_n_patches):
         n_patches = len(mails)
         if self.has_cover_letter:
             n_patches -= 1
+        self.assertEquals(n_patches, ref_n_patches)
 
         self.assertEquals(revision.series_id, series.id)
         self.assertEquals(revision.root_msgid, mails[0].get('Message-Id'))
@@ -562,7 +563,7 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
             self.assertEquals(patch.msgid, patch_mail.get('Message-Id'))
             i += 1
 
-    def check(self, series1_mails, series2_mails):
+    def check(self, series1_mails, series2_mails, n_patches):
         self.assertEquals(Series.objects.count(), 1)
         series = Series.objects.all()[0]
         self.assertEquals(series.last_revision.version, 2)
@@ -570,8 +571,12 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
         revisions = SeriesRevision.objects.all()
         self.assertEquals(revisions.count(), 2)
 
-        self.check_revision(series, revisions[0], series1_mails)
-        self.check_revision(series, revisions[1], series2_mails)
+        self.check_revision(series, revisions[0], series1_mails, n_patches[0])
+        self.check_revision(series, revisions[1], series2_mails, n_patches[1])
+
+        # Make sure we've created an event per revision (and so we've correctly
+        # picked up the 2 revisions even if the number of patches changes)
+        self.assertEquals(EventLog.objects.all().count(), 2)
 
     def _set_cover_letter_subject(self, mail, n_patches, subject):
         del mail['Subject']
@@ -591,7 +596,7 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
                                         subjects[1])
         series2.insert(series2_mails)
 
-        self.check(series1_mails, series2_mails)
+        self.check(series1_mails, series2_mails, n_patches)
 
     def testCleanSeriesName(self):
         cases = (
