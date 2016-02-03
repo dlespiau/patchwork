@@ -64,6 +64,12 @@ $(function () {
             this.completion.on('change', function() {
                 _this.refresh_apply();
             });
+
+            $('#submitter-filter .selectize-input input').focus(function() {
+                _this.me.prop('checked', false);
+                _this.by.prop('checked', true);
+                _this.refresh_apply();
+            });
         },
         set_filter: function(table) {
             var filter = null;
@@ -117,6 +123,12 @@ $(function () {
             this.completion = pw.setup_autocompletion('#set-reviewer-search',
                                                       '/complete_user');
             this.completion.on('change', function() {
+                _this.refresh_apply();
+            });
+
+            $('#reviewer-action .selectize-input input').focus(function() {
+                _this.me.prop('checked', false);
+                _this.to.prop('checked', true);
                 _this.refresh_apply();
             });
         },
