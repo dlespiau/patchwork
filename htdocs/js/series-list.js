@@ -4,10 +4,12 @@ $(function () {
     var series_table = pw.setup_series_list('#serieslist');
 
     /* date filter */
-    var date_filter = pw.create_filter({
+    pw.create_filter({
         table: series_table,
         name: 'date',
         init: function() {
+            var _this = this;
+
             $('.input-group.date').datepicker({
                 clearBtn: true,
                 todayHighlight: true,
@@ -15,6 +17,11 @@ $(function () {
                 format: 'yyyy-mm-dd',
 
             });
+
+            $('.input-group.date').datepicker().on('changeDate', function(e) {
+                _this.refresh_apply();
+            });
+
         },
         set_filter: function(table) {
             table.set_filter('updated_since', $('#date-from').val());
@@ -43,12 +50,8 @@ $(function () {
         },
     });
 
-    $('.input-group.date').datepicker().on('changeDate', function(e) {
-        date_filter.refresh_apply();
-    });
-
     /* submitter filter */
-    var submitter_filter = pw.create_filter({
+    pw.create_filter({
         table: series_table,
         name: 'submitter',
         init: function() {
@@ -60,6 +63,10 @@ $(function () {
              * in user */
             if (!pw.user.is_authenticated)
                 this.me.attr('disabled', '');
+
+            $('#submitter-filter input:radio').change(function() {
+                _this.refresh_apply();
+            });
 
             this.completion = pw.setup_autocompletion('#submitter-search',
                                                       '/submitter');
@@ -103,12 +110,8 @@ $(function () {
         },
     });
 
-    $('#submitter-filter input:radio').change(function() {
-        submitter_filter.refresh_apply();
-    });
-
     /* reviewer action */
-    var reviewer_action = pw.create_action({
+    pw.create_action({
         table: series_table,
         name: 'reviewer',
         init: function() {
@@ -121,6 +124,10 @@ $(function () {
              * user */
             if (!pw.user.is_authenticated)
                 this.me.attr('disabled', '');
+
+            $('#reviewer-action input:radio').change(function() {
+                _this.refresh_apply();
+            });
 
             this.completion = pw.setup_autocompletion('#set-reviewer-search',
                                                       '/complete_user');
@@ -155,9 +162,5 @@ $(function () {
                    (this.to.prop('checked') && this.completion.getValue());
         },
 
-    });
-
-    $('#reviewer-action input:radio').change(function() {
-        reviewer_action.refresh_apply();
     });
 });
