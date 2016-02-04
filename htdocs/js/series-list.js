@@ -110,6 +110,73 @@ $(function () {
         },
     });
 
+    /* reviewer filter */
+    pw.create_filter({
+        table: series_table,
+        name: 'reviewer',
+        init: function() {
+            var _this = this;
+
+            this.none = $('#reviewer-none');
+            this.me = $('#reviewer-me');
+            this.to = $('#reviewer-to');
+            /* don't show the "reviewed by me" option if there is no logged
+             * in user */
+            if (!pw.user.is_authenticated)
+                this.me.attr('disabled', '');
+
+            $('#reviewer-filter input:radio').change(function() {
+                _this.refresh_apply();
+            });
+
+            this.completion = pw.setup_autocompletion('#reviewer-search',
+                                                      '/complete_user');
+            this.completion.on('change', function() {
+                _this.refresh_apply();
+            });
+
+            $('#reviewer-filter .selectize-input input').focus(function() {
+                _this.none.prop('checked', false);
+                _this.me.prop('checked', false);
+                _this.to.prop('checked', true);
+                _this.refresh_apply();
+            });
+        },
+        set_filter: function(table) {
+            var filter = null;
+            var reviewer = this.completion.getValue();
+
+            if (this.none.prop('checked'))
+                filter = 'null';
+            else if (this.me.prop('checked'))
+                filter = pw.user.pk;
+            else if (this.to.prop('checked') && reviewer)
+                filter = reviewer;
+
+            table.set_filter('reviewer', filter);
+        },
+        clear_filter: function(table) {
+            this.none.prop('checked', false);
+            this.me.prop('checked', false);
+            this.to.prop('checked', true);
+            table.set_filter('reviewer', null);
+            this.completion.clearOptions();
+            this.completion.clear();
+        },
+        can_submit: function() {
+            return this.none.prop('checked') || this.me.prop('checked') ||
+                   (this.to.prop('checked') && this.completion.getValue());
+        },
+        humanize: function() {
+            if (this.none.prop('checked'))
+                return 'with no reviewer';
+            if (this.me.prop('checked'))
+                return 'assigned for review to me';
+            var reviewer = this.completion.getValue();
+            return 'assigned for review to ' + this.completion.getItem(reviewer).text();
+        },
+    });
+
     /* reviewer action */
     pw.create_action({
         table: series_table,

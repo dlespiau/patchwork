@@ -100,6 +100,45 @@
           </li>
          </ul>
       </li>
+      <li class="dropdown" id="reviewer-filter">
+        <a data-toggle="dropdown" href='#' id="reviewer-filter-dropdown">
+          <button id="clear-reviewer-filter" class="btn btn-default btn-xs" title="Clear reviewer filter" style="display:none;">
+             <span class="glyphicon glyphicon-remove"></span>
+          </button>
+          Reviewer
+          <span class="caret"></span>
+        </a>
+        <ul role="menu" class="dropdown-menu table-toolbar">
+           <li><span>Show series:</span></li>
+           <li>
+            <form id="reviewer-form">
+             <div class="radio">
+               <label>
+                 <input id="reviewer-none" type="radio" value="none" name="reviewer-options">
+                 Without a reviewer
+               </label>
+             </div>
+             <div class="radio">
+               <label>
+                 <input id="reviewer-me" type="radio" value="me" name="reviewer-options">
+                 Assigned to me for review
+               </label>
+             </div>
+             <div class="radio">
+               <label>
+                 <input id="reviewer-to" type="radio" value="to" name="reviewer-options">
+                 Assigned to
+               </label>
+             </div>
+             <div class="form-group">
+               <input type="text" class="form-control" id="reviewer-search" placeholder="Find reviewer">
+             </div>
+             <button type="submit" class="btn btn-default apply-filter">Apply</button>
+             <button class="btn btn-link" style="display:none;">Clear reviewer filter</button>
+           </form>
+          </li>
+         </ul>
+      </li>
     </ul>
     <div class="btn-group navbar-btn" id="serieslist-actions" style="display:none;">
       <div class="btn-group" style="margin-left: 20px">
