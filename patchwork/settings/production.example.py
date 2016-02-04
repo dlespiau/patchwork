@@ -53,7 +53,8 @@ DATABASES = {
 #
 # Static files settings
 # https://docs.djangoproject.com/en/1.7/ref/settings/#static-files
+# https://docs.djangoproject.com/en/1.8/ref/contrib/staticfiles/#manifeststaticfilesstorage
 #
 
 STATIC_ROOT = '/srv/patchwork/htdocs/static'
-
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
