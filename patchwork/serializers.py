@@ -23,7 +23,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
-                             State, EventLog, Test, TestResult, TestState
+                             State, Event, EventLog, Test, TestResult, TestState
 from rest_framework import serializers
 from rest_framework import fields
 from enum import Enum
@@ -197,7 +197,12 @@ class RevisionSerializer(PatchworkModelSerializer):
             'patches': PatchSerializer,
         }
 
-class EventLogSerializer(PatchworkModelSerializer):
+class EventSerializer(PatchworkModelSerializer):
+    class Meta:
+        model = Event 
+        fields = ('id', 'name')
+
+class NewrevisionSerializer(PatchworkModelSerializer):
     name = serializers.CharField(source='event.name', read_only=True)
     parameters = JSONField(read_only=True)
     class Meta:
@@ -205,6 +210,16 @@ class EventLogSerializer(PatchworkModelSerializer):
         fields = ('name', 'event_time', 'series', 'user', 'parameters')
         expand_serializers = {
             'series': SeriesSerializer,
+            'user': UserSerializer,
+        }
+
+class StatechangeLogSerializer(PatchworkModelSerializer):
+    name = serializers.CharField(source='event.name', read_only=True)
+    parameters = JSONField(read_only=True)
+    class Meta:
+        model = EventLog
+        fields = ('name', 'event_time', 'patch', 'user', 'new_state', 'previous_state')
+        expand_serializers = {
             'user': UserSerializer,
         }
 
