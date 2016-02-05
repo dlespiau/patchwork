@@ -467,10 +467,8 @@ class EventViewSet(mixins.ListModelMixin,
                       ListMixin,
                       viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
-    queryset = EventLog.objects.all()
+    queryset = Event.objects.all()
     serializer_class = EventSerializer
-    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
-    filter_class = EventTimeFilter
 
     def retrieve(self, request, pk=None):
         if is_integer(pk):
