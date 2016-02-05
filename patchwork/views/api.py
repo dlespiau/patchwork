@@ -28,7 +28,7 @@ from django.conf import settings
 from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
-from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
+from patchwork.models import Project, Series, SeriesRevision, Patch, Event, EventLog, \
                              Test, TestResult, TestState, Person, \
                              SERIES_DEFAULT_NAME
 from rest_framework import views, viewsets, mixins, generics, filters, \
@@ -40,7 +40,8 @@ from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
                                   RevisionSerializer, PatchSerializer, \
-                                  EventLogSerializer, TestResultSerializer
+                                  EventSerializer, TestResultSerializer, \
+                                  StatechangeLogSerializer, NewrevisionSerializer
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
 import django_filters
@@ -423,21 +424,58 @@ class EventTimeFilter(django_filters.FilterSet):
     class Meta:
         model = EventLog
         fields = ['since']
-
-class EventLogViewSet(mixins.ListModelMixin,
+        
+class NewRevisionViewSet(mixins.ListModelMixin,
                       ListMixin,
                       viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = EventLog.objects.all().select_related('event')
-    serializer_class = EventLogSerializer
+    serializer_class = NewrevisionSerializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
     filter_class = EventTimeFilter
 
     def get_queryset(self):
 
         pk = self.kwargs['project_pk']
+        
         if is_integer(pk):
             queryset = self.queryset.filter(series__project__pk=pk)
         else:
             queryset = self.queryset.filter(series__project__linkname=pk)
         return queryset
+
+class StatechangeLogViewSet(mixins.ListModelMixin,
+                      ListMixin,
+                      viewsets.GenericViewSet):
+    permission_classes = (MaintainerPermission, )
+    queryset = EventLog.objects.all().select_related('event')
+    serializer_class = StatechangeLogSerializer
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
+    filter_class = EventTimeFilter
+
+    def get_queryset(self):
+
+        pk = self.kwargs['project_pk']
+
+        if is_integer(pk):
+            queryset = self.queryset.filter(patch__project__pk=pk)
+        else:
+            queryset = self.queryset.filter(patch__project__linkname=pk)
+        return queryset
+
+class EventViewSet(mixins.ListModelMixin,
+                      ListMixin,
+                      viewsets.GenericViewSet):
+    permission_classes = (MaintainerPermission, )
+    queryset = EventLog.objects.all()
+    serializer_class = EventSerializer
+    filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
+    filter_class = EventTimeFilter
+
+    def retrieve(self, request, pk=None):
+        if is_integer(pk):
+            queryset = get_object_or_404(Project, pk=pk)
+        else:
+            queryset = get_object_or_404(Project, linkname=pk)
+        serializer = ProjectSerializer(queryset)
+        return Response(serializer.data)
