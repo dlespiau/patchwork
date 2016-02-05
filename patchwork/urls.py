@@ -37,7 +37,15 @@ series_list_router.register(r'series', api.SeriesListViewSet)
 # /projects/$project/events/
 event_router = routers.NestedSimpleRouter(project_router, 'projects',
                                           lookup='project')
-event_router.register(r'events', api.EventLogViewSet)
+event_router.register(r'events', api.EventViewSet)
+# /projects/$project/newrevisions
+newrevision_router = routers.NestedSimpleRouter(project_router, 'projects',
+                                          lookup='project')
+newrevision_router.register(r'newrevisions', api.NewRevisionViewSet)
+# /projects/$project/statechanges/
+statechange_router = routers.NestedSimpleRouter(project_router, 'projects',
+                                          lookup='project')
+statechange_router.register(r'statechanges', api.StatechangeLogViewSet)
 # /series/$id/
 series_router = routers.SimpleRouter()
 series_router.register(r'series', api.SeriesViewSet)
@@ -75,6 +83,8 @@ urlpatterns = patterns('',
     (r'^api/1.0/', include(patches_router.urls)),
     (r'^api/1.0/', include(patch_results_router.urls)),
     (r'^api/1.0/', include(event_router.urls)),
+    (r'^api/1.0/', include(newrevision_router.urls)),
+    (r'^api/1.0/', include(statechange_router.urls)),
 
     # project view:
     url(r'^$', 'patchwork.views.projects', name='root'),
