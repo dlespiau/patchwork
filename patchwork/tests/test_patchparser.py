@@ -705,6 +705,17 @@ class GitSendEmailTest(MailFromPatchTest):
         parse_mail(email)
         self._assertNPatches(1)
 
+    def testSettingOnGitSendEmailNoXMailer(self):
+        """git_send_email_only is true and email has been sent with
+           git send-email --no-xmailer"""
+        self.p1.git_send_email_only = True
+        self.p1.save()
+        email = self.get_email()
+        del email['Message-Id']
+        email['Message-Id'] = '<1454600601-21900-1-git-send-email-cpaul@redhat.com>'
+        parse_mail(email)
+        self._assertNPatches(1)
+
     def testSettingOnNoGitSendEmail(self):
         """git_send_email_only is true and email has been not sent with
            git send-email"""

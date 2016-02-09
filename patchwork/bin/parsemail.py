@@ -309,6 +309,11 @@ def parse_series_marker(subject_prefixes):
     return (None, None)
 
 
+def is_git_send_email(mail):
+    return mail.get('X-Mailer', '').startswith('git-send-email ') or \
+           'git-send-email' in mail.get('Message-ID', '')
+
+
 def find_content(project, mail):
     patchbuf = None
     commentbuf = ''
@@ -375,10 +380,9 @@ def find_content(project, mail):
     is_root = refs == []
     is_cover_letter = is_root and x == 0
     is_patch = patchbuf is not None
-    is_git_send_email = mail.get('X-Mailer', '').startswith('git-send-email ')
 
     drop_patch = not is_attachment and \
-                 project.git_send_email_only and not is_git_send_email
+                 project.git_send_email_only and not is_git_send_email(mail)
 
     if pullurl or (is_patch and not drop_patch):
         ret.patch_order = x or 1
