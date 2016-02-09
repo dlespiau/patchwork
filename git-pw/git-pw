@@ -48,6 +48,7 @@
 
 import argparse
 from collections import OrderedDict
+import errno
 import fcntl
 import json
 import os
@@ -753,9 +754,14 @@ class GitPatchwork(object):
     def run(self):
         self.setup()
         method = 'do_' + self.cmd.method_name()
-        ret = getattr(self, method)()
-        ret = 0 if ret is None else ret
-        return ret
+        try:
+            ret = getattr(self, method)()
+            ret = 0 if ret is None else ret
+            return ret
+        except IOError as e:
+            if e.errno != errno.EPIPE:
+                raise
+            return 0
 
 
 class AliasedSubParsersAction(argparse._SubParsersAction):
