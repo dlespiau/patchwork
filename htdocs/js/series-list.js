@@ -62,7 +62,7 @@ $(function () {
             /* don't show the "submitted by me" option if there is no logged
              * in user */
             if (!pw.user.is_authenticated)
-                this.me.attr('disabled', '');
+                this.set_radio_disabled(this.me, true);
 
             $('#submitter-filter input:radio').change(function() {
                 _this.refresh_apply();
@@ -123,7 +123,7 @@ $(function () {
             /* don't show the "reviewed by me" option if there is no logged
              * in user */
             if (!pw.user.is_authenticated)
-                this.me.attr('disabled', '');
+                this.set_radio_disabled(this.me, true);
 
             $('#reviewer-filter input:radio').change(function() {
                 _this.refresh_apply();
@@ -191,7 +191,7 @@ $(function () {
             /* don't allow the "assign to me" option if there is no logged in
              * user */
             if (!pw.user.is_authenticated)
-                this.me.attr('disabled', '');
+                this.set_radio_disabled(this.me, true);
 
             $('#reviewer-action input:radio').change(function() {
                 _this.refresh_apply();
@@ -219,7 +219,7 @@ $(function () {
                         n_reviewers++;
                 });
 
-                _this.none.prop('disabled', n_reviewers === 0);
+                _this.set_radio_disabled(_this.none, n_reviewers === 0);
             });
         },
         do_action: function(id) {

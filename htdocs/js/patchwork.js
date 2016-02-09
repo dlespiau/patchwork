@@ -280,6 +280,16 @@ var pw = (function() {
         return o;
     }
 
+    var toolbar_mixin = {
+        set_radio_disabled: function(radio, disabled) {
+            radio.prop('disabled', disabled);
+            if (disabled)
+                radio.parent().addClass('disabled');
+            else
+                radio.parent().removeClass('disabled');
+        },
+    };
+
     /*
      * table: the table the filter applies to
      * name: name of the filter, used to lookup HTML elements
@@ -296,6 +306,7 @@ var pw = (function() {
         var o = {};
 
         $.extend(o, config);
+        $.extend(o, toolbar_mixin);
 
         o.refresh_apply = function() {
             var submit = $('#' + o.name + '-filter .apply-filter');
@@ -384,6 +395,7 @@ var pw = (function() {
         o._pending_posts = 0;
 
         $.extend(o, config);
+        $.extend(o, toolbar_mixin);
 
         o.refresh_apply = function() {
             var submit = $('#' + o.name + '-action .apply-action');

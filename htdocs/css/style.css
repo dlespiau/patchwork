@@ -195,6 +195,10 @@ ul.dropdown-menu.table-toolbar {
   }
 }
 
+label.disabled {
+	color: #ccc;
+}
+
 .navbar-default .btn-link {
 	color: #428bca;
 }
