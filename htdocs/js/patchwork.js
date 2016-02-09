@@ -230,21 +230,39 @@ var pw = (function() {
             }
         };
 
+        o._row_selection_changed = function() {
+           this._refresh_actions();
+           $(this.selector).trigger('table-row-selection-changed',
+                                    [this, this.table]);
+        };
+
         o._select_row = function(row) {
            row.prop('checked', true);
            row.parent().parent().css('background-color', '#f5f5f5');
-           this._refresh_actions();
+           this._row_selection_changed();
         };
 
         o._deselect_row = function(row) {
            row.prop('checked', false);
            row.parent().parent().css('background-color', 'transparent');
-           this._refresh_actions();
-
+           this._row_selection_changed();
         };
 
         o._highlight_next_refresh = function(objects) {
             this._highlight_objects = objects;
+        };
+
+        o.for_each_selected_row = function(callback) {
+            var i = -1;
+
+            this._for_each_checkbox(function() {
+                i++;
+
+                if (!$(this).is(':checked'))
+                    return;
+
+                callback(o._dynatable().settings.dataset.records[i]);
+            });
         };
 
         /* setup the select-all check box */

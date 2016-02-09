@@ -184,6 +184,7 @@ $(function () {
         init: function() {
             var _this = this;
 
+            this.none = $('#set-reviewer-none');
             this.me = $('#set-reviewer-me');
             this.to = $('#set-reviewer-to');
 
@@ -207,11 +208,26 @@ $(function () {
                 _this.to.prop('checked', true);
                 _this.refresh_apply();
             });
+
+            /* enable/disable the "unassign" radio button */
+            $(this.table.selector).on('table-row-selection-changed',
+                                      function() {
+                var n_reviewers = 0;
+
+                _this.table.for_each_selected_row(function(series)  {
+                    if (series.reviewer)
+                        n_reviewers++;
+                });
+
+                _this.none.prop('disabled', n_reviewers === 0);
+            });
         },
         do_action: function(id) {
             var reviewer = null;
 
-            if (this.me.prop('checked'))
+            if (this.none.prop('checked'))
+                reviewer = null;
+            else if (this.me.prop('checked'))
                 reviewer = pw.user.pk;
             else
                 reviewer = this.completion.getValue();
@@ -219,13 +235,14 @@ $(function () {
             this.post_data('/series/' + id + '/', { reviewer: reviewer });
         },
         clear_action: function() {
+            this.none.prop('checked', false);
             this.me.prop('checked', false);
             this.to.prop('checked', true);
             this.completion.clearOptions();
             this.completion.clear();
         },
         can_submit: function() {
-            return this.me.prop('checked') ||
+            return this.none.prop('checked') || this.me.prop('checked') ||
                    (this.to.prop('checked') && this.completion.getValue());
         },
 
