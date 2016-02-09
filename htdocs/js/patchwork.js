@@ -145,7 +145,7 @@ var pw = (function() {
         };
 
         o._refresh_select_checkboxes = function() {
-            if (!this.ctx.user.is_authenticated) {
+            if (!this.ctx.project.is_editable) {
                 $('#css-table-select').html('.table-select { display: none; }');
                 return;
             }
@@ -596,7 +596,7 @@ var pw = (function() {
             ordering = '-last_updated';
 
         if (typeof url == 'undefined') {
-            url = '/projects/' + ctx.project + '/series/';
+            url = '/projects/' + ctx.project.name + '/series/';
             if (!window.location.search)
                 history.replaceState(null, null,
                                      '?' + $.param({ ordering: ordering }));

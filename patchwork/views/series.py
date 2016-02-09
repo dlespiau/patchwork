@@ -25,8 +25,11 @@ from patchwork.models import Project, Series, SeriesRevision, TestResult
 
 class SeriesListView(View):
     def get(self, request, *args, **kwargs):
+        project = get_object_or_404(Project, linkname=kwargs['project'])
+        is_editable = 'true' if project.is_editable(request.user) else 'false'
         return render(request, 'patchwork/series-list.html', {
-            'project': get_object_or_404(Project, linkname=kwargs['project']),
+            'project': project,
+            'is_editable': is_editable,
             'default_patches_per_page': settings.DEFAULT_PATCHES_PER_PAGE,
         })
 
