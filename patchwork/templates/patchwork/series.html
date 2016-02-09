@@ -24,7 +24,7 @@ $(function () {
   <tr>
     <th>Reviewer</th>
 {% if series.reviewer %}
-    <td>{{ series.reviewer }}</td>
+    <td>{{ series.reviewer.name }}</td>
 {% else %}
     <td><em class="text-muted">None</em></td>
 {% endif %}
