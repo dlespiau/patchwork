@@ -556,6 +556,7 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
         self.assertEquals(revision.series_id, series.id)
         self.assertEquals(revision.root_msgid, mails[0].get('Message-Id'))
         self.assertEquals(revision.patches.count(), n_patches)
+        self.assertEquals(revision.n_patches, n_patches)
 
         i = 1 if self.has_cover_letter else 0
         for patch in revision.ordered_patches():

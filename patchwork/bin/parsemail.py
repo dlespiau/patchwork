@@ -673,6 +673,7 @@ def on_revision_complete(sender, revision, **kwargs):
     new_revision = previous_series.latest_revision().duplicate_meta()
     new_revision.root_msgid = revision.root_msgid
     new_revision.cover_letter = revision.cover_letter
+    new_revision.n_patches = revision.n_patches
     new_revision.save()
     i = 1
     for patch in revision.ordered_patches():
