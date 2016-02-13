@@ -1,0 +1,11 @@
+Hi,
+
+You are no longer the reviewer for:
+
+  {{series.human_name}}
+  {{series_url}}
+
+Until next time!
+
+-- 
+Sent by Patchwork

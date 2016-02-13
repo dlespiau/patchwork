@@ -1,0 +1,14 @@
+Hi,
+
+{{user.name}} has requested a review from you for:
+
+  {{series.human_name}}
+  {{series_url}}
+
+Please review this series at your earliest convience or speak with the
+requester if short on time.
+
+Thanks,
+
+-- 
+Sent by Patchwork

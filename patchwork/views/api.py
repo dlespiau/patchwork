@@ -24,10 +24,12 @@ try:
     from django.core.exceptions import FieldDoesNotExist
 except:
     from django.db.models.fields import FieldDoesNotExist
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
+from patchwork.tasks import send_reviewer_notification
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
                               Test, TestResult, TestState, Person)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
@@ -101,6 +103,43 @@ class RequestDjangoFilterBackend(filters.DjangoFilterBackend):
             return filter.qs
 
         return queryset
+
+
+class UpdateModelMixin(mixins.UpdateModelMixin):
+
+    # we unfortunately have to rewrite update() here to be handle notifications
+    # when certain fields in the series change. It's not possible to just do
+    # it with pre_save(). So, instead, we add an additional hook, pre_update()
+    # to inject some code before any modification is done on self.object.
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        self.object = self.get_object_or_none()
+
+        self.pre_update(self.object)
+
+        serializer = self.get_serializer(self.object, data=request.DATA,
+                                         files=request.FILES, partial=partial)
+
+        if not serializer.is_valid():
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            self.pre_save(serializer.object)
+        except ValidationError as err:
+            # full_clean on model instance may be called in pre_save,
+            # so we have to handle eventual errors.
+            return Response(err.message_dict,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if self.object is None:
+            self.object = serializer.save(force_insert=True)
+            self.post_save(self.object, created=True)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        self.object = serializer.save(force_update=True)
+        self.post_save(self.object, created=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class API(views.APIView):
@@ -247,11 +286,23 @@ class SeriesListViewSet(mixins.ListModelMixin,
 
 class SeriesViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
-                    mixins.UpdateModelMixin,
+                    UpdateModelMixin,
                     SeriesListMixin,
                     viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = Series.objects.all()
+
+    def pre_update(self, series):
+        self._old_reviewer = series.reviewer
+
+    def post_save(self, series, created=False):
+        if self._old_reviewer != series.reviewer:
+            old = self._old_reviewer.pk if self._old_reviewer else None
+            new = series.reviewer.pk if series.reviewer else None
+            url = self.request.build_absolute_uri(series.get_absolute_url())
+            send_reviewer_notification.delay(series.pk, url,
+                                             self.request.user.pk,
+                                             old, new)
 
 
 def series_mbox(revision):

@@ -27,6 +27,7 @@ import re
 import time
 
 from django.core import mail
+from django.test.utils import override_settings
 
 import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
@@ -101,6 +102,8 @@ class APITestBase(test_series.Series0010):
         self.user = TestUser(username='user')
         self.maintainer = TestUser(username='maintainer')
         self.maintainer.add_to_maintainers(self.project)
+        self.maintainer2 = TestUser(username='maintainer2')
+        self.maintainer2.add_to_maintainers(self.project)
 
         # a second series so we can test ordering/filtering
         test_series = TestSeries(3, project=self.project)
@@ -149,11 +152,11 @@ class APITestBase(test_series.Series0010):
         return json.loads(self.get(url, params).content)
 
     # user: a TestUser instance
-    def post_json(self, url, data={}, user=None):
+    def _send_json(self, method, url, data={}, user=None):
         auth_headers = {}
         if user:
             auth_headers['HTTP_AUTHORIZATION'] = user.basic_auth_header()
-        response = self.client.post('/api/1.0' + url % {
+        response = method('/api/1.0' + url % {
             'project_id': self.project.pk,
             'project_linkname': self.project.linkname,
             'series_id': self.series.pk,
@@ -162,6 +165,12 @@ class APITestBase(test_series.Series0010):
             }, content_type="application/json", data=json.dumps(data),
             **auth_headers)
         return (response, json.loads(response.content))
+
+    def post_json(self, url, data={}, user=None):
+        return self._send_json(self.client.post, url, data, user)
+
+    def patch_json(self, url, data={}, user=None):
+        return self._send_json(self.client.patch, url, data, user)
 
 
 class APITest(APITestBase):
@@ -736,3 +745,68 @@ class TestResultTest(APITestBase):
 
         self.assertEqual(self._test_state(ss, self.series), None,
              "'None' expected as a new revision must reset the testing state")
+
+
+class ReviewerNotificationTest(APITestBase):
+    def _set_reviewer(self, reviewer):
+        if reviewer:
+            reviewer = reviewer.user.pk
+        r, _ = self.patch_json('/series/%(series_id)s/',
+                               {'reviewer': reviewer},
+                               user=self.maintainer2)
+        self.assertEqual(r.status_code, 200)
+
+    @override_settings(CELERY_EAGER_PROPAGATES_EXCEPTIONS=True,
+                       CELERY_ALWAYS_EAGER=True,
+                       BROKER_BACKEND='memory')
+    def testSendNotifications(self):
+        # set a reviewer on a series that didn't have one before
+        # None -> user
+        self._set_reviewer(self.user)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.user.user.email])
+        mail.outbox = []
+
+        # set a new reviewer, notify both previous and new reviewer
+        # user -> maintainer
+        self._set_reviewer(self.maintainer)
+        self.assertEqual(len(mail.outbox), 2)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.user.user.email])
+        email = mail.outbox[1]
+        self.assertEqual(email.to, [self.maintainer.user.email])
+        mail.outbox = []
+
+        # previous reviewer was removed assignment but no new one was defined
+        # maintainer -> none
+        self._set_reviewer(None)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.maintainer.user.email])
+        mail.outbox = []
+
+        # when the new reviewer or the previous reviewer is the user setting
+        # the field, don't notify him/her for the change he/she has initiated.
+
+        # none -> maintainer2
+        self._set_reviewer(self.maintainer2)
+        self.assertEqual(len(mail.outbox), 0)
+
+        # maintainer2 -> user
+        self._set_reviewer(self.user)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.user.user.email])
+        mail.outbox = []
+
+        # a user without an email (it's possible by creating the user from
+        # the admin interface) shouldn't trigger the mailing
+        # user -> maintainer
+        self.maintainer.user.email = ''
+        self.maintainer.user.save()
+        self._set_reviewer(self.maintainer)
+        self.assertEqual(len(mail.outbox), 1)
+        email = mail.outbox[0]
+        self.assertEqual(email.to, [self.user.user.email])
+        mail.outbox = []
