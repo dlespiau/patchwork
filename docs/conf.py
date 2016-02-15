@@ -47,7 +47,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Patchwork'
-copyright = u'2008-2015 Jeremy Kerr, 2014-2015 Intel Corporation'
+copyright = u'2008-2015 Jeremy Kerr, 2014-2016 Intel Corporation'
 author = u'Stephen Finucane, Jeremy Kerr, Damien Lespiau'
 
 # The version info for the project you're documenting, acts as replacement for
