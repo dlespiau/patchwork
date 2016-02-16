@@ -27,6 +27,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from django.conf import settings
 from django.utils.functional import cached_property
+from current_user import get_current_user
 from patchwork.parser import hash_patch, extract_tags
 import jsonfield
 
@@ -594,6 +595,9 @@ class EventLog(models.Model):
     series = models.ForeignKey(Series)
     user = models.ForeignKey(User, null=True)
     parameters = jsonfield.JSONField(null=True)
+    patch = models.ForeignKey(Patch, blank=True, null=True)
+    previous_state = models.CharField(max_length=50, null = True, blank = True)
+    new_state = models.CharField(max_length=50, null = True, blank = True)
 
     class Meta:
         ordering = ['-event_time']
@@ -714,7 +718,7 @@ def _patch_change_callback(sender, instance, **kwargs):
     if instance.pk is None:
         return
 
-    if instance.project is None or not instance.project.send_notifications:
+    if instance.project is None:
         return
 
     try:
@@ -722,9 +726,19 @@ def _patch_change_callback(sender, instance, **kwargs):
     except Patch.DoesNotExist:
         return
 
-    # If there's no interesting changes, abort without creating the
-    # notification
+    # If there's no interesting changes, abort without creating a
+    # notification nor log
     if orig_patch.state == instance.state:
+        return
+    # If state changed, log the event
+    else:
+        event_state_change = Event.objects.get(name='patch-state-change')
+        patch_identifier = Patch.objects.get(pk = instance.pk)
+        curr_user = User.objects.get(username=get_current_user)
+        log = EventLog(event=event_state_change, patch=patch_identifier, user=curr_user, previous_state = orig_patch.state, new_state = instance.state)
+        log.save()
+
+    if not instance.project.send_notifications:
         return
 
     notification = None
@@ -734,8 +748,7 @@ def _patch_change_callback(sender, instance, **kwargs):
         pass
 
     if notification is None:
-        notification = PatchChangeNotification(patch = instance,
-                                               orig_state = orig_patch.state)
+        notification = PatchChangeNotification(patch = instance, orig_state = orig_patch.state)
 
     elif notification.orig_state == instance.state:
         # If we're back at the original state, there is no need to notify

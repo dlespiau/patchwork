@@ -171,7 +171,7 @@ Events
 .. http:get:: /api/1.0/projects/(string: linkname)/events/
 .. http:get:: /api/1.0/projects/(int: project_id)/events/
 
-    List of events for this project.
+    List of events for this project. There is a specific list for each event.
 
     .. sourcecode:: http
 
@@ -188,6 +188,42 @@ Events
         {
             "count": 23,
             "next": "http://patchwork.example.com/api/1.0/events/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 2,
+                    "name": "patch-state-change"
+                },
+                {
+                    "id": 1,
+                    "name": "series-new-revision"
+                }
+            ]
+        }
+
+New Series Revision
+~~~~~~
+
+.. http:get:: /api/1.0/projects/(string: linkname)/newrevisions/
+.. http:get:: /api/1.0/projects/(int: project_id)/newrevisions/
+
+    List of new Series Revision events recorded for this project.
+
+    .. sourcecode:: http
+
+        GET /api/1.0/projects/intel-gfx/newrevisions/ HTTP/1.1
+        Accept: application/json
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+        Vary: Accept
+        Allow: GET, HEAD, OPTIONS
+
+        {
+            "count": 23,
+            "next": "http://patchwork.example.com/api/1.0/newrevisions/?page=2",
             "previous": null,
             "results": [
                 {
@@ -219,8 +255,7 @@ Events
                   be used in the next query with a ``since`` parameter to only
                   retrieve events that haven't been seen yet.
 
-Each event type has some ``parameters`` specific to that event. At the moment,
-only one event is possible:
+Each new Series Revision event has some specific ``parameters``.
 
 - **series-new-revision**: This event corresponds to patchwork receiving a new
   revision of a series, should it be the initial submission or subsequent
@@ -234,6 +269,49 @@ only one event is possible:
   ``series`` and ``revision`` can be used to retrieve the corresponding
   patches.
 
+State Change
+~~~~~
+
+.. http:get:: /api/1.0/projects/(string: linkname)/statechanges/
+.. http:get:: /api/1.0/projects/(int: project_id)/statechanges/
+
+    List of new Patch State Change events recorded for this project.
+
+    .. sourcecode:: http
+
+        GET /api/1.0/projects/intel-gfx/statechanges/ HTTP/1.1
+        Accept: application/json
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+        Vary: Accept
+        Allow: GET, HEAD, OPTIONS
+
+        {
+            "count": 7,
+            "next": "http://patchwork.example.com/api/1.0/projects/intel-gfx/statechanges/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "name": "patch-state-change",
+                    "event_time": "2016-02-05T02:21:41.543966",
+                    "patch": 9,
+                    "user": 2,
+                    "new_state": "Changes Requested",
+                    "previous_state": "New"
+                },
+                {
+                    "name": "patch-state-change",
+                    "event_time": "2016-01-29T07:29:20.487172",
+                    "patch": 7,
+                    "user": null,
+                    "new_state": "New",
+                    "previous_state": "Under Review"
+                }
+            ]
+        }
 
 Series
 ~~~~~~

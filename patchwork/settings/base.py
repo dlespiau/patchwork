@@ -36,6 +36,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'patchwork.current_user.CurrentUserMiddleware',
 ]
 
 if django.VERSION < (1, 7):
