@@ -23,16 +23,21 @@
 from __future__ import absolute_import
 
 import base64
-from DocXMLRPCServer import XMLRPCDocGenerator
-from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
+# NOTE(stephenfin) six does not seem to support this
+try:
+    from DocXMLRPCServer import XMLRPCDocGenerator
+except ImportError:
+    from xmlrpc.server import XMLRPCDocGenerator
 import sys
-import xmlrpclib
 
 from django.core import urlresolvers
 from django.contrib.auth import authenticate
 from django.http import (
     HttpResponse, HttpResponseRedirect, HttpResponseServerError)
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import six
+from django.utils.six.moves import map, xmlrpc_client
+from django.utils.six.moves.xmlrpc_server import SimpleXMLRPCDispatcher
 
 from patchwork.models import Patch, Project, Person, State
 from patchwork.views import patch_to_mbox
@@ -52,7 +57,7 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
         def _dumps(obj, *args, **kwargs):
             kwargs['allow_none'] = self.allow_none
             kwargs['encoding'] = self.encoding
-            return xmlrpclib.dumps(obj, *args, **kwargs)
+            return xmlrpc_client.dumps(obj, *args, **kwargs)
 
         self.dumps = _dumps
 
@@ -90,7 +95,7 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
         return authenticate(username=username, password=password)
 
     def _dispatch(self, request, method, params):
-        if method not in self.func_map.keys():
+        if method not in list(self.func_map.keys()):
             raise Exception('method "%s" is not supported' % method)
 
         auth_required, fn = self.func_map[method]
@@ -106,18 +111,19 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
 
     def _marshaled_dispatch(self, request):
         try:
-            params, method = xmlrpclib.loads(request.body)
+            params, method = six.moves.xmlrpc_client.loads(request.body)
 
             response = self._dispatch(request, method, params)
             # wrap response in a singleton tuple
             response = (response,)
             response = self.dumps(response, methodresponse=1)
-        except xmlrpclib.Fault, fault:
+        except six.moves.xmlrpc_client.Fault as fault:
             response = self.dumps(fault)
         except:
             # report exception back to server
             response = self.dumps(
-                xmlrpclib.Fault(1, '%s:%s' % (sys.exc_type, sys.exc_value)),
+                six.moves.xmlrpc_client.Fault(1,
+                    '%s:%s' % (sys.exc_info()[0], sys.exc_info()[1])),
             )
 
         return response
@@ -225,7 +231,7 @@ def person_to_dict(obj):
         'id': obj.id,
         'email': obj.email,
         'name': name,
-        'user': unicode(obj.user).encode('utf-8'),
+        'user': six.text_type(obj.user).encode('utf-8'),
     }
 
 
@@ -261,18 +267,18 @@ def patch_to_dict(obj):
     """
     return {
         'id': obj.id,
-        'date': unicode(obj.date).encode('utf-8'),
+        'date': six.text_type(obj.date).encode('utf-8'),
         'filename': obj.filename(),
         'msgid': obj.msgid,
         'name': obj.name,
-        'project': unicode(obj.project).encode('utf-8'),
+        'project': six.text_type(obj.project).encode('utf-8'),
         'project_id': obj.project_id,
-        'state': unicode(obj.state).encode('utf-8'),
+        'state': six.text_type(obj.state).encode('utf-8'),
         'state_id': obj.state_id,
         'archived': obj.archived,
-        'submitter': unicode(obj.submitter).encode('utf-8'),
+        'submitter': six.text_type(obj.submitter).encode('utf-8'),
         'submitter_id': obj.submitter_id,
-        'delegate': unicode(obj.delegate).encode('utf-8'),
+        'delegate': six.text_type(obj.delegate).encode('utf-8'),
         'delegate_id': max(obj.delegate_id, 0),
         'commit_ref': max(obj.commit_ref, ''),
     }
@@ -376,7 +382,7 @@ def project_list(search_str=None, max_count=0):
         elif max_count < 0:
             return map(project_to_dict, projects)[max_count:]
         else:
-            return map(project_to_dict, projects)
+            return list(map(project_to_dict, projects))
     except Project.DoesNotExist:
         return []
 
@@ -430,7 +436,7 @@ def person_list(search_str=None, max_count=0):
         elif max_count < 0:
             return map(person_to_dict, people)[max_count:]
         else:
-            return map(person_to_dict, people)
+            return list(map(person_to_dict, people))
     except Person.DoesNotExist:
         return []
 
@@ -571,13 +577,13 @@ def patch_list(filt=None):
         patches = Patch.objects.filter(**dfilter)
 
         if max_count > 0:
-            return map(patch_to_dict, patches[:max_count])
+            return [patch_to_dict(p) for p in patches[:max_count]]
         elif max_count < 0:
-            results = map(patch_to_dict, patches.reverse()[:-max_count])
-            results.reverse()
-            return results
+            res = [patch_to_dict(p) for p in patches.reverse()[:-max_count]]
+            res.reverse()
+            return res
         else:
-            return map(patch_to_dict, patches)
+            return [patch_to_dict(p) for p in patches]
     except Patch.DoesNotExist:
         return []
 
@@ -727,7 +733,7 @@ def patch_set(user, patch_id, params):
         if not patch.is_editable(user):
             raise Exception('No permissions to edit this patch')
 
-        for (k, v) in params.iteritems():
+        for (k, v) in params.items():
             if k not in ok_params:
                 continue
 
@@ -772,7 +778,7 @@ def state_list(search_str=None, max_count=0):
         elif max_count < 0:
             return map(state_to_dict, states)[max_count:]
         else:
-            return map(state_to_dict, states)
+            return list(map(state_to_dict, states))
     except State.DoesNotExist:
         return []
 
