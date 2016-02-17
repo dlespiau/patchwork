@@ -23,25 +23,31 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
-                             State, EventLog, Test, TestResult, TestState
+    State, EventLog, Test, TestResult, TestState
 from rest_framework import serializers
 from rest_framework import fields
 from enum import Enum
+
 
 class RelatedMode(Enum):
     """Select how to show related fields in the JSON responses."""
     primary_key = 1
     expand = 2
 
+
 class Iso8601DateTimeField(fields.DateTimeField):
+
     def __init__(self, **kwargs):
         super(Iso8601DateTimeField, self).__init__(format='iso-8601', **kwargs)
 
+
 class PatchworkModelSerializerOptions(serializers.ModelSerializerOptions):
     """Meta class options for PatchworkModelSerializer"""
+
     def __init__(self, meta):
         super(PatchworkModelSerializerOptions, self).__init__(meta)
         self.expand_serializers = getattr(meta, 'expand_serializers', {})
+
 
 class PatchworkModelSerializer(serializers.ModelSerializer):
     """A model serializer with configurable related fields.
@@ -78,6 +84,7 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
 
     def _pw_get_nested_field(self, model_field, related_model, to_many):
         class NestedModelSerializer(serializers.ModelSerializer):
+
             class Meta:
                 model = related_model
 
@@ -91,10 +98,13 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
             return self._pw_get_nested_field(model_field, related_model, to_many)
         else:
             return super(PatchworkModelSerializer, self). \
-                    get_related_field(model_field, related_model, to_many)
+                get_related_field(model_field, related_model, to_many)
 
 # See https://github.com/tomchristie/django-rest-framework/issues/1880
+
+
 class JSONField(serializers.WritableField):
+
     def to_native(self, obj):
         return obj
 
@@ -104,28 +114,37 @@ class JSONField(serializers.WritableField):
 
         return value
 
+
 class UserSerializer(serializers.ModelSerializer):
     name = serializers.CharField(read_only=True)
+
     class Meta:
         model = User
         fields = ('id', 'name')
 
+
 class PersonSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='display_name', read_only=True)
+
     class Meta:
         model = Person
         fields = ('id', 'name', )
 
+
 class ProjectSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Project
         fields = ('id', 'name', 'linkname', 'listemail', 'web_url', 'scm_url',
                   'webscm_url')
 
+
 class StateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = State
         fields = ('id', 'name')
+
 
 class SeriesSerializer(PatchworkModelSerializer):
     version = serializers.SerializerMethodField('get_version')
@@ -163,7 +182,9 @@ class SeriesSerializer(PatchworkModelSerializer):
             'reviewer': UserSerializer,
         }
 
+
 class PatchSerializer(PatchworkModelSerializer):
+
     class Meta:
         model = Patch
         fields = ('id', 'project', 'name', 'date', 'submitter', 'state',
@@ -175,6 +196,7 @@ class PatchSerializer(PatchworkModelSerializer):
             'submitter': PersonSerializer,
             'state': StateSerializer,
         }
+
 
 class RevisionSerializer(PatchworkModelSerializer):
     patches = serializers.SerializerMethodField('get_patches')
@@ -197,9 +219,11 @@ class RevisionSerializer(PatchworkModelSerializer):
             'patches': PatchSerializer,
         }
 
+
 class EventLogSerializer(PatchworkModelSerializer):
     name = serializers.CharField(source='event.name', read_only=True)
     parameters = JSONField(read_only=True)
+
     class Meta:
         model = EventLog
         fields = ('name', 'event_time', 'series', 'user', 'parameters')
@@ -208,7 +232,9 @@ class EventLogSerializer(PatchworkModelSerializer):
             'user': UserSerializer,
         }
 
+
 class ValueChoiceField(serializers.ChoiceField):
+
     def to_native(self, value):
         for k, v in self.choices:
             if value == k:
@@ -220,6 +246,7 @@ class ValueChoiceField(serializers.ChoiceField):
                 return k
         msg = self.error_messages['invalid_choice'] % {'value': value}
         raise ValidationError(msg)
+
 
 class TestResultSerializer(serializers.Serializer):
     test_name = serializers.CharField(source='test.name')

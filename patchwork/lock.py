@@ -26,26 +26,34 @@ import warnings
 # from error.py
 #
 
+
 class LockError(IOError):
+
     def __init__(self, errno, strerror, filename, desc):
         IOError.__init__(self, errno, strerror, filename)
         self.desc = desc
 
+
 class LockHeld(LockError):
+
     def __init__(self, errno, filename, desc, locker):
         LockError.__init__(self, errno, 'Lock held', filename, desc)
         self.locker = locker
+
 
 class LockUnavailable(LockError):
     pass
 
 # LockError is for errors while acquiring the lock -- this is unrelated
+
+
 class LockInheritanceContractViolation(RuntimeError):
     pass
 
 #
 # from util.py
 #
+
 
 def testpid(pid):
     '''return False if pid dead, True if running or not sure'''
@@ -57,18 +65,20 @@ def testpid(pid):
     except OSError as inst:
         return inst.errno != errno.ESRCH
 
+
 def makelock(info, pathname):
     try:
         return os.symlink(info, pathname)
     except OSError as why:
         if why.errno == errno.EEXIST:
             raise
-    except AttributeError: # no symlink in os
+    except AttributeError:  # no symlink in os
         pass
 
     ld = os.open(pathname, os.O_CREAT | os.O_WRONLY | os.O_EXCL)
     os.write(ld, info)
     os.close(ld)
+
 
 def readlock(pathname):
     try:
@@ -76,7 +86,7 @@ def readlock(pathname):
     except OSError as why:
         if why.errno not in (errno.EINVAL, errno.ENOSYS):
             raise
-    except AttributeError: # no symlink in os
+    except AttributeError:  # no symlink in os
         pass
     fp = posixfile(pathname)
     r = fp.read()
@@ -86,6 +96,7 @@ def readlock(pathname):
 #
 # from lock.py
 #
+
 
 class lock(object):
     '''An advisory lock held by one process to control access to a set
@@ -119,7 +130,7 @@ class lock(object):
         self.parentlock = parentlock
         self._parentheld = False
         self._inherited = False
-        self.postrelease  = []
+        self.postrelease = []
         self.pid = self._getpid()
         self.delay = self.lock()
         if self.acquirefn:
@@ -128,8 +139,8 @@ class lock(object):
     def __del__(self):
         if self.held:
             warnings.warn("use lock.release instead of del lock",
-                    category=DeprecationWarning,
-                    stacklevel=2)
+                          category=DeprecationWarning,
+                          stacklevel=2)
 
             # ensure the lock will be removed
             # even if recursive locking did occur
@@ -294,6 +305,7 @@ class lock(object):
             if not self._parentheld:
                 for callback in self.postrelease:
                     callback()
+
 
 def release(*locks):
     for lock in locks:

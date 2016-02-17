@@ -47,8 +47,8 @@ from django.utils.six.moves import map
 from patchwork import lock as lockmod
 from patchwork.lock import release
 from patchwork.models import (Patch, Project, Person, Comment, State, Series,
-    SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state,
-    series_revision_complete, SERIES_DEFAULT_NAME)
+                              SeriesRevision, SeriesRevisionPatch, get_default_initial_patch_state,
+                              series_revision_complete, SERIES_DEFAULT_NAME)
 from patchwork.parser import parse_patch
 
 LOGGER = logging.getLogger(__name__)
@@ -106,7 +106,7 @@ def find_project(mail):
             # order_by will put projects with a blank subject_prefix_tags
             # first
             projects = Project.objects.filter(listid=listid).\
-                                       order_by('subject_prefix_tags')
+                order_by('subject_prefix_tags')
             if not projects:
                 break
 
@@ -186,9 +186,9 @@ def mail_date(mail):
 
 def mail_headers(mail):
     return reduce(operator.__concat__,
-            ['%s: %s\n' % (k, Header(v, header_name = k,
-                                     continuation_ws = '\t').encode())
-             for (k, v) in list(mail.items())])
+                  ['%s: %s\n' % (k, Header(v, header_name=k,
+                                           continuation_ws='\t').encode())
+                   for (k, v) in list(mail.items())])
 
 
 def find_pull_request(content):
@@ -211,6 +211,7 @@ def try_decode(payload, charset):
 
 
 class MailContent:
+
     def __init__(self):
         self.patch = None
         self.comment = None
@@ -318,7 +319,7 @@ def parse_series_marker(subject_prefixes):
 
 def is_git_send_email(mail):
     return mail.get('X-Mailer', '').startswith('git-send-email ') or \
-           'git-send-email' in mail.get('Message-ID', '')
+        'git-send-email' in mail.get('Message-ID', '')
 
 
 def find_content(project, mail):
@@ -389,12 +390,12 @@ def find_content(project, mail):
     is_patch = patchbuf is not None
 
     drop_patch = not is_attachment and \
-                 project.git_send_email_only and not is_git_send_email(mail)
+        project.git_send_email_only and not is_git_send_email(mail)
 
     if pullurl or (is_patch and not drop_patch):
         ret.patch_order = x or 1
         ret.patch = Patch(name=name, pull_url=pullurl, content=patchbuf,
-                    date=mail_date(mail), headers=mail_headers(mail))
+                          date=mail_date(mail), headers=mail_headers(mail))
 
     # Create/update the Series and SeriesRevision objects
     if is_cover_letter or is_patch:
@@ -425,16 +426,16 @@ def find_content(project, mail):
         # patch has been saved by the caller
         if ret.patch:
             ret.comment = Comment(date=mail_date(mail),
-                    content = clean_content(commentbuf),
-                    headers = mail_headers(mail))
+                                  content=clean_content(commentbuf),
+                                  headers=mail_headers(mail))
 
         else:
             cpatch = find_patch_for_comment(project, refs)
             if not cpatch:
                 return ret
             ret.comment = Comment(patch=cpatch, date=mail_date(mail),
-                    content = clean_content(commentbuf),
-                    headers = mail_headers(mail))
+                                  content=clean_content(commentbuf),
+                                  headers=mail_headers(mail))
 
     # make sure we always have a valid (series,revision) tuple if we have a
     # patch. We don't consider pull requests a series.
@@ -486,7 +487,7 @@ def find_patch_order(revisions, previous_patch, order, n_patches):
     for revision in revisions:
         try:
             order = SeriesRevisionPatch.objects.get(revision=revision,
-                    patch=previous_patch).order
+                                                    patch=previous_patch).order
             if n_patches is None:
                 n_patches = revision.n_patches
             break
@@ -513,7 +514,7 @@ def find_series_for_mail(project, name, msgid, is_patch, order, n_patches,
         # grab the latest revision for this mail thread
         revisions = SeriesRevision.objects.filter(series__project=project,
                                                   root_msgid=root_msgid) \
-                                                 .reverse()
+            .reverse()
         revision = revisions[0]
         series = revision.series
         if name:
@@ -600,7 +601,7 @@ def clean_subject(subject, drop_prefixes=None):
     while match:
         prefix_str = match.group(1)
         prefixes += [p for p in split_prefixes(prefix_str)
-                        if p.lower() not in drop_prefixes]
+                     if p.lower() not in drop_prefixes]
 
         subject = match.group(2)
         match = prefix_re.match(subject)
@@ -670,9 +671,9 @@ def on_revision_complete(sender, revision, **kwargs):
         return
 
     name = clean_series_name(new_series.name)
-    previous_series = Series.objects.filter(Q(project=new_series.project),
-                                            Q(name__iexact=name) &
-                                            ~Q(pk=new_series.pk))
+    previous_series = Series.objects.filter(
+            Q(project=new_series.project),
+            Q(name__iexact=name) & ~Q(pk=new_series.pk))
     if len(previous_series) != 1:
         return
 
@@ -752,7 +753,7 @@ def parse_mail(mail):
         patch.project = project
         patch.state = get_state(mail.get('X-Patchwork-State', '').strip())
         patch.delegate = get_delegate(
-                mail.get('X-Patchwork-Delegate', '').strip())
+            mail.get('X-Patchwork-Delegate', '').strip())
         patch.save()
         if revision:
             revision.add_patch(patch, content.patch_order)

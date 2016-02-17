@@ -26,6 +26,7 @@ from django.template.defaultfilters import stringfilter
 
 register = template.Library()
 
+
 @register.filter(name='patch_tags')
 def patch_tags(patch, tag):
     count = getattr(patch, tag.attr_name)

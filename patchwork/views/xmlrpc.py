@@ -123,7 +123,7 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
             # report exception back to server
             response = self.dumps(
                 six.moves.xmlrpc_client.Fault(1,
-                    '%s:%s' % (sys.exc_info()[0], sys.exc_info()[1])),
+                        '%s:%s' % (sys.exc_info()[0], sys.exc_info()[1])),
             )
 
         return response

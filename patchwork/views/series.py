@@ -23,7 +23,9 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views.generic import View
 from patchwork.models import Project, Series, SeriesRevision, TestResult
 
+
 class SeriesListView(View):
+
     def get(self, request, *args, **kwargs):
         project = get_object_or_404(Project, linkname=kwargs['project'])
         is_editable = 'true' if project.is_editable(request.user) else 'false'
@@ -33,13 +35,15 @@ class SeriesListView(View):
             'default_patches_per_page': settings.DEFAULT_PATCHES_PER_PAGE,
         })
 
+
 class SeriesView(View):
+
     def get(self, request, *args, **kwargs):
         series = get_object_or_404(Series, pk=kwargs['series'])
         revisions = get_list_or_404(SeriesRevision, series=series)
         for revision in revisions:
             revision.patch_list = revision.ordered_patches().\
-                                        select_related('state', 'submitter')
+                select_related('state', 'submitter')
             revision.test_results = TestResult.objects \
                     .filter(revision=revision, patch=None) \
                     .order_by('test__name').select_related('test')

@@ -68,6 +68,7 @@ def die(message):
 
 
 class HttpError(Exception):
+
     def __init__(self, status_code):
         self.status_code = status_code
         self.response = None
@@ -223,24 +224,24 @@ class Series(RestObject):
         'name': {
             'header': 'Name',
             'can_shrink': True,
-        } ,
+        },
         'n_patches': {
             'header': 'Patches',
-        } ,
+        },
         'submitter': {
             'header': 'Submitter',
-        } ,
+        },
         'submitted': {
             'header': 'Submitted',
             'format': 'date',
-        } ,
+        },
         'last_updated': {
             'header': 'Updated',
             'format': 'date',
-        } ,
+        },
         'version': {
             'header': 'Version',
-        } ,
+        },
         'reviewer': {
             'header': 'Reviewer',
         },
@@ -400,7 +401,7 @@ class Table(object):
         # we allow one column to shrink to accomodate 'max_width'
         shrinking_column = None
         if ('max_width' in self.config and
-            table_width > self.config['max_width']):
+                table_width > self.config['max_width']):
             for key, column in columns.iteritems():
                 if 'can_shrink' in column:
                     shrinking_column = key
@@ -657,7 +658,7 @@ class GitPatchwork(object):
         # Human readable
         filtered_fields = {key: Series.meta[key] for key in self.cmd.fields}
         columns = OrderedDict(sorted(filtered_fields.items(),
-                              key=lambda k: self.cmd.fields.index(k[0])))
+                                 key=lambda k: self.cmd.fields.index(k[0])))
         config = {
             'columns': columns,
             'max_width': Terminal().get_size()[0],
@@ -741,14 +742,14 @@ class GitPatchwork(object):
         (series, revision) = self.cmd_get_series_revision()
 
         self._do_post_results(revision, {
-                404: "No series with id %d" % self.cmd.series_id
+            404: "No series with id %d" % self.cmd.series_id
         })
 
     def do_post_result_patch(self):
         patch = self.pw.get_patch(self.cmd.patch_id)
 
         self._do_post_results(patch, {
-                404: "No patch with id %d" % self.cmd.patch_id
+            404: "No patch with id %d" % self.cmd.patch_id
         })
 
     def run(self):
@@ -768,6 +769,7 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
     '''Aliases for argparse positional arguments.'''
 
     class _AliasedPseudoAction(argparse.Action):
+
         def __init__(self, name, aliases, help):
             dest = name
             if aliases:
@@ -783,7 +785,7 @@ class AliasedSubParsersAction(argparse._SubParsersAction):
             aliases = []
 
         parser = super(AliasedSubParsersAction, self). \
-                    add_parser(name, **kwargs)
+            add_parser(name, **kwargs)
 
         # Make the aliases work.
         for alias in aliases:

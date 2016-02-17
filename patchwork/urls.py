@@ -43,7 +43,7 @@ series_router = routers.SimpleRouter()
 series_router.register(r'series', api.SeriesViewSet)
 # /series/$id/revisions/$rev
 revisions_router = routers.NestedSimpleRouter(series_router, 'series',
-                                             lookup='series')
+                                              lookup='series')
 revisions_router.register(r'revisions', api.RevisionViewSet)
 # /series/$id/revisions/$rev/test-results/
 revision_results_router = routers.NestedSimpleRouter(revisions_router,
@@ -56,14 +56,16 @@ patches_router = routers.SimpleRouter()
 patches_router.register(r'patches', api.PatchViewSet)
 # /patches/$id/test-restults/
 patch_results_router = routers.NestedSimpleRouter(patches_router, 'patches',
-                                          lookup='patch')
+                                                  lookup='patch')
 patch_results_router.register(r'test-results', api.PatchResultViewSet,
                               base_name='patch-results')
 
 
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
+
     url(r'^admin/', include(admin.site.urls)),
 
     # API
@@ -86,7 +88,7 @@ urlpatterns = patterns('',
 
     # series views
     url(r'^project/(?P<project>[^/]+)/series/$', SeriesListView.as_view(),
-     name='series_list'),
+        name='series_list'),
     (r'^series/(?P<series>\d+)/$', SeriesView.as_view()),
 
     # patch views
@@ -112,37 +114,37 @@ urlpatterns = patterns('',
 
     # password change
     url(r'^user/password-change/$', auth_views.password_change,
-            name='password_change'),
+        name='password_change'),
     url(r'^user/password-change/done/$', auth_views.password_change_done,
-            name='password_change_done'),
+        name='password_change_done'),
     url(r'^user/password-reset/$', auth_views.password_reset,
-            name='password_reset'),
+        name='password_reset'),
     url(r'^user/password-reset/mail-sent/$', auth_views.password_reset_done,
-            name='password_reset_done'),
+        name='password_reset_done'),
     url(r'^user/password-reset/(?P<uidb64>[0-9A-Za-z_\-]+)/'
-            r'(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-            auth_views.password_reset_confirm,
-            name='password_reset_confirm'),
+        r'(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.password_reset_confirm,
+        name='password_reset_confirm'),
     url(r'^user/password-reset/complete/$',
-            auth_views.password_reset_complete,
-            name='password_reset_complete'),
+        auth_views.password_reset_complete,
+        name='password_reset_complete'),
 
     # login/logout
     url(r'^user/login/$', auth_views.login,
         {'template_name': 'patchwork/login.html'},
-        name = 'auth_login'),
+        name='auth_login'),
     url(r'^user/logout/$', auth_views.logout,
         {'template_name': 'patchwork/logout.html'},
-        name = 'auth_logout'),
+        name='auth_logout'),
 
     # registration
     (r'^register/', 'patchwork.views.user.register'),
 
     # public view for bundles
     (r'^bundle/(?P<username>[^/]*)/(?P<bundlename>[^/]*)/$',
-                                'patchwork.views.bundle.bundle'),
+     'patchwork.views.bundle.bundle'),
     (r'^bundle/(?P<username>[^/]*)/(?P<bundlename>[^/]*)/mbox/$',
-                                'patchwork.views.bundle.mbox'),
+     'patchwork.views.bundle.mbox'),
 
     (r'^confirm/(?P<key>[0-9a-f]+)/$', 'patchwork.views.confirm'),
 
@@ -162,18 +164,17 @@ urlpatterns = patterns('',
 
 if settings.ENABLE_XMLRPC:
     urlpatterns += patterns('',
-        (r'xmlrpc/$', 'patchwork.views.xmlrpc.xmlrpc'),
-        (r'^pwclient/$', 'patchwork.views.pwclient'),
-        (r'^project/(?P<project_id>[^/]+)/pwclientrc/$',
-             'patchwork.views.pwclientrc'),
-    )
+                            (r'xmlrpc/$', 'patchwork.views.xmlrpc.xmlrpc'),
+                            (r'^pwclient/$', 'patchwork.views.pwclient'),
+                            (r'^project/(?P<project_id>[^/]+)/pwclientrc/$',
+                                'patchwork.views.pwclientrc'),
+                            )
 
 # redirect from old urls
 if settings.COMPAT_REDIR:
     urlpatterns += patterns('',
-        (r'^user/bundle/(?P<bundle_id>[^/]+)/$',
-            'patchwork.views.bundle.bundle_redir'),
-        (r'^user/bundle/(?P<bundle_id>[^/]+)/mbox/$',
-            'patchwork.views.bundle.mbox_redir'),
-    )
-
+                            (r'^user/bundle/(?P<bundle_id>[^/]+)/$',
+                             'patchwork.views.bundle.bundle_redir'),
+                            (r'^user/bundle/(?P<bundle_id>[^/]+)/mbox/$',
+                             'patchwork.views.bundle.mbox_redir'),
+                            )

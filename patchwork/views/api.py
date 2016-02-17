@@ -29,24 +29,25 @@ from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-                             Test, TestResult, TestState, Person, \
-                             SERIES_DEFAULT_NAME
+    Test, TestResult, TestState, Person, \
+    SERIES_DEFAULT_NAME
 from rest_framework import views, viewsets, mixins, generics, filters, \
-                           permissions, status
+    permissions, status
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import api_view, renderer_classes, detail_route
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
-                                  RevisionSerializer, PatchSerializer, \
-                                  EventLogSerializer, TestResultSerializer
+    RevisionSerializer, PatchSerializer, \
+    EventLogSerializer, TestResultSerializer
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
 import django_filters
 
 
 API_REVISION = 2
+
 
 class RelatedOrderingFilter(filters.OrderingFilter):
     """
@@ -75,7 +76,9 @@ class RelatedOrderingFilter(filters.OrderingFilter):
         return [term for term in ordering
                 if self.is_valid_field(queryset.model, term.lstrip('-'))]
 
+
 class MaintainerPermission(permissions.BasePermission):
+
     def has_object_permission(self, request, view, obj):
         # read only for everyone
         if request.method in permissions.SAFE_METHODS:
@@ -106,13 +109,15 @@ class API(views.APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, format=None):
-        return Response({ 'revision': API_REVISION })
+        return Response({'revision': API_REVISION})
+
 
 class ListMixin(object):
     paginate_by = 20
     paginate_by_param = 'perpage'
     max_paginate_by = 100
     filter_backends = (RelatedOrderingFilter, )
+
 
 class SeriesFilter(django_filters.FilterSet):
 
@@ -157,7 +162,8 @@ class SeriesFilter(django_filters.FilterSet):
 
     submitted_since = django_filters.CharFilter(action=submitted_since_filter)
     updated_since = django_filters.CharFilter(action=updated_since_filter)
-    submitted_before = django_filters.CharFilter(action=submitted_before_filter)
+    submitted_before = django_filters.CharFilter(
+        action=submitted_before_filter)
     updated_before = django_filters.CharFilter(action=updated_before_filter)
     submitter = django_filters.MethodFilter(action='submitter_filter')
     reviewer = django_filters.MethodFilter(action=reviewer_filter)
@@ -165,6 +171,7 @@ class SeriesFilter(django_filters.FilterSet):
     class Meta:
         model = Series
         fields = []
+
 
 class SeriesListMixin(ListMixin):
     queryset = Series.objects.all()
@@ -174,7 +181,9 @@ class SeriesListMixin(ListMixin):
     filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
     filter_class = SeriesFilter
 
+
 class SelectRelatedMixin(object):
+
     def select_related(self, queryset):
         select_fields = getattr(self, 'select_fields', ())
 
@@ -187,12 +196,14 @@ class SelectRelatedMixin(object):
 
         return queryset.select_related(*select_fields)
 
+
 def is_integer(s):
     try:
         int(s)
         return True
     except ValueError:
         return False
+
 
 class ProjectViewSet(mixins.ListModelMixin, ListMixin, viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
@@ -206,6 +217,7 @@ class ProjectViewSet(mixins.ListModelMixin, ListMixin, viewsets.GenericViewSet):
             queryset = get_object_or_404(Project, linkname=pk)
         serializer = ProjectSerializer(queryset)
         return Response(serializer.data)
+
 
 class SeriesListViewSet(mixins.ListModelMixin,
                         SeriesListMixin,
@@ -222,6 +234,7 @@ class SeriesListViewSet(mixins.ListModelMixin,
             queryset = self.queryset.filter(project__linkname=pk)
         return self.select_related(queryset)
 
+
 class SeriesViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.UpdateModelMixin,
@@ -229,6 +242,7 @@ class SeriesViewSet(mixins.ListModelMixin,
                     viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = Series.objects.all()
+
 
 def series_mbox(revision):
     patches = revision.ordered_patches()
@@ -238,6 +252,7 @@ def series_mbox(revision):
     response['Content-Disposition'] = 'attachment; filename=' + \
         revision.series.filename()
     return response
+
 
 class RevisionViewSet(mixins.ListModelMixin, ListMixin,
                       viewsets.GenericViewSet):
@@ -260,7 +275,9 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
         rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
         return series_mbox(rev)
 
+
 class ResultMixin(object):
+
     def _object_name(self, obj):
         if isinstance(obj, SeriesRevision):
             name = obj.series.name
@@ -299,7 +316,6 @@ class ResultMixin(object):
             return getattr(obj, 'root_msgid')
         except AttributeError:
             return getattr(obj, 'msgid')
-
 
     def handle_test_results(self, request, obj, check_obj, q, ctx):
         # auth
@@ -366,6 +382,7 @@ class ResultMixin(object):
 
         return Response(result.data, status=status.HTTP_201_CREATED)
 
+
 class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
     permission_classes = (MaintainerPermission, )
     authentication_classes = (BasicAuthentication, )
@@ -381,6 +398,7 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
 
         return response
 
+
 def endpoint(endpoint):
     """Used to rename a method on a ViewSet"""
 
@@ -388,6 +406,7 @@ def endpoint(endpoint):
         func.endpoint = endpoint
         return func
     return decorator
+
 
 class PatchViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
@@ -401,6 +420,7 @@ class PatchViewSet(mixins.ListModelMixin,
     def mbox(self, request, pk=None):
         return patch_mbox(request, pk)
 
+
 class PatchResultViewSet(viewsets.ViewSet, ResultMixin):
     permission_classes = (MaintainerPermission, )
     authentication_classes = (BasicAuthentication, )
@@ -410,19 +430,22 @@ class PatchResultViewSet(viewsets.ViewSet, ResultMixin):
         return self.handle_test_results(request, patch, patch, Q(patch=patch),
                                         {'patch': patch})
 
+
 class EventTimeFilter(django_filters.FilterSet):
 
     def event_time_filter(query_set, date):
         queryset = query_set
         if date:
-            queryset =  queryset.filter(event_time__gt=date)
+            queryset = queryset.filter(event_time__gt=date)
         return queryset
 
-    since = django_filters.CharFilter(name='event_time', action=event_time_filter)
+    since = django_filters.CharFilter(
+        name='event_time', action=event_time_filter)
 
     class Meta:
         model = EventLog
         fields = ['since']
+
 
 class EventLogViewSet(mixins.ListModelMixin,
                       ListMixin,
