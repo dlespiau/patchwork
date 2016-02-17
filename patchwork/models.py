@@ -504,6 +504,11 @@ class TestState:
         (STATE_FAILURE, 'failure'),
     )
 
+    @classmethod
+    def from_string(cls, s):
+        s2i = {s: i for i, s in cls.STATE_CHOICES}
+        return s2i[s]
+
 
 # This Model represents the "top level" Series, an object that doesn't change
 # with the various versions of patches sent to the mailing list.

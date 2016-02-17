@@ -160,6 +160,16 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(reviewer__isnull=True)
         return queryset
 
+    def test_state_filter(queryset, test_state):
+        try:
+            state = TestState.from_string(test_state)
+            queryset = queryset.filter(last_revision__test_state=state)
+        except KeyError:
+            if test_state == 'null':
+                queryset = queryset.filter(
+                        last_revision__test_state__isnull=True)
+        return queryset
+
     submitted_since = django_filters.CharFilter(action=submitted_since_filter)
     updated_since = django_filters.CharFilter(action=updated_since_filter)
     submitted_before = django_filters.CharFilter(
@@ -167,6 +177,7 @@ class SeriesFilter(django_filters.FilterSet):
     updated_before = django_filters.CharFilter(action=updated_before_filter)
     submitter = django_filters.MethodFilter(action='submitter_filter')
     reviewer = django_filters.MethodFilter(action=reviewer_filter)
+    test_state = django_filters.MethodFilter(action=test_state_filter)
 
     class Meta:
         model = Series

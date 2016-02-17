@@ -314,6 +314,11 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                              specified time. Format is the same as
                              ``last_updated`` in response, an ISO 8601 date.
 
+    :query test_state: Filter series by test state. Possible values are
+                       ``pending``, ``success``, ``warning``, ``failure`` or
+                       ``null`` series that don't have any test result.
+
+
 .. http:get:: /api/1.0/series/
 
     List of all Series known to patchwork.
