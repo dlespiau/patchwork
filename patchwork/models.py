@@ -18,23 +18,28 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.db import models
-from django.db.models import Q
-import django.dispatch
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
 from django.conf import settings
+from django.db import models
+from django.db.models import Q
+import django.dispatch
+from django.utils import six
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
-from patchwork.parser import hash_patch, extract_tags
+from django.utils.six import add_metaclass
 import jsonfield
+
+from patchwork.parser import hash_patch, extract_tags
 
 import re
 import datetime, time
 import random
 from collections import Counter, OrderedDict
 
+@python_2_unicode_compatible
 class Person(models.Model):
     email = models.CharField(max_length=255, unique = True)
     name = models.CharField(max_length=255, null = True, blank = True)
@@ -53,12 +58,12 @@ class Person(models.Model):
         else:
             return self.email
 
-    def __unicode__(self):
-        return self.display_name()
-
     def link_to_user(self, user):
         self.name = user.profile.name()
         self.user = user
+
+    def __str__(self):
+        return self.display_name()
 
     class Meta:
         verbose_name_plural = 'People'
@@ -70,6 +75,7 @@ def get_comma_separated_field(value):
     tags = [tag for tag in tags if tag]
     return tags
 
+@python_2_unicode_compatible
 class Project(models.Model):
     linkname = models.CharField(max_length=255, unique=True)
     name = models.CharField(max_length=255, unique=True)
@@ -85,9 +91,6 @@ class Project(models.Model):
     subject_prefix_tags = models.CharField(max_length=255, blank=True,
             help_text='Comma separated list of tags')
 
-    def __unicode__(self):
-        return self.name
-
     def is_editable(self, user):
         if not user.is_authenticated():
             return False
@@ -102,17 +105,21 @@ class Project(models.Model):
     def get_subject_prefix_tags(self):
         return get_comma_separated_field(self.subject_prefix_tags)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         ordering = ['linkname']
 
 def user_name(user):
     if user.first_name or user.last_name:
-        names = filter(bool, [user.first_name, user.last_name])
+        names = list(filter(bool, [user.first_name, user.last_name]))
         return u' '.join(names)
     return user.username
 
 auth.models.User.add_to_class('name', user_name)
 
+@python_2_unicode_compatible
 class UserProfile(models.Model):
     user = models.OneToOneField(User, unique = True, related_name='profile')
     primary_project = models.ForeignKey(Project, null = True, blank = True)
@@ -156,7 +163,7 @@ class UserProfile(models.Model):
                          .values('pk').query)
         return qs
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name()
 
 def _user_saved_callback(sender, created, instance, **kwargs):
@@ -168,32 +175,35 @@ def _user_saved_callback(sender, created, instance, **kwargs):
 
 models.signals.post_save.connect(_user_saved_callback, sender = User)
 
+@python_2_unicode_compatible
 class State(models.Model):
     name = models.CharField(max_length = 100)
     ordering = models.IntegerField(unique = True)
     action_required = models.BooleanField(default = True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
         ordering = ['ordering']
 
+@add_metaclass(models.SubfieldBase)
 class HashField(models.CharField):
-    __metaclass__ = models.SubfieldBase
 
     def __init__(self, algorithm = 'sha1', *args, **kwargs):
         self.algorithm = algorithm
         try:
             import hashlib
             def _construct(string = ''):
+                if isinstance(string, six.text_type):
+                    string = string.encode('utf-8')
                 return hashlib.new(self.algorithm, string)
             self.construct = _construct
             self.n_bytes = len(hashlib.new(self.algorithm).hexdigest())
         except ImportError:
             modules = { 'sha1': 'sha', 'md5': 'md5'}
 
-            if algorithm not in modules.keys():
+            if algorithm not in modules:
                 raise NameError("Unknown algorithm '%s'" % algorithm)
 
             self.construct = __import__(modules[algorithm]).new
@@ -206,6 +216,7 @@ class HashField(models.CharField):
     def db_type(self, connection=None):
         return 'char(%d)' % self.n_bytes
 
+@python_2_unicode_compatible
 class Tag(models.Model):
     name = models.CharField(max_length=20)
     pattern = models.CharField(max_length=50,
@@ -216,12 +227,12 @@ class Tag(models.Model):
                 help_text='Short (one-or-two letter) abbreviation for the tag, '
                     'used in table column headers')
 
-    def __unicode__(self):
-        return self.name
-
     @property
     def attr_name(self):
         return 'tag_%d_count' % self.id
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         ordering = ['abbrev']
@@ -273,6 +284,7 @@ def filename(name, ext):
     str = fname_re.sub('-', name)
     return str.strip('-') + ext
 
+@python_2_unicode_compatible
 class Patch(models.Model):
     project = models.ForeignKey(Project)
     msgid = models.CharField(max_length=255)
@@ -290,9 +302,6 @@ class Patch(models.Model):
     tags = models.ManyToManyField(Tag, through=PatchTag)
 
     objects = PatchManager()
-
-    def __unicode__(self):
-        return self.name
 
     def commit_message(self):
         """Retrieves the commit message"""
@@ -349,6 +358,9 @@ class Patch(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('patchwork.views.patch.patch', (), {'patch_id': self.id})
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         verbose_name_plural = 'Patches'
@@ -414,9 +426,6 @@ class Bundle(models.Model):
                 order = max_order + 1)
         bp.save()
 
-    class Meta:
-        unique_together = [('owner', 'name')]
-
     def public_url(self):
         if not self.public:
             return None
@@ -435,6 +444,9 @@ class Bundle(models.Model):
                                 'bundlename': self.name,
                             })
 
+    class Meta:
+        unique_together = [('owner', 'name')]
+
 class BundlePatch(models.Model):
     patch = models.ForeignKey(Patch)
     bundle = models.ForeignKey(Bundle)
@@ -445,6 +457,7 @@ class BundlePatch(models.Model):
         ordering = ['order']
 
 SERIES_DEFAULT_NAME = "Series without cover letter"
+
 
 
 class TestState:
@@ -462,6 +475,7 @@ class TestState:
 
 # This Model represents the "top level" Series, an object that doesn't change
 # with the various versions of patches sent to the mailing list.
+@python_2_unicode_compatible
 class Series(models.Model):
     project = models.ForeignKey(Project)
     name = models.CharField(max_length=200, default=SERIES_DEFAULT_NAME)
@@ -474,9 +488,6 @@ class Series(models.Model):
     # information with a JOIN
     last_revision = models.OneToOneField('SeriesRevision', null=True,
                                          related_name='+')
-
-    def __unicode__(self):
-        return self.name
 
     def revisions(self):
         return SeriesRevision.objects.filter(series=self)
@@ -505,12 +516,16 @@ class Series(models.Model):
     def filename(self):
         return filename(self.name, '.mbox')
 
+    def __str__(self):
+        return self.name
+
 # Signal one can listen to to know when a revision is complete (ie. has all of
 # its patches)
 series_revision_complete = django.dispatch.Signal(providing_args=["revision"])
 
 # A 'revision' of a series. Resending a new version of a patch or a full new
 # iteration of a series will create a new revision.
+@python_2_unicode_compatible
 class SeriesRevision(models.Model):
     series = models.ForeignKey(Series)
     version = models.IntegerField(default=1)
@@ -573,7 +588,7 @@ class SeriesRevision(models.Model):
             self.save()
             self.series.save()
 
-    def __unicode__(self):
+    def __str__(self):
         return "Revision " + str(self.version)
 
 class SeriesRevisionPatch(models.Model):
@@ -598,6 +613,7 @@ class EventLog(models.Model):
     class Meta:
         ordering = ['-event_time']
 
+@python_2_unicode_compatible
 class Test(models.Model):
     # no mail, default so test systems/scripts can have a grace period to
     # settle down and give useful results
@@ -646,9 +662,10 @@ class Test(models.Model):
     def get_cc_list(self):
         return get_comma_separated_field(self.mail_cc_list)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
+@python_2_unicode_compatible
 class TestResult(models.Model):
 
     test = models.ForeignKey(Test)
@@ -660,11 +677,11 @@ class TestResult(models.Model):
     url = models.URLField(blank=True, null=True)
     summary = models.TextField(blank=True, null=True)
 
+    def __str__(self):
+        return self.get_state_display()
+
     class Meta:
         unique_together = [('test', 'revision'), ('test', 'patch')]
-
-    def __unicode__(self):
-        return self.get_state_display()
 
 class EmailConfirmation(models.Model):
     validity = datetime.timedelta(days = settings.CONFIRMATION_VALIDITY_DAYS)
@@ -693,16 +710,17 @@ class EmailConfirmation(models.Model):
             self.key = self._meta.get_field('key').construct(str).hexdigest()
         super(EmailConfirmation, self).save()
 
+@python_2_unicode_compatible
 class EmailOptout(models.Model):
     email = models.CharField(max_length = 200, primary_key = True)
-
-    def __unicode__(self):
-        return self.email
 
     @classmethod
     def is_optout(cls, email):
         email = email.lower().strip()
         return cls.objects.filter(email = email).count() > 0
+
+    def __str__(self):
+        return self.email
 
 class PatchChangeNotification(models.Model):
     patch = models.OneToOneField(Patch, primary_key = True)
