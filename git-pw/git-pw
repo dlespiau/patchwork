@@ -162,6 +162,23 @@ class User(object):
         self.password = password
 
 
+class TestState(object):
+    PENDING = 0
+    SUCCESS = 1
+    WARNING = 2
+    FAILURE = 3
+    CHOICES = (
+        (PENDING, 'pending'),
+        (SUCCESS, 'success'),
+        (WARNING, 'warning'),
+        (FAILURE, 'failure'),
+    )
+
+    @classmethod
+    def choices(cls):
+        return [s for _, s in cls.CHOICES]
+
+
 class RestObject(object):
 
     def __init__(self, patchwork):
@@ -635,6 +652,8 @@ class GitPatchwork(object):
         elif self.cmd.updated_since:
             params['ordering'] = 'last_updated'
             params['updated_since'] = self.cmd.updated_since
+        elif self.cmd.test_state:
+            params['test_state'] = self.cmd.test_state
 
         series_list = []
         try:
@@ -912,6 +931,10 @@ if __name__ == '__main__':
     format_group.add_argument('--fields', '-f', metavar='fields', nargs='+',
         type=str, choices=Series.FIELDS, default=default_series_fields,
         help='list of fields to display')
+
+    list_parser.add_argument('--test-state', metavar='test_state',
+         type=str, choices=TestState.choices(),
+         help='retrieve series with a particular test state')
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
