@@ -42,6 +42,7 @@ class PatchTest(TestCase):
 class InlinePatchTest(PatchTest):
     patch_filename = '0001-add-line.patch'
     test_comment = 'Test for inlined patch'
+    expected_filenames = ['meep.text']
 
     def setUp(self):
         self.orig_patch = read_patch(self.patch_filename)
@@ -49,6 +50,7 @@ class InlinePatchTest(PatchTest):
         content = find_content(self.project, email)
         self.patch = content.patch
         self.comment = content.comment
+        self.filenames = content.filenames
 
     def testPatchPresence(self):
         self.assertTrue(self.patch is not None)
@@ -61,6 +63,9 @@ class InlinePatchTest(PatchTest):
 
     def testCommentContent(self):
         self.assertEqual(self.comment.content, self.test_comment)
+
+    def testFilenames(self):
+        self.assertEqual(self.filenames, self.expected_filenames)
 
 
 class AttachmentPatchTest(InlinePatchTest):
@@ -76,6 +81,7 @@ class AttachmentPatchTest(InlinePatchTest):
         content = find_content(self.project, email)
         self.patch = content.patch
         self.comment = content.comment
+        self.filenames = content.filenames
 
 class AttachmentXDiffPatchTest(AttachmentPatchTest):
     content_subtype = 'x-diff'
@@ -91,6 +97,7 @@ class UTF8InlinePatchTest(InlinePatchTest):
         content = find_content(self.project, email)
         self.patch = content.patch
         self.comment = content.comment
+        self.filenames = content.filenames
 
 class NoCharsetInlinePatchTest(InlinePatchTest):
     """ Test mails with no content-type or content-encoding header """
@@ -104,6 +111,7 @@ class NoCharsetInlinePatchTest(InlinePatchTest):
         content = find_content(self.project, email)
         self.patch = content.patch
         self.comment = content.comment
+        self.filenames = content.filenames
 
 class SignatureCommentTest(InlinePatchTest):
     patch_filename = '0001-add-line.patch'
@@ -117,6 +125,7 @@ class SignatureCommentTest(InlinePatchTest):
         content = find_content(self.project, email)
         self.patch = content.patch
         self.comment = content.comment
+        self.filenames = content.filenames
 
 class ListFooterTest(InlinePatchTest):
     patch_filename = '0001-add-line.patch'
@@ -132,6 +141,7 @@ class ListFooterTest(InlinePatchTest):
         content = find_content(self.project, email)
         self.patch = content.patch
         self.comment = content.comment
+        self.filenames = content.filenames
 
 
 class DiffWordInCommentTest(InlinePatchTest):
