@@ -635,6 +635,9 @@ class GitPatchwork(object):
         elif self.cmd.updated_since:
             params['ordering'] = 'last_updated'
             params['updated_since'] = self.cmd.updated_since
+        elif self.cmd.test_state:
+            params['ordering'] = 'test_state'
+            params['test_state'] = self.cmd.test_state
 
         series_list = []
         try:
@@ -913,6 +916,10 @@ if __name__ == '__main__':
         type=str, choices=Series.FIELDS, default=default_series_fields,
         help='list of fields to display')
 
+    test_state = ['pending', 'success', 'warning', 'failure']
+    test_state_str = ', '.join(test_state)
+    list_parser.add_argument('--test-state', metavar='test_state',
+                             type=str, help='retrieve series with a particular test state. Possible: %s' % test_state_str)
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
 
