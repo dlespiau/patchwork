@@ -28,19 +28,18 @@ from django.conf import settings
 from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
-from patchwork.models import Project, Series, SeriesRevision, Patch, EventLog, \
-    Test, TestResult, TestState, Person, \
-    SERIES_DEFAULT_NAME
-from rest_framework import views, viewsets, mixins, generics, filters, \
-    permissions, status
+from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
+                              Test, TestResult, TestState, Person,
+                              SERIES_DEFAULT_NAME)
+from rest_framework import (views, viewsets, mixins, filters, permissions,
+                            status)
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.decorators import api_view, renderer_classes, detail_route
-from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
-from patchwork.serializers import ProjectSerializer, SeriesSerializer, \
-    RevisionSerializer, PatchSerializer, \
-    EventLogSerializer, TestResultSerializer
+from patchwork.serializers import (ProjectSerializer, SeriesSerializer,
+                                   RevisionSerializer, PatchSerializer,
+                                   EventLogSerializer, TestResultSerializer)
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
 import django_filters
@@ -216,7 +215,8 @@ def is_integer(s):
         return False
 
 
-class ProjectViewSet(mixins.ListModelMixin, ListMixin, viewsets.GenericViewSet):
+class ProjectViewSet(mixins.ListModelMixin, ListMixin,
+                     viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
@@ -330,7 +330,7 @@ class ResultMixin(object):
 
     def handle_test_results(self, request, obj, check_obj, q, ctx):
         # auth
-        if not 'test_name' in request.DATA:
+        if 'test_name' not in request.DATA:
             return Response({'test_name': ['This field is required.', ]},
                             status=status.HTTP_400_BAD_REQUEST)
 
