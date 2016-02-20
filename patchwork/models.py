@@ -36,7 +36,6 @@ from patchwork.parser import hash_patch, extract_tags
 
 import re
 import datetime
-import time
 import random
 from collections import Counter, OrderedDict
 
@@ -93,7 +92,7 @@ class Project(models.Model):
     use_tags = models.BooleanField(default=True)
     git_send_email_only = models.BooleanField(default=False)
     subject_prefix_tags = models.CharField(max_length=255, blank=True,
-                                           help_text='Comma separated list of tags')
+               help_text='Comma separated list of tags')
 
     def is_editable(self, user):
         if not user.is_authenticated():
@@ -145,13 +144,13 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, unique=True, related_name='profile')
     primary_project = models.ForeignKey(Project, null=True, blank=True)
     maintainer_projects = models.ManyToManyField(Project,
-                                                 related_name='maintainer_project')
+             related_name='maintainer_project')
     send_email = models.BooleanField(default=False,
-                                     help_text='Selecting this option allows patchwork to send ' +
-                                     'email on your behalf')
-    patches_per_page = models.PositiveIntegerField(default=100,
-                                                   null=False, blank=False,
-                                                   help_text='Number of patches to display per page')
+             help_text='Selecting this option allows patchwork to send ' +
+             'email on your behalf')
+    patches_per_page = models.PositiveIntegerField(
+            default=100, null=False, blank=False,
+            help_text='Number of patches to display per page')
 
     def name(self):
         return user_name(self.user)
@@ -244,12 +243,12 @@ class HashField(models.CharField):
 class Tag(models.Model):
     name = models.CharField(max_length=20)
     pattern = models.CharField(max_length=50,
-                               help_text='A simple regex to match the tag in the content of '
-                               'a message. Will be used with MULTILINE and IGNORECASE '
-                               'flags. eg. ^Acked-by:')
+            help_text='A simple regex to match the tag in the content of '
+                      'a message. Will be used with MULTILINE and IGNORECASE '
+                      'flags. eg. ^Acked-by:')
     abbrev = models.CharField(max_length=2, unique=True,
-                              help_text='Short (one-or-two letter) abbreviation for the tag, '
-                              'used in table column headers')
+            help_text='Short (one-or-two letter) abbreviation for the tag, '
+                       'used in table column headers')
 
     @property
     def attr_name(self):
@@ -289,10 +288,11 @@ class PatchQuerySet(models.query.QuerySet):
         select = OrderedDict()
         select_params = []
         for tag in project.tags:
-            select[tag.attr_name] = ("coalesce("
-                                     "(SELECT count FROM patchwork_patchtag "
-                                     "WHERE patchwork_patchtag.patch_id=patchwork_patch.id "
-                                     "AND patchwork_patchtag.tag_id=%s), 0)")
+            select[tag.attr_name] = (
+                "coalesce("
+                     "(SELECT count FROM patchwork_patchtag "
+                     "WHERE patchwork_patchtag.patch_id=patchwork_patch.id "
+                     "AND patchwork_patchtag.tag_id=%s), 0)")
             select_params.append(tag.id)
 
         return qs.extra(select=select, select_params=select_params)
