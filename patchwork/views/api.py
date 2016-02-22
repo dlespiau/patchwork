@@ -289,6 +289,12 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
 
 class ResultMixin(object):
 
+    def _object_type(self, obj):
+        if isinstance(obj, SeriesRevision):
+            return "Series"
+        else:
+            return "Patch"
+
     def _object_name(self, obj):
         if isinstance(obj, SeriesRevision):
             name = obj.series.name
@@ -299,7 +305,7 @@ class ResultMixin(object):
             return name
         return obj.name
 
-    def _prepare_mail(self, result, obj):
+    def _prepare_mail(self, request, result, obj, check_obj):
         if result.state == TestState.STATE_SUCCESS:
             tick = u"✓"
         else:
@@ -308,6 +314,12 @@ class ResultMixin(object):
                                               result.get_state_display(),
                                               self._object_name(obj))
         body = ''
+        body += '== %s Details ==\n\n' % self._object_type(obj)
+        body += 'Series: ' + self._object_name(obj) + '\n'
+        body += 'URL   : ' + \
+                request.build_absolute_uri(check_obj.get_absolute_url()) + '\n'
+        body += 'State : ' + result.get_state_display() + '\n'
+        body += '\n'
         if result.summary:
             body += "== Summary ==\n\n"
             body += result.summary
@@ -378,7 +390,8 @@ class ResultMixin(object):
                 to = []
 
         if to:
-            subject, body = self._prepare_mail(instance, obj)
+            subject, body = self._prepare_mail(request, instance,
+                                               obj, check_obj)
             msgid = self._get_msgid(obj)
             headers = {
                 'X-Patchwork-Hint': 'ignore',
