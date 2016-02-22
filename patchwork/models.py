@@ -556,6 +556,9 @@ class Series(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = 'Series'
+
 # Signal one can listen to to know when a revision is complete (ie. has all of
 # its patches)
 series_revision_complete = django.dispatch.Signal(providing_args=["revision"])
