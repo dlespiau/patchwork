@@ -385,6 +385,9 @@ class Patch(models.Model):
     def filename(self):
         return filename(self.name, '.patch')
 
+    def human_name(self):
+        return self.name
+
     @models.permalink
     def get_absolute_url(self):
         return ('patchwork.views.patch.patch', (), {'patch_id': self.id})
@@ -553,6 +556,13 @@ class Series(models.Model):
     def filename(self):
         return filename(self.name, '.mbox')
 
+    def human_name(self):
+        name = self.name
+        if name == SERIES_DEFAULT_NAME:
+            name = "series starting with " + \
+                    self.las_revision.ordered_patches()[0].name
+        return name
+
     def __str__(self):
         return self.name
 
@@ -629,6 +639,14 @@ class SeriesRevision(models.Model):
             self.test_state = max([r.state for r in results])
             self.save()
             self.series.save()
+
+    def human_name(self):
+        name = self.series.name
+        if name == SERIES_DEFAULT_NAME:
+            name = "series starting with " + self.ordered_patches()[0].name
+        if self.version > 1:
+            name += " (rev%d)" % self.version
+        return name
 
     def __str__(self):
         return "Revision " + str(self.version)

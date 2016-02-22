@@ -29,8 +29,7 @@ from django.core import mail
 from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
-                              Test, TestResult, TestState, Person,
-                              SERIES_DEFAULT_NAME)
+                              Test, TestResult, TestState, Person)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
                             status)
 from rest_framework.authentication import BasicAuthentication
@@ -295,16 +294,6 @@ class ResultMixin(object):
         else:
             return "Patch"
 
-    def _object_name(self, obj):
-        if isinstance(obj, SeriesRevision):
-            name = obj.series.name
-            if name == SERIES_DEFAULT_NAME:
-                name = "series starting with " + obj.ordered_patches()[0].name
-            if obj.version > 1:
-                name += " (rev%d)" % obj.version
-            return name
-        return obj.name
-
     def _prepare_mail(self, request, result, obj, check_obj):
         if result.state == TestState.STATE_SUCCESS:
             tick = u"✓"
@@ -312,10 +301,10 @@ class ResultMixin(object):
             tick = u"✗"
         subject = tick + u" %s: %s for %s" % (result.test.name,
                                               result.get_state_display(),
-                                              self._object_name(obj))
+                                              obj.human_name())
         body = ''
         body += '== %s Details ==\n\n' % self._object_type(obj)
-        body += 'Series: ' + self._object_name(obj) + '\n'
+        body += 'Series: ' + obj.human_name() + '\n'
         body += 'URL   : ' + \
                 request.build_absolute_uri(check_obj.get_absolute_url()) + '\n'
         body += 'State : ' + result.get_state_display() + '\n'
