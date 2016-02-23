@@ -31,21 +31,23 @@ from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.tasks import send_reviewer_notification
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
-                              Test, TestResult, TestState, Person,
+                              Test, TestResult, TestState, Person)
                               RevisionState)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
-                            status)
+                            status, generics)
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
 from patchwork.serializers import (ProjectSerializer, SeriesSerializer,
                                    RevisionSerializer, PatchSerializer,
-                                   EventLogSerializer, TestResultSerializer)
+                                   EventLogSerializer, TestResultSerializer,
+                                   APITokenSerializer)
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
 import django_filters
-
+from patchwork.authentication import APITokenAuthentication
+from rest_framework.authentication import SessionAuthentication
 
 API_REVISION = 2
 
@@ -535,3 +537,33 @@ class EventLogViewSet(mixins.ListModelMixin,
         else:
             queryset = self.queryset.filter(series__project__linkname=pk)
         return queryset
+
+class APITokenView(viewsets.GenericViewSet,
+                    mixins.ListModelMixin,
+                    mixins.RetrieveModelMixin,
+                    mixins.UpdateModelMixin,
+                    mixins.DestroyModelMixin,
+                    ListMixin):
+    authentication_classes = (APITokenAuthentication, SessionAuthentication)
+    permission_classes = (permissions.IsAuthenticated, )
+    queryset = APIToken.objects.all()
+    model = APIToken
+    serializer_class = APITokenSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return self.queryset.filter(user=user)
+
+    def create(self, request):
+        serializer = self.get_serializer(data=request.DATA)
+        if serializer.is_valid():
+            apitoken, entry = APIToken.create(serializer.init_data['name'], user=request.user)
+            serializer = self.get_serializer(entry)
+            serializer.data['apitoken'] = apitoken
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+    def update(self, request, *args, **kwargs):
+        entry = get_object_or_404(self.get_queryset(),pk=kwargs['pk'])
+        return super(APITokenView,self).update(request, *args, **kwargs)
+
