@@ -60,6 +60,8 @@ patch_results_router = routers.NestedSimpleRouter(patches_router, 'patches',
 patch_results_router.register(r'test-results', api.PatchResultViewSet,
                               base_name='patch-results')
 
+apitoken_router = routers.SimpleRouter()
+apitoken_router.register(r'tokens', api.APITokenView)
 
 admin.autodiscover()
 
@@ -78,6 +80,7 @@ urlpatterns = patterns(
     (r'^api/1.0/', include(patches_router.urls)),
     (r'^api/1.0/', include(patch_results_router.urls)),
     (r'^api/1.0/', include(event_router.urls)),
+    (r'^api/1.0/', include(apitoken_router.urls)),
 
     # project view:
     url(r'^$', 'patchwork.views.projects', name='root'),
