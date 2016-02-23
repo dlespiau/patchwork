@@ -38,7 +38,11 @@ from patchwork.parser import hash_patch, extract_tags
 import re
 import datetime
 import random
+import binascii
+import os
 from collections import Counter, OrderedDict
+from rest_framework.authtoken.models import AUTH_USER_MODEL
+from django.contrib.auth import hashers
 
 
 @python_2_unicode_compatible
@@ -1015,3 +1019,41 @@ def _on_revision_complete(sender, revision, **kwargs):
     log.save()
 
 series_revision_complete.connect(_on_revision_complete)
+
+
+
+class APIToken(models.Model):
+    name = models.CharField(max_length=40)
+    user = models.ForeignKey(AUTH_USER_MODEL, related_name='auth_token')
+    state = models.CharField(max_length=20, default='active')
+    secret = models.CharField(max_length=80, unique=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('name', 'user', )
+
+    def get_state(self):
+        return self.state == 'active', self.state
+
+    @staticmethod
+    def authenticate(apitoken):
+        secret = hashers.make_password(apitoken, 'unsalted_md5')
+        return APIToken.objects.filter(secret=secret).first()
+
+    @staticmethod
+    def create(name, user):
+        entry = APIToken(name=name, user=user)
+
+        while 1:
+            apitoken = APIToken._generate_password()
+            entry.secret = hashers.make_password(apitoken, 'unsalted_md5')
+            if APIToken.objects.filter(secret=entry.secret).count():
+                continue
+            break
+
+        entry.save()
+        return apitoken, entry
+
+    @staticmethod
+    def _generate_password():
+        return binascii.hexlify(os.urandom(20)).decode()

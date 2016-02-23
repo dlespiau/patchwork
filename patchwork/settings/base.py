@@ -106,6 +106,10 @@ STATICFILES_DIRS = [
 #
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'patchwork.authentication.APITokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication'
+    )
 }
 
 
