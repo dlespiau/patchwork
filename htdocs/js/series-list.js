@@ -171,7 +171,7 @@ $(function () {
             if (this.none.prop('checked'))
                 return 'with no reviewer';
             if (this.me.prop('checked'))
-                return 'assigned for review to me';
+                return 'assigned to me for review';
             var reviewer = this.completion.getValue();
             return 'assigned for review to ' + this.completion.getItem(reviewer).text();
         },
