@@ -177,14 +177,19 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(reviewer__isnull=True)
         return queryset
 
-    def filter_test_state(self, queryset, test_state):
+    def filter_test_state(self, queryset, test_states):
+        if not test_states:
+            return queryset
+
         try:
-            state = TestState.from_string(test_state)
-            queryset = queryset.filter(last_revision__test_state=state)
+            states = map(TestState.from_string, test_states.split(','))
+            queryset = queryset.filter(
+                last_revision__test_state__in=states)
         except KeyError:
-            if test_state == 'null':
+            if test_states == 'null':
                 queryset = queryset.filter(
                         last_revision__test_state__isnull=True)
+
         return queryset
 
     submitted_since = django_filters.CharFilter(name='submitted',
