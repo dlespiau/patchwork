@@ -203,6 +203,7 @@ class SeriesFilter(django_filters.FilterSet):
     submitter = django_filters.MethodFilter()
     reviewer = django_filters.MethodFilter()
     test_state = django_filters.MethodFilter()
+    name = django_filters.CharFilter(lookup_type='icontains')
 
     class Meta:
         model = Series
