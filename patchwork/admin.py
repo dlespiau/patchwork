@@ -105,7 +105,8 @@ admin.site.register(Comment, CommentAdmin)
 
 
 class TestAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'project')
+    list_filter = ('project', )
 admin.site.register(Test, TestAdmin)
 
 
