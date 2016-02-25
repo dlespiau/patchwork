@@ -24,13 +24,12 @@ from django.contrib import admin
 
 from patchwork.models import (Project, Person, UserProfile, State, Patch,
                               Comment, Bundle, Tag, Test, TestResult,
-                              DelegationRule, Series, SeriesRevision)
-
+                              DelegationRule, Series, SeriesRevision, 
+                              APIToken)
 
 class DelegationRuleInline(admin.TabularInline):
     model = DelegationRule
     fields = ('path', 'user', 'priority')
-
 
 class ProjectAdmin(admin.ModelAdmin):
     list_display = ('name', 'linkname', 'listid', 'listemail')
@@ -129,3 +128,8 @@ admin.site.register(Bundle, BundleAdmin)
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name',)
 admin.site.register(Tag, TagAdmin)
+
+class APITokenAdmin(admin.ModelAdmin):
+    list_display = ('name', 'user', 'state')
+admin.site.register(APIToken, APITokenAdmin)
+

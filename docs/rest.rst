@@ -59,6 +59,34 @@ total number of objects while ``next`` and ``previous`` will hold URLs to the
 next and previous pages. It's possible to change the number of elements per
 page with the ``perpage`` GET parameter, with a limit of 100 elements per page.
 
+API Authentication
+------------------
+
+APIToken
+~~~~~~~~
+
+To use APIToken authentication scheme you'll need to provide it
+in Authorization request headers.
+If authentication fails you will get a `401` response and the body
+will contain the failure reason.
+
+    .. sourcecode:: http
+
+        GET /api/1.0/ HTTP/1.1
+        Accept: application/json
+        Authorization: APIToken 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
+
+    .. sourcecode:: http
+
+        HTTP/1.1 401 UNAUTHORIZED
+        Vary: Accept
+        Content-Type: application/json
+
+        {
+            "detail": "Invalid API token"
+        }
+
+
 API Reference
 -------------
 
@@ -571,6 +599,200 @@ Patches
 ::
 
     $ curl -s http://patchwork.example.com/api/1.0/patches/42/mbox/ | git am -3
+
+APIToken
+~~~~~~~~
+
+If any of these API fails, response body contain just one field
+containing the failuare reason:
+
+    .. sourcecode:: http
+
+            POST /api/1.0/tokens/ HTTP/1.1
+            Content-Type: application/json
+            Accept: application/json
+
+            {
+                "name":"Foo"
+            }
+
+    .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, POST, HEAD, OPTIONS
+
+            {
+                "name": ["Name exists"]
+            }
+
+.. http:get:: /api/1.0/apitoken/
+
+    List all APITokens.
+
+    .. sourcecode:: http
+
+            GET /api/1.0/tokens/ HTTP/1.1
+            Accept: application/json
+
+    .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, POST, HEAD, OPTIONS
+
+            [
+                {
+                    "id": 1,
+                    "name": "JenkinsKey",
+                    "user": 1,
+                    "state": "active",
+                    "created": "2015-11-17T09:47:04.995296"
+                },
+                {
+                    "id": 2,
+                    "name": "Key2",
+                    "user": 1,
+                    "state": "active",
+                    "created": "2015-11-17T09:51:17.414646"
+                }
+            ]
+
+.. http:get:: /api/1.0/tokens/(int: apitoken_id)/
+
+    Get specific APIToken.
+
+    .. sourcecode:: http
+
+            GET /api/1.0/tokens/2/ HTTP/1.1
+            Accept: application/json
+
+    .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+
+            {
+                "id": 2,
+                "name": "Key2",
+                "user": 1,
+                "state": "active",
+                "created": "2015-11-17T09:51:17.414646"
+            }
+
+.. http:post:: /api/1.0/tokens/
+
+    Create new APIToken.
+
+    .. sourcecode:: http
+
+            POST /api/1.0/tokens/ HTTP/1.1
+            Content-Type: application/json
+            Accept: application/json
+
+            {
+                "name":"Foo"
+            }
+
+    .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, POST, HEAD, OPTIONS
+
+            {
+                "id": 3,
+                "name": "Foo",
+                "user": 1,
+                "state": "active",
+                "created": "2015-11-17T10:03:36.961686",
+                "apitoken": "0949c2ba0a8aac546ce9eb33778ea8a1f44a2e85"
+            }
+
+    **Note:** This contain the generated APIToken secret
+    which is included ONLY in this POST response.
+    You wont be able to retrieve this APIToken again.
+
+.. http:delete:: /api/1.0/tokens/(int: apitoken_id)/
+
+    Delete APIToken.
+
+    .. sourcecode:: http
+
+            DELETE /api/1.0/tokens/3/ HTTP/1.1
+            Accept: application/json
+
+    .. sourcecode:: http
+
+            HTTP/1.1 204 NO CONTENT
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+
+.. http:patch:: /api/1.0/tokens/(int: apitoken_id)/
+
+    Modify name and/or state.
+
+    .. sourcecode:: http
+
+            PATCH /api/1.0/tokens/2/ HTTP/1.1
+            Content-Type: application/json
+            Accept: application/json
+
+            {
+                "name":"Foo"
+            }
+
+    .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+
+            {
+                "id": 2,
+                "name": "Foo",
+                "user": 1,
+                "state": "Active",
+                "created": "2015-11-17T09:51:17.414646"
+            }
+
+.. http:put:: /api/1.0/tokens/(int: apitoken_id)/
+
+    Modify name and state.
+
+    .. sourcecode:: http
+
+            PUT /api/1.0/tokens/2/ HTTP/1.1
+            Content-Type: application/json
+            Accept: application/json
+
+            {
+                "name":"Foo",
+                "state":"Inactive"
+            }
+
+    .. sourcecode:: http
+
+            HTTP/1.1 200 OK
+            Content-Type: application/json
+            Vary: Accept
+            Allow: GET, PUT, PATCH, DELETE, HEAD, OPTIONS
+
+            {
+                "id": 2,
+                "name": "Foo",
+                "user": 1,
+                "state": "Inactive",
+                "created": "2015-11-17T09:51:17.414646"
+            }
+    **Note:** If state is ommited, default value will be used ("Active").
 
 API Revisions
 -------------
