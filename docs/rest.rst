@@ -202,12 +202,14 @@ Events
                 {
                 },
                 {
-                    "name": "series-new-revision",
-                    "event_time": "2015-10-20T19:49:43.895382",
-                    "series": 22,
-                    "user": null,
+                    "name": "patch-state-change",
+                    "event_time": "2016-02-18T09:30:33.853206",
+                    "series": null,
+                    "user": 1,
                     "parameters": {
-                        "revision": 1
+                        "changed_patch": 3417,
+                        "new_state": "Under Review",
+                        "previous_state": "New"
                     }
                 }
             ]
@@ -220,7 +222,7 @@ Events
                   retrieve events that haven't been seen yet.
 
 Each event type has some ``parameters`` specific to that event. At the moment,
-only one event is possible:
+two events are possible:
 
 - **series-new-revision**: This event corresponds to patchwork receiving a new
   revision of a series, should it be the initial submission or subsequent
@@ -234,6 +236,7 @@ only one event is possible:
   ``series`` and ``revision`` can be used to retrieve the corresponding
   patches.
 
+- **patch-state-change**: This event corresponds to patchwork receiving a patch state change, either automatic or manually performed by an authorized user, who will be identified by its patchwork-user id.
 
 Series
 ~~~~~~
