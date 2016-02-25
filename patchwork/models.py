@@ -31,6 +31,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.six import add_metaclass
 import jsonfield
+import threadlocalrequest
 
 from patchwork.parser import hash_patch, extract_tags
 
@@ -682,6 +683,7 @@ class EventLog(models.Model):
     series = models.ForeignKey(Series)
     user = models.ForeignKey(User, null=True)
     parameters = jsonfield.JSONField(null=True)
+    patch = models.ForeignKey(Patch, null=True)
 
     class Meta:
         ordering = ['-event_time']
@@ -809,12 +811,20 @@ class PatchChangeNotification(models.Model):
     orig_state = models.ForeignKey(State)
 
 
+def find_series_for_patch(patch):
+    try:
+        revision = SeriesRevisionPatch.objects.filter(patch=patch)[0].revision
+        return revision.series
+    except:
+        return None
+
+
 def _patch_change_callback(sender, instance, **kwargs):
     # we only want notification of modified patches
     if instance.pk is None:
         return
 
-    if instance.project is None or not instance.project.send_notifications:
+    if instance.project is None:
         return
 
     try:
@@ -823,8 +833,31 @@ def _patch_change_callback(sender, instance, **kwargs):
         return
 
     # If there's no interesting changes, abort without creating the
-    # notification
+    # notification or log
     if orig_patch.state == instance.state:
+        return
+
+    # If state changed, log the event
+    event_state_change = Event.objects.get(name='patch-state-change')
+    curr_user = threadlocalrequest.get_current_user()
+    previous_state = str(orig_patch.state)
+    new_state = str(instance.state)
+    changed_patch = Patch.objects.get(pk=instance.pk)
+
+    # Do not log patch-state-change events for Patches that are not part of a
+    # Series (ie patches older than the introduction of Series)
+    series = find_series_for_patch(orig_patch)
+    if series:
+        log = EventLog(event=event_state_change,
+                      user=curr_user,
+                      series_id=series.id,
+                      patch=changed_patch,
+                      parameters={'previous_state': previous_state,
+                                  'new_state': new_state,
+                                 })
+        log.save()
+
+    if not instance.project.send_notifications:
         return
 
     notification = None
