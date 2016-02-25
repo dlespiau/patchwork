@@ -380,6 +380,50 @@ var pw = (function() {
         return o;
     };
 
+    /* a specialized filter for the search input */
+    exports.create_search_filter = function(config) {
+        var o = {};
+
+        $.extend(o, config);
+        $.extend(o, filter_mixin);
+
+        o.refresh_active = function() {
+            if (this.is_active) {
+                $('#' + this.name + '-filter .btn-link').fadeIn();
+            } else {
+                $('#' + this.name + '-filter .btn-link').fadeOut();
+            }
+        };
+
+        /* install a few call backs */
+        $('#' + o.name + '-form').submit(function(e) {
+            e.preventDefault();
+            if (!o.can_submit())
+                return;
+
+            o.set_filter(o.table);
+            o.table.refresh();
+            o.set_active(true);
+        });
+
+        $('#' + o.name + '-filter .btn-default').click(function(e) {
+            $('#' + o.name + '-form').submit();
+        });
+
+        $('#' + o.name + '-filter .btn-link').click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            o._clear_filter();
+        });
+
+        /* initialize the filter */
+        o.init();
+        o.clear_filter(o.table);
+        o.set_active(false);
+        o.table.add_filter(o);
+
+    };
+
     /*
      * table: the table the action applies to
      * name: name of the action, used to lookup HTML elements

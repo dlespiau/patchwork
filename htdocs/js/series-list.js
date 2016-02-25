@@ -234,6 +234,29 @@ $(function () {
         },
     });
 
+    /* tests filter */
+    pw.create_search_filter({
+        table: series_table,
+        name: 'search',
+        init: function() {
+            this.input = $('#search-series');
+        },
+        set_filter: function(table) {
+            table.set_filter('name', this.input.val());
+        },
+        clear_filter: function(table) {
+            this.input.val('');
+            table.set_filter('name', null);
+        },
+        can_submit: function() {
+            var val = this.input.val();
+            return val && val.length > 0;
+        },
+        humanize: function() {
+            return 'containing "' + this.input.val() + '"';
+        },
+    });
+
     /* reviewer action */
     pw.create_action({
         table: series_table,
