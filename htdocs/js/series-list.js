@@ -177,6 +177,63 @@ $(function () {
         },
     });
 
+    /* tests filter */
+    pw.create_filter({
+        table: series_table,
+        name: 'tests',
+        init: function() {
+            var _this = this;
+
+            this.success = $('#tests-success');
+            this.warning = $('#tests-warning');
+            this.failure = $('#tests-failure');
+
+            $('#tests-filter input:checkbox').change(function() {
+                _this.refresh_apply();
+            });
+        },
+        _collect_states: function() {
+            var filters = [];
+
+            if (this.success.prop('checked'))
+                filters.push('success');
+            if (this.warning.prop('checked'))
+                filters.push('warning');
+            if (this.failure.prop('checked'))
+                filters.push('failure');
+
+            return filters;
+        },
+        set_filter: function(table) {
+            var filters = this._collect_states();
+
+            table.set_filter('test_state', filters.join(','));
+        },
+        clear_filter: function(table) {
+            this.success.prop('checked', false);
+            this.warning.prop('checked', false);
+            this.failure.prop('checked', false);
+            table.set_filter('test_state', null);
+        },
+        can_submit: function() {
+            return this.success.prop('checked') ||
+                   this.warning.prop('checked') ||
+                   this.failure.prop('checked');
+        },
+        humanize: function() {
+            var filters = this._collect_states();
+
+            if (filters.length == 1)
+                return 'with test result "' + filters[0] + '"';
+            if (filters.length == 2)
+                return 'with test result "' + filters[0] + '" or "' +
+                    filters[1] + '"';
+            if (filters.length == 3)
+                return 'with test result "' + filters[0] + '", "' +
+                    filters[1] + '" or "' + filters[2] + '"';
+        },
+    });
+
     /* reviewer action */
     pw.create_action({
         table: series_table,
