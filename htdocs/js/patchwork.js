@@ -290,6 +290,22 @@ var pw = (function() {
         },
     };
 
+    var filter_mixin = {
+        set_active: function(val) {
+            if (val == this.is_active)
+                return;
+
+            this.is_active = val;
+            this.refresh_active();
+        },
+
+        _clear_filter: function() {
+            this.clear_filter(this.table);
+            this.table.refresh();
+            this.set_active(false);
+        },
+    };
+
     /*
      * table: the table the filter applies to
      * name: name of the filter, used to lookup HTML elements
@@ -306,6 +322,7 @@ var pw = (function() {
         var o = {};
 
         $.extend(o, config);
+        $.extend(o, filter_mixin);
         $.extend(o, toolbar_mixin);
 
         o.refresh_apply = function() {
@@ -329,14 +346,6 @@ var pw = (function() {
             }
         };
 
-        o.set_active = function(val) {
-            if (val == o.is_active)
-                return;
-
-            o.is_active = val;
-            o.refresh_active();
-        };
-
         /* initialize the filter */
         o.init();
         o.clear_filter(o.table);
@@ -351,12 +360,6 @@ var pw = (function() {
 
             o.set_active(true);
         });
-
-        o._clear_filter = function() {
-            o.clear_filter(this.table);
-            this.table.refresh();
-            o.set_active(false);
-        };
 
         $('#clear-' + o.name + '-filter').tooltip();
         $('#clear-' + o.name + '-filter').click(function(e) {
