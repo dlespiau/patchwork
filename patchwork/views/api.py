@@ -158,27 +158,7 @@ class ListMixin(object):
 
 class SeriesFilter(django_filters.FilterSet):
 
-    def submitted_since_filter(queryset, date):
-        if date:
-            queryset = queryset.filter(submitted__gt=date)
-        return queryset
-
-    def updated_since_filter(queryset, date):
-        if date:
-            queryset = queryset.filter(last_updated__gt=date)
-        return queryset
-
-    def submitted_before_filter(queryset, date):
-        if date:
-            queryset = queryset.filter(submitted__lte=date)
-        return queryset
-
-    def updated_before_filter(queryset, date):
-        if date:
-            queryset = queryset.filter(last_updated__lte=date)
-        return queryset
-
-    def submitter_filter(self, queryset, submitter):
+    def filter_submitter(self, queryset, submitter):
         try:
             submitter = int(submitter)
             queryset = queryset.filter(submitter=submitter)
@@ -188,7 +168,7 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(submitter__in=people)
         return queryset
 
-    def reviewer_filter(queryset, reviewer):
+    def filter_reviewer(self, queryset, reviewer):
         try:
             reviewer = int(reviewer)
             queryset = queryset.filter(reviewer=reviewer)
@@ -197,7 +177,7 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(reviewer__isnull=True)
         return queryset
 
-    def test_state_filter(queryset, test_state):
+    def filter_test_state(self, queryset, test_state):
         try:
             state = TestState.from_string(test_state)
             queryset = queryset.filter(last_revision__test_state=state)
@@ -207,14 +187,17 @@ class SeriesFilter(django_filters.FilterSet):
                         last_revision__test_state__isnull=True)
         return queryset
 
-    submitted_since = django_filters.CharFilter(action=submitted_since_filter)
-    updated_since = django_filters.CharFilter(action=updated_since_filter)
-    submitted_before = django_filters.CharFilter(
-        action=submitted_before_filter)
-    updated_before = django_filters.CharFilter(action=updated_before_filter)
-    submitter = django_filters.MethodFilter(action='submitter_filter')
-    reviewer = django_filters.MethodFilter(action=reviewer_filter)
-    test_state = django_filters.MethodFilter(action=test_state_filter)
+    submitted_since = django_filters.CharFilter(name='submitted',
+                                                lookup_type='gt')
+    updated_since = django_filters.CharFilter(name='last_updated',
+                                              lookup_type='gt')
+    submitted_before = django_filters.CharFilter(name='submitted',
+                                                 lookup_type='lte')
+    updated_before = django_filters.CharFilter(name='last_updated',
+                                              lookup_type='lte')
+    submitter = django_filters.MethodFilter()
+    reviewer = django_filters.MethodFilter()
+    test_state = django_filters.MethodFilter()
 
     class Meta:
         model = Series
