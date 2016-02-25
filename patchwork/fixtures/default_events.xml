@@ -3,4 +3,7 @@
   <object pk="1" model="patchwork.event">
     <field type="CharField" name="name">series-new-revision</field>
   </object>
+  <object pk="2" model="patchwork.event">
+    <field type="CharField" name="name">patch-state-change</field>
+  </object>
 </django-objects>
