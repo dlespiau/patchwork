@@ -178,11 +178,13 @@ var pw = (function() {
             }
 
             var text, count = this.count();
-            if (descriptions.length === 0)
+            if (descriptions.length === 0) {
                 text = "Showing all " + count + " " + this.name;
-            else {
+                $(this.selector + '-showall').hide();
+            } else {
                 text = "Showing " + count + " " + this.name + ' ';
                 text += descriptions.join(', ');
+                $(this.selector + '-showall').show();
             }
             this.set_info(text);
         };
@@ -275,6 +277,20 @@ var pw = (function() {
                 o._for_each_checkbox(function() {
                     o._deselect_row($(this));
                 });
+        });
+
+        /* 'Show all' link */
+        $(o.selector + '-showall').click(function() {
+            for (var i = 0; i < o.filters.length; i++) {
+                var filter = o.filters[i];
+
+                if (!filter.is_active)
+                    continue;
+
+                filter.clear_filter(o);
+                filter.set_active(false);
+            }
+            o.refresh();
         });
 
         return o;
