@@ -292,6 +292,8 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
             ]
         }
 
+    :query name: Filter series by name.
+
     :query submitter: Filter series by submitter ``id``. ``self`` can be used
                       as a special value meaning the current logged in user.
 
@@ -316,7 +318,8 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
 
     :query test_state: Filter series by test state. Possible values are
                        ``pending``, ``success``, ``warning``, ``failure`` or
-                       ``null`` series that don't have any test result.
+                       ``null`` series that don't have any test result. It's
+                       also possible to give a comma separated list of states.
 
 
 .. http:get:: /api/1.0/series/
