@@ -23,7 +23,7 @@ from django import forms
 from django.contrib import admin
 
 from patchwork.models import (Project, Person, UserProfile, State, Patch,
-                              Comment, Bundle, Tag, Test, TestResult,
+                              Comment, Bundle, Tag, EventLog, Test, TestResult,
                               DelegationRule, Series, SeriesRevision)
 
 
@@ -102,6 +102,18 @@ class CommentAdmin(admin.ModelAdmin):
     search_fields = ('patch__name', 'submitter__name', 'submitter__email')
     date_hierarchy = 'date'
 admin.site.register(Comment, CommentAdmin)
+
+
+class EventAdmin(admin.ModelAdmin):
+    list_display = ('event_name', 'project_name', 'series')
+    list_filter = ('series__project', 'event__name')
+
+    def project_name(self, log):
+        return log.series.project.name
+
+    def event_name(self, log):
+        return log.event.name
+admin.site.register(EventLog, EventAdmin)
 
 
 class TestAdmin(admin.ModelAdmin):
