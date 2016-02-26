@@ -26,13 +26,13 @@ Contributor to
 <div class="leftcol">
 <div class="box">
  <h2>Todo</h2>
-{% if user.profile.n_todo_patches %}
+{% if user.profile.n_todo %}
  <p>Your <a href="{% url 'patchwork.views.user.todo_lists' %}">todo
-  list</a> contains {{ user.profile.n_todo_patches }}
-  patch{{ user.profile.n_todo_patches|pluralize:"es" }}.</p>
+  list</a> contains {{ user.profile.n_todo }}
+  patch{{ user.profile.n_todo|pluralize:"es" }}.</p>
 {% else %}
- <p>Your todo list contains patches that have been delegated to you. You
-  have no items in your todo list at present.</p>
+ <p>Your todo list contains patches and series that have been assigned to you.
+    You have no items in your todo list at present.</p>
 {% endif %}
 </div>
 

@@ -39,6 +39,7 @@
 {% endif  %}
 {% if project %}
             , project: {
+                pk: {{ project.pk }},
                 name: '{{ project.linkname }}',
                 is_editable: {{ is_editable|default:"false" }},
             },
@@ -100,14 +101,14 @@
 {% if user.is_authenticated %}
      <li class="dropdown">
        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-         <span class="badge">{{ user.profile.n_todo_patches }}</span>
+         <span class="badge">{{ user.profile.n_todo }}</span>
          <strong>{{ user.username }}</strong>&nbsp;<span class="caret"></span>
        </a>
        <ul class="dropdown-menu" role="menu">
          <li>
            <a href="{% url 'patchwork.views.user.todo_lists' %}">
              Reviews pending
-             <span class="badge">{{ user.profile.n_todo_patches }}</span>
+             <span class="badge">{{ user.profile.n_todo }}</span>
            </a>
          </li>
 {% if user.is_staff %}

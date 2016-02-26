@@ -4,14 +4,33 @@
 
 {% block title %}{{ user }}'s todo list{% endblock %}
 
+{% block headers %}
+<script language="JavaScript" type="text/javascript">
+$(function () {
+    pw.setup_series_list('#serieslist', '/series/', {
+        project: pw.project.pk,
+        reviewer: pw.user.pk,
+    });
+});
+</script>
+{% endblock %}
+
 {% block body %}
 <h1>TODO</h1>
 
-<p>A Patchwork Todo-list contains patches that are assigned to you, and
-are in an "action required" state
-({% for state in action_required_states %}{% if forloop.last and not forloop.first %} or {% endif %}{{ state }}{% if not forloop.last and not forloop.first %}, {%endif %}{% endfor %}), and are not archived.
-</p>
+<p>The Patchwork TODO-list contains patches and series that are assigned to you
+   and need your attention. </p>
+
+{% if n_series %}
+<h2>Series</h2>
+
+{% include "patchwork/series-list-table.html" %}
+{% endif %}
+
+{% if n_patches %}
+<h2>Patches</h2>
 
 {% include "patchwork/patch-list.html" %}
+{% endif %}
 
 {% endblock %}

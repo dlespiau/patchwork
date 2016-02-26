@@ -164,8 +164,8 @@ class UserProfile(models.Model):
     def sync_person(self):
         pass
 
-    def n_todo_patches(self):
-        return self.todo_patches().count()
+    def n_todo(self):
+        return self.todo_patches().count() + self.todo_series().count()
 
     def todo_patches(self, project=None):
 
@@ -179,6 +179,16 @@ class UserProfile(models.Model):
             .filter(delegate=self.user) \
             .filter(state__in=State.objects.filter(action_required=True)
                     .values('pk').query)
+        return qs
+
+    def todo_series(self, project=None):
+        # filter on project, if necessary
+        if project:
+            qs = Series.objects.filter(project=project)
+        else:
+            qs = Series.objects
+
+        qs = qs.filter(reviewer=self.user)
         return qs
 
     def __str__(self):

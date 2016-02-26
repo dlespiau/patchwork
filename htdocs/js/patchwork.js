@@ -572,6 +572,7 @@ var pw = (function() {
         ctx.api_base_url = ctx.base_url + '/api/1.0';
 
         exports.user = ctx.user;
+        exports.project = ctx.project;
     };
 
     exports.init = function(init_ctx) {
@@ -682,17 +683,20 @@ var pw = (function() {
         }).data('selectize');
     };
 
-    exports.setup_series_list = function(selector, url, ordering) {
+    exports.setup_series_list = function(selector, url, params) {
         var table = $(selector);
 
-        if (typeof ordering == 'undefined')
-            ordering = '-last_updated';
+        var all_params = {
+            ordering: '-last_updated',
+            related: 'expand',
+        };
+        $.extend(all_params, params);
 
         if (typeof url == 'undefined') {
             url = '/projects/' + ctx.project.name + '/series/';
             if (!window.location.search)
                 history.replaceState(null, null,
-                                     '?' + $.param({ ordering: ordering }));
+                        '?' + $.param({ ordering: all_params.ordering }));
         }
 
         exports.table = ctx.table = create_table({
@@ -709,9 +713,7 @@ var pw = (function() {
                 'Tests':'test_state',
             },
             'api_url': ctx.api_base_url + url,
-            'api_params': {
-                related: 'expand',
-            }
+            'api_params': all_params,
         });
 
         table.bind('dynatable:preinit', function(e, dynatable) {

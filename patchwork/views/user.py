@@ -194,10 +194,16 @@ def todo_lists(request):
 
     for project in Project.objects.all():
         patches = request.user.profile.todo_patches(project=project)
-        if not patches.count():
+        series = request.user.profile.todo_series(project=project)
+
+        n_series = series.count()
+        n_patches = patches.count()
+        if (n_series + n_patches) == 0:
             continue
 
-        todo_lists.append({'project': project, 'n_patches': patches.count()})
+        todo_lists.append({'project': project,
+                           'n_series': n_series,
+                           'n_patches': n_patches})
 
     if len(todo_lists) == 1:
         return HttpResponseRedirect(
@@ -215,6 +221,7 @@ def todo_lists(request):
 def todo_list(request, project_id):
     project = get_object_or_404(Project, linkname=project_id)
     patches = request.user.profile.todo_patches(project=project)
+    series = request.user.profile.todo_series(project=project)
     filter_settings = [(DelegateFilter,
                         {'delegate': request.user})]
 
@@ -226,4 +233,6 @@ def todo_list(request, project_id):
 
     context['action_required_states'] = \
         State.objects.filter(action_required=True).all()
+    context['n_patches'] = patches.count()
+    context['n_series'] = series.count()
     return render_to_response('patchwork/todo-list.html', context)

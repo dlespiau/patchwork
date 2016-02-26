@@ -7,18 +7,20 @@
 <h1>TODO</h1>
 
 {% if todo_lists %}
-<p>You have multiple todo lists. Each todo list contains patches for a single
- project.</p>
+<p>You have multiple todo lists. Each todo list contains series and patches for
+   a single project.</p>
 <table class="vertical">
  <tr>
-  <th>project</th>
-  <th>patches</th>
+  <th>Project</th>
+  <th>Series</th>
+  <th>Patches</th>
  </tr>
 {% for todo_list in todo_lists %}
  <tr>
   <td><a
    href="{% url 'patchwork.views.user.todo_list' project_id=todo_list.project.linkname %}"
     >{{ todo_list.project.name }}</a></td>
+  <td class="numberformat">{{ todo_list.n_series }}</td>
   <td class="numberformat">{{ todo_list.n_patches }}</td>
  </tr>
 {% endfor %}
