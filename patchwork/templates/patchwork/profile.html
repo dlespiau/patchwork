@@ -29,7 +29,7 @@ Contributor to
 {% if user.profile.n_todo %}
  <p>Your <a href="{% url 'patchwork.views.user.todo_lists' %}">todo
   list</a> contains {{ user.profile.n_todo }}
-  patch{{ user.profile.n_todo|pluralize:"es" }}.</p>
+  item{{ user.profile.n_todo|pluralize:"s" }}.</p>
 {% else %}
  <p>Your todo list contains patches and series that have been assigned to you.
     You have no items in your todo list at present.</p>
