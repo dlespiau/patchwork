@@ -292,6 +292,8 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
             ]
         }
 
+    :query project: Filter series by project ``id``.
+
     :query name: Filter series by name.
 
     :query submitter: Filter series by submitter ``id``. ``self`` can be used
