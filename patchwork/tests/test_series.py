@@ -20,8 +20,10 @@
 import os
 
 from django.test import TestCase
-from patchwork.models import Patch, Series, SeriesRevision, Project, \
-    SERIES_DEFAULT_NAME, EventLog, User, Person
+
+from patchwork.models import (Patch, Series, SeriesRevision, Project,
+                              SERIES_DEFAULT_NAME, EventLog, User, Person,
+                              State)
 from patchwork.tests.utils import read_mail
 from patchwork.tests.utils import defaults, TestSeries
 
@@ -690,3 +692,21 @@ class EventLogIncompleteTest(MultipleMailCoverLetterSeriesIncomplete):
     def testNoNewSeriesIfIncomplete(self):
         logs = EventLog.objects.all()
         self.assertEquals(logs.count(), 0)
+
+#
+# patch-state-change event tests
+#
+
+
+class StateChangeEventLogTest(Series0010):
+    def testStateChangeLog(self):
+        patches = Patch.objects.all()
+        states = [patch.state.pk for patch in patches]
+        state = State.objects.exclude(pk__in = states)[0]
+        update_count = 0
+        for patch in patches:
+            patch.state = state
+            patch.save()
+            update_count += 1
+        stateChangeLogCount = EventLog.objects.filter(event_id=2).count()
+        self.assertEquals(update_count, stateChangeLogCount)
