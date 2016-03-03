@@ -597,7 +597,7 @@ class GitPatchwork(object):
         return (series, revision)
 
     def do_apply(self):
-	try:
+        try:
             (series, revision) = self.cmd_get_series_revision()
             print('Applying series: %s (rev %d)' % (series.name,
                                                     series.version))
