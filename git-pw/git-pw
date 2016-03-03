@@ -648,17 +648,24 @@ class GitPatchwork(object):
         params = {
             'ordering': '-last_updated'
         }
+        filter_applied = False
 
         # since related parameters
         if self.cmd.submitted_since:
+            filter_applied = True
             params['ordering'] = 'submitted'
             params['submitted_since'] = self.cmd.submitted_since
         elif self.cmd.updated_since:
+            filter_applied = True
             params['ordering'] = 'last_updated'
             params['updated_since'] = self.cmd.updated_since
 
         if self.cmd.test_state:
+            filter_applied = True
             params['test_state'] = self.cmd.test_state
+        if self.cmd.title:
+            filter_applied = True
+            params['name'] = self.cmd.title
 
         series_list = []
         try:
@@ -672,6 +679,13 @@ class GitPatchwork(object):
             die('No project with link name %s.' % project.linkname)
 
         # print the series
+
+        if len(series_list) == 0:
+            if filter_applied:
+                print('No series found!')
+            else:
+                print('No series in this project yet!')
+            return
 
         # JSON
         if self.cmd.json:
@@ -932,6 +946,8 @@ if __name__ == '__main__':
     filter_group.add_argument('--test-state', metavar='test_state',
         type=str, choices=TestState.choices(),
         help='retrieve series with a particular test state')
+    filter_group.add_argument('title', type=str, metavar='str', nargs='?',
+        help='substring to search for series by name')
 
     default_series_fields = ['id', 'name', 'n_patches', 'submitter',
                              'last_updated']
