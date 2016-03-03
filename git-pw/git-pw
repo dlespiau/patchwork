@@ -925,8 +925,13 @@ if __name__ == '__main__':
     since_group.add_argument('--updated-since', '-u', metavar='timestamp',
         type=str,
         help='retrieve updated series newer than the given ISO 8601 time')
-    since_group.add_argument('-n', metavar='n', type=int, default=-1,
+
+    filter_group = list_parser.add_argument_group()
+    filter_group.add_argument('-n', metavar='n', type=int, default=-1,
         help='number of series to retrieve')
+    filter_group.add_argument('--test-state', metavar='test_state',
+        type=str, choices=TestState.choices(),
+        help='retrieve series with a particular test state')
 
     default_series_fields = ['id', 'name', 'n_patches', 'submitter',
                              'last_updated']
@@ -936,10 +941,6 @@ if __name__ == '__main__':
     format_group.add_argument('--fields', '-f', metavar='fields', nargs='+',
         type=str, choices=Series.FIELDS, default=default_series_fields,
         help='list of fields to display')
-
-    list_parser.add_argument('--test-state', metavar='test_state',
-         type=str, choices=TestState.choices(),
-         help='retrieve series with a particular test state')
 
     git_pw = GitPatchwork()
     parser.parse_args(namespace=git_pw.cmd)
