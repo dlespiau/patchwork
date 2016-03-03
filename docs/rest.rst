@@ -204,10 +204,10 @@ Events
                 {
                     "name": "patch-state-change",
                     "event_time": "2016-02-18T09:30:33.853206",
-                    "series": null,
+                    "series": 285,
+                    "patch": 685
                     "user": 1,
                     "parameters": {
-                        "changed_patch": 3417,
                         "new_state": "Under Review",
                         "previous_state": "New"
                     }
