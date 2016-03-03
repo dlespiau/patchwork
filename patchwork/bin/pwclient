@@ -548,7 +548,7 @@ def main():
         except:
             action_parser.error("Invalid maximum count '%s'" % args.get('n'))
 
-    if args.get('N') != None:
+    if args.get('N') is not None:
         try:
             filt.add("max_count", 0 - args.get('N'))
         except:
