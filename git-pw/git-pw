@@ -675,9 +675,10 @@ class GitPatchwork(object):
                                            n_items=self.cmd.n):
                 series_list.append(series)
         except HttpError as e:
-            if e.status_code != 404:
-                raise
-            die('No project with link name %s.' % project.linkname)
+            e.handle_error({
+                404: "No project with link name %s." % project.linkname
+            })
+            raise
 
         # print the series
 
