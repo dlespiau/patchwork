@@ -83,6 +83,7 @@ class HttpError(Exception):
     def handle_error(self, msg_overrides={}):
         msg = {
             404: "Couldn't find object",
+            500: "Internal error, you found a bug in Patchwork!"
         }
         msg.update(msg_overrides)
 
