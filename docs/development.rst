@@ -127,7 +127,7 @@ PW_TEST_DB_PASS
   Password to access the database with. Defaults to ``password``.
 
 PW_TEST_DB_TYPE
-  Type of database to use. Either ``mysql`` (default) or ``postgresql``.
+  Type of database to use. Either ``mysql`` (default) or ``postgres``.
 
 Running Tests
 -------------
