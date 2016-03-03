@@ -656,7 +656,8 @@ class GitPatchwork(object):
         elif self.cmd.updated_since:
             params['ordering'] = 'last_updated'
             params['updated_since'] = self.cmd.updated_since
-        elif self.cmd.test_state:
+
+        if self.cmd.test_state:
             params['test_state'] = self.cmd.test_state
 
         series_list = []
