@@ -673,6 +673,7 @@ class EventLog(models.Model):
     series = models.ForeignKey(Series)
     user = models.ForeignKey(User, null=True)
     parameters = jsonfield.JSONField(null=True)
+    patch = models.ForeignKey(Patch, null=True)
 
     class Meta:
         ordering = ['-event_time']
@@ -820,6 +821,7 @@ def _patch_change_callback(sender, instance, **kwargs):
     curr_user = ThreadLocalRequest.get_current_user()
     previous_state = str(orig_patch.state)
     new_state = str(instance.state)
+    changed_patch = Patch.objects.get(pk=instance.pk)
 
     # Do not log patch-state-change events for Patches that
     # are not part of a Series
@@ -828,8 +830,8 @@ def _patch_change_callback(sender, instance, **kwargs):
         log = EventLog(event=event_state_change,
                       user=curr_user,
                       series_id=series.id,
-                      parameters={'changed_patch': instance.pk,
-                                  'previous_state': previous_state,
+                      patch=changed_patch,
+                      parameters={'previous_state': previous_state,
                                   'new_state': new_state,
                                     })
         log.save()
