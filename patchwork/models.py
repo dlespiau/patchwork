@@ -707,10 +707,13 @@ class Test(models.Model):
 
     # send result mail on any state (but pending)
     CONDITION_ALWAYS = 0
-    # only send result on warning/failure
-    CONDITION_ON_FAILURE = 1
+    # send result mail on warning or failure
+    CONDITION_ON_WARNING = 1
+    # send result mail on error
+    CONDITION_ON_FAILURE = 2
     CONDITION_CHOICES = (
         (CONDITION_ALWAYS, 'always'),
+        (CONDITION_ON_WARNING, 'on warning/failure'),
         (CONDITION_ON_FAILURE, 'on failure'),
     )
 

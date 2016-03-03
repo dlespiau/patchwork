@@ -413,9 +413,14 @@ class ResultMixin(object):
             if instance.state == TestState.STATE_PENDING:
                 to = []
 
-            if (instance.test.mail_condition == Test.CONDITION_ON_FAILURE and
-                instance.state not in (TestState.STATE_WARNING,
-                                       TestState.STATE_FAILURE)):
+            elif (instance.test.mail_condition ==
+                  Test.CONDITION_ON_WARNING and
+                  instance.state not in (TestState.STATE_WARNING,
+                                         TestState.STATE_FAILURE)):
+                to = []
+
+            elif (instance.test.mail_condition == Test.CONDITION_ON_FAILURE and
+                  instance.state != TestState.STATE_FAILURE):
                 to = []
 
         if to:

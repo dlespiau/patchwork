@@ -666,38 +666,30 @@ class TestResultTest(APITestBase):
         for url in self.test_urls:
             self.assertEqual(len(mail.outbox), 0)
 
-            self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
-            self._post_result(url, 'super test', 'success')
-            self.assertEqual(len(mail.outbox), 1)
-            mail.outbox = []
+            cases = (
+                # condition, test state, number of mail
+                (Test.CONDITION_ALWAYS, 'pending', 0),
+                (Test.CONDITION_ALWAYS, 'success', 1),
+                (Test.CONDITION_ALWAYS, 'warning', 1),
+                (Test.CONDITION_ALWAYS, 'failure', 1),
+                (Test.CONDITION_ON_WARNING, 'pending', 0),
+                (Test.CONDITION_ON_WARNING, 'success', 0),
+                (Test.CONDITION_ON_WARNING, 'warning', 1),
+                (Test.CONDITION_ON_WARNING, 'failure', 1),
+                (Test.CONDITION_ON_FAILURE, 'pending', 0),
+                (Test.CONDITION_ON_FAILURE, 'success', 0),
+                (Test.CONDITION_ON_FAILURE, 'warning', 0),
+                (Test.CONDITION_ON_FAILURE, 'failure', 1),
+            )
 
-            self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
-            self._post_result(url, 'super test', 'pending')
-            self.assertEqual(len(mail.outbox), 0)
-
-            self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
-            self._post_result(url, 'super test', 'success')
-            self.assertEqual(len(mail.outbox), 0)
-
-            self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
-            self._post_result(url, 'super test', 'pending')
-            self.assertEqual(len(mail.outbox), 0)
-
-            self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
-            self._post_result(url, 'super test', 'warning')
-            self.assertEqual(len(mail.outbox), 1)
-            mail.outbox = []
-
-            self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ON_FAILURE)
-            self._post_result(url, 'super test', 'failure')
-            self.assertEqual(len(mail.outbox), 1)
-            mail.outbox = []
+            for case in cases:
+                cond, state, n = case
+                self._configure_test(url, 'super test',
+                        Test.RECIPIENT_SUBMITTER, cond)
+                self._post_result(url, 'super test', state)
+                self.assertEqual(len(mail.outbox), n,
+                                 "cond %d, '%s', %d mail" % (cond, state, n))
+                mail.outbox = []
 
     def testMailSubject(self):
         sub_tests = [

@@ -94,9 +94,11 @@ as well:
 **always**
   Always send an email, disregarding the status of the test result.
 
-**on failure**
+**on warning/failure**
   Only send an email when the test has some warnings or errors.
 
+**on failure**
+  Only send an email when the test has some errors.
 
 |git-pw| helper commands
 ------------------------
