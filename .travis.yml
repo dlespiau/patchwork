@@ -1,0 +1,30 @@
+language: python
+python:
+    - 2.7
+
+cache: pip
+
+addons:
+    apt:
+        packages:
+        - libmysqlclient-dev
+
+services:
+    - mysql
+
+install:
+    - npm install jshint
+    - npm install karma
+    - npm install karma-jasmine
+    - npm install karma-firefox-launcher
+    - export DISPLAY=:99.0
+    - sh -e /etc/init.d/xvfb start
+    - sleep 3 # give xvfb some time to start
+
+before_script:
+    - mysql -e 'create database patchwork;'
+    - export SELENIUM_BROWSER=firefox
+    - export PW_TEST_DB_USER=travis
+    - export PW_TEST_DB_PASS=""
+
+script: ./tests/test_all.sh

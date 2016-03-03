@@ -15,6 +15,7 @@
 tags
 TAGS
 !.gitignore
+!.travis.yml
 
 # configuration files
 patchwork/settings/production.py
