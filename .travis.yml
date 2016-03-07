@@ -26,5 +26,6 @@ before_script:
     - export SELENIUM_BROWSER=firefox
     - export PW_TEST_DB_USER=travis
     - export PW_TEST_DB_PASS=""
+    - env | grep ^TRAVIS
 
 script: ./tests/test_all.sh
