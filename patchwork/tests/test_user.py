@@ -19,7 +19,6 @@
 
 import base64
 
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.core.urlresolvers import reverse
