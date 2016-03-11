@@ -261,7 +261,7 @@ class lock(object):
             raise LockInheritanceContractViolation(
                 'inherit can only be called while lock is held')
         if self._inherited:
-            raise error.LockInheritanceContractViolation(
+            raise LockInheritanceContractViolation(
                 'inherit cannot be called while lock is already inherited')
         if self._inheritchecker is not None:
             self._inheritchecker()
