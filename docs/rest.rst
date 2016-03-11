@@ -222,6 +222,9 @@ Events
                   be used in the next query with a ``since`` parameter to only
                   retrieve events that haven't been seen yet.
 
+    :query name: Filter the events by name. This field is a comma separated
+                 list of events names.
+
 Each event type has some ``parameters`` specific to that event. At the moment,
 two events are possible:
 
@@ -597,6 +600,8 @@ API Revisions
   parameters to the list of series entry points.
 
 - Add the patch-state-change event.
+
+- Add the `name` query parameter to the /events/ entry point.
 
 **Revision 2**
 

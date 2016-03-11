@@ -491,7 +491,15 @@ class PatchResultViewSet(viewsets.ViewSet, ResultMixin):
 
 class EventFilter(django_filters.FilterSet):
 
+    def filter_name(self, queryset, event_names):
+        if not event_names:
+            return queryset
+
+        names = event_names.split(',')
+        return queryset.filter(event__name__in=names)
+
     since = django_filters.CharFilter(name='event_time', lookup_type='gt')
+    name = django_filters.MethodFilter()
 
     class Meta:
         model = EventLog

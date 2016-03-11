@@ -33,7 +33,7 @@ import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.tests.utils import TestSeries
 from patchwork.models import (
-    Series, Patch, SeriesRevision, Test, TestResult, TestState
+    Series, Patch, SeriesRevision, Test, TestResult, TestState, State
 )
 from patchwork.serializers import SeriesSerializer
 
@@ -266,6 +266,26 @@ class APITest(APITestBase):
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'since': after})
         self.assertEqual(events['count'], 0)
+
+    def testEventNameFilter(self):
+        event_names = ['series-new-revision', 'patch-state-change']
+
+        self.patch.state = State.objects.get(name='Accepted')
+        self.patch.save()
+
+        # we now have one more event than the number of 'series-new-revision'
+        # events
+        events = self.get_json('/projects/%(project_id)s/events/',
+                           params={'name': ','.join(event_names)})
+        self.assertEqual(events['count'], self.n_series + 1)
+
+        events = self.get_json('/projects/%(project_id)s/events/',
+                               params={'name': event_names[0]})
+        self.assertEqual(events['count'], self.n_series)
+
+        events = self.get_json('/projects/%(project_id)s/events/',
+                               params={'name': event_names[1]})
+        self.assertEqual(events['count'], 1)
 
     def testNumQueries(self):
         # using the related=expand parameter shouldn't make the number of
