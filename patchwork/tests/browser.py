@@ -21,14 +21,15 @@ import errno
 import os
 import time
 
-try: # django 1.7+
+try:  # django 1.7+
     from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 except:
     from django.test import LiveServerTestCase as StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException, \
-        StaleElementReferenceException, TimeoutException
+    StaleElementReferenceException, TimeoutException
+
 
 class Wait(WebDriverWait):
     """Subclass of WebDriverWait with predetermined timeout and poll
@@ -81,14 +82,16 @@ class Wait(WebDriverWait):
 
         raise TimeoutException(message)
 
+
 def mkdir(path):
     try:
         os.makedirs(path)
-    except OSError as error: # Python >2.5
+    except OSError as error:  # Python >2.5
         if error.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else:
             raise
+
 
 class SeleniumTestCase(StaticLiveServerTestCase):
     _SCREENSHOT_DIR = os.path.dirname(__file__) + '/../../selenium_screenshots'
@@ -105,7 +108,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
             self.selenium = webdriver.Firefox()
         if self.browser == 'chrome':
             self.selenium = webdriver.Chrome(
-                    service_args=["--verbose", "--log-path=selenium.log"]
+                service_args=["--verbose", "--log-path=selenium.log"]
             )
 
         mkdir(self._SCREENSHOT_DIR)
@@ -147,7 +150,7 @@ class SeleniumTestCase(StaticLiveServerTestCase):
 
     def wait_until_focused(self, selector):
         is_focused  = \
-                lambda driver: self.find(selector) == self.focused_element()
+            lambda driver: self.find(selector) == self.focused_element()
         msg = "The element matching '%s' should be focused" % selector
         Wait(self.selenium).until(is_focused, msg)
         self.screenshot()

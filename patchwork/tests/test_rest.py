@@ -33,7 +33,7 @@ import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.tests.utils import TestSeries
 from patchwork.models import (
-        Series, Patch, SeriesRevision, Test, TestResult, TestState
+    Series, Patch, SeriesRevision, Test, TestResult, TestState
 )
 from patchwork.serializers import SeriesSerializer
 
@@ -141,11 +141,11 @@ class APITestBase(test_series.Series0010):
 
     def get(self, url, params={}):
         return self.client.get('/api/1.0' + url % {
-                'project_id': self.project.pk,
-                'project_linkname': self.project.linkname,
-                'series_id': self.series.pk,
-                'version': 1,
-                'patch_id': self.patch.pk,
+            'project_id': self.project.pk,
+            'project_linkname': self.project.linkname,
+            'series_id': self.series.pk,
+            'version': 1,
+            'patch_id': self.patch.pk,
         }, params)
 
     def get_json(self, url, params={}):
@@ -162,7 +162,7 @@ class APITestBase(test_series.Series0010):
             'series_id': self.series.pk,
             'version': 1,
             'patch_id': self.patch.pk,
-            }, content_type="application/json", data=json.dumps(data),
+        }, content_type="application/json", data=json.dumps(data),
             **auth_headers)
         return (response, json.loads(response.content))
 
@@ -282,7 +282,7 @@ class APITest(APITestBase):
             ('updated_since', self.last_inserted_series.last_updated, 0),
             ('submitted_before', '2015-06-01', 1),
             ('updated_before', self.last_inserted_series.last_updated,
-                               self.n_series),
+             self.n_series),
         ]
 
         for entry_point in entry_points:
@@ -356,7 +356,7 @@ class TestResultTest(APITestBase):
             }, user=self.user)
             self.assertEqual(r.status_code, 403)
             self.assertEqual(data['detail'],
-                         "You do not have permission to perform this action.")
+                             "You do not have permission to perform this action.")
 
     def _cleanup_tests(self):
         TestResult.objects.all().delete()
@@ -384,7 +384,7 @@ class TestResultTest(APITestBase):
             }, user=self.maintainer)
             self.assertEqual(r.status_code, 400)
             self.assertEqual(data['state'], ['Select a valid choice. '
-                        'invalid is not one of the available choices.'])
+                                             'invalid is not one of the available choices.'])
 
     def testSubmitPartialTestResult(self):
         for url in self.test_urls:
@@ -532,7 +532,7 @@ class TestResultTest(APITestBase):
             self.assertEqual(len(mail.outbox), 0)
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -556,7 +556,7 @@ class TestResultTest(APITestBase):
             self.assertEqual(len(mail.outbox), 0)
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -566,7 +566,7 @@ class TestResultTest(APITestBase):
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS)
+                                 Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -579,38 +579,38 @@ class TestResultTest(APITestBase):
                       'Daniel Vetter <daniel@ffwll.ch>'
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_NONE, Test.CONDITION_ALWAYS,
-                    to_list=to_list)
+                                 Test.RECIPIENT_NONE, Test.CONDITION_ALWAYS,
+                                 to_list=to_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 0)
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
-                    to_list=to_list)
+                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
+                                 to_list=to_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
             self.assertEqual(email.to, [self.series.submitter.email_name()] +
-                                       to_list.split(','))
+                             to_list.split(','))
             self.assertEqual(email.cc, [])
 
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
-                    to_list=to_list)
+                                 Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
+                                 to_list=to_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
             self.assertEqual(email.to, [self.series.submitter.email_name()] +
-                                       to_list.split(','))
+                             to_list.split(','))
             self.assertEqual(email.cc, [self.project.listemail])
 
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_TO_LIST, Test.CONDITION_ALWAYS,
-                    to_list=to_list)
+                                 Test.RECIPIENT_TO_LIST, Test.CONDITION_ALWAYS,
+                                 to_list=to_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -622,14 +622,14 @@ class TestResultTest(APITestBase):
             cc_list = 'ville.syrjala@linux.intel.com'
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_NONE, Test.CONDITION_ALWAYS,
-                    cc_list=cc_list)
+                                 Test.RECIPIENT_NONE, Test.CONDITION_ALWAYS,
+                                 cc_list=cc_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 0)
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
-                    cc_list=cc_list)
+                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
+                                 cc_list=cc_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -639,20 +639,20 @@ class TestResultTest(APITestBase):
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
-                    cc_list=cc_list)
+                                 Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
+                                 cc_list=cc_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
             self.assertEqual(email.to, [self.series.submitter.email_name()])
             self.assertEqual(email.cc, [self.project.listemail] +
-                                       cc_list.split(','))
+                             cc_list.split(','))
 
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                    Test.RECIPIENT_TO_LIST, Test.CONDITION_ALWAYS,
-                    to_list=to_list, cc_list=cc_list)
+                                 Test.RECIPIENT_TO_LIST, Test.CONDITION_ALWAYS,
+                                 to_list=to_list, cc_list=cc_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -685,7 +685,7 @@ class TestResultTest(APITestBase):
             for case in cases:
                 cond, state, n = case
                 self._configure_test(url, 'super test',
-                        Test.RECIPIENT_SUBMITTER, cond)
+                                     Test.RECIPIENT_SUBMITTER, cond)
                 self._post_result(url, 'super test', state)
                 self.assertEqual(len(mail.outbox), n,
                                  "cond %d, '%s', %d mail" % (cond, state, n))
@@ -701,7 +701,7 @@ class TestResultTest(APITestBase):
         ]
         for test in sub_tests:
             self._configure_test(test[0], 'super test',
-                    Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
             self._post_result(test[0], 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -736,10 +736,11 @@ class TestResultTest(APITestBase):
         self.assertEqual(self.series.revisions().count(), 2)
 
         self.assertEqual(self._test_state(ss, self.series), None,
-             "'None' expected as a new revision must reset the testing state")
+                         "'None' expected as a new revision must reset the testing state")
 
 
 class ReviewerNotificationTest(APITestBase):
+
     def _set_reviewer(self, reviewer):
         if reviewer:
             reviewer = reviewer.user.pk

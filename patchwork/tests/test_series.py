@@ -21,12 +21,13 @@ import os
 
 from django.test import TestCase
 from patchwork.models import Patch, Series, SeriesRevision, Project, \
-                             SERIES_DEFAULT_NAME, EventLog, User, Person
+    SERIES_DEFAULT_NAME, EventLog, User, Person
 from patchwork.tests.utils import read_mail
 from patchwork.tests.utils import defaults, read_mail, TestSeries
 
 from patchwork.bin.parsemail import parse_mail, build_references_list, \
-                                    clean_series_name
+    clean_series_name
+
 
 class SeriesTest(TestCase):
     fixtures = ['default_states', 'default_events']
@@ -80,6 +81,7 @@ class SeriesTest(TestCase):
         logs = EventLog.objects.all()
         self.assertEquals(logs.count(), 1)
 
+
 class GeneratedSeriesTest(SeriesTest):
     project = defaults.project
 
@@ -97,7 +99,9 @@ class GeneratedSeriesTest(SeriesTest):
             self.cover_letter = None
         return (series, mails)
 
+
 class BasicGeneratedSeriesTests(GeneratedSeriesTest):
+
     def testInsertion(self):
         (series, mails) = self._create_series(3)
         series.insert(mails)
@@ -116,16 +120,20 @@ class BasicGeneratedSeriesTests(GeneratedSeriesTest):
         revision = series.revisions()[0]
         self.assertEquals(str(revision), 'Revision 1')
 
+
 class SeriesViewTest(GeneratedSeriesTest):
+
     def testSeriesIdNotInteger(self):
         response = self.client.get('/series/foo/')
         self.assertEqual(response.status_code, 404)
 
+
 class IntelGfxTest(SeriesTest):
-    project = Project(linkname = 'intel-gfx',
-                      name = 'Intel Gfx',
-                      listid = 'intel-gfx.lists.freedesktop.org',
+    project = Project(linkname='intel-gfx',
+                      name='Intel Gfx',
+                      listid='intel-gfx.lists.freedesktop.org',
                       listemail='intel-gfx@lists.freedesktop.org')
+
 
 class SingleMailSeries(IntelGfxTest):
     mails = (
@@ -137,7 +145,9 @@ class SingleMailSeries(IntelGfxTest):
     root_msgid = '<1400748280-26449-1-git-send-email-chris@chris-wilson.co.uk>'
     cover_letter = None
 
+
 class Series0001(SingleMailSeries):
+
     def testInsertion(self):
         """A single patch is a series of 1 patch"""
 
@@ -147,6 +157,7 @@ class Series0001(SingleMailSeries):
         patches = Patch.objects.all()
         patch = patches[0]
         self.assertEquals(patch.msgid, self.root_msgid)
+
 
 class Series0010(IntelGfxTest):
     mails = (
@@ -162,7 +173,7 @@ class Series0010(IntelGfxTest):
     root_msgid = '<1400020344-17248-1-git-send-email-damien.lespiau@intel.com>'
 
     cover_letter = \
-"""With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
+        """With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
 a series introducing macros to iterate through the CRTCs instead of using
 list_for_each_entry() and mode_config.crtc_list, a tiny bit more readable and
 easier to recall.
@@ -181,11 +192,14 @@ Damien Lespiau (4):
  drivers/gpu/drm/i915/intel_pm.c      | 12 +++---
  6 files changed, 47 insertions(+), 54 deletions(-)"""
 
+
 class MultipleMailCoverLetterSeries(Series0010):
+
     def testInsertion(self):
         """A series with a cover letter and 4 patches"""
 
         self.commonInsertionChecks()
+
 
 class MultipleMailCoverLetterSeriesUnordered(Series0010):
     mails = (
@@ -203,6 +217,7 @@ class MultipleMailCoverLetterSeriesUnordered(Series0010):
 
         self.commonInsertionChecks()
 
+
 class Series0020(IntelGfxTest):
     mails = (
         '0020-multiple-mails-no-cover-letter.mbox',
@@ -215,11 +230,14 @@ class Series0020(IntelGfxTest):
     root_msgid = '<1421182013-751-1-git-send-email-kenneth@whitecape.org>'
     cover_letter = None
 
+
 class MultipleMailNoCoverLetterSeries(Series0020):
+
     def testInsertion(self):
         """A series with 3 patches, but no cover letter"""
 
         self.commonInsertionChecks()
+
 
 class ReferencesListTest(TestCase):
     fixtures = ['default_states', 'default_events']
@@ -290,6 +308,8 @@ class ReferencesListTest(TestCase):
 #
 # New version of a single patch
 #
+
+
 class Series0030(IntelGfxTest):
     mails = (
         '0030-patch-v2-in-reply.mbox',
@@ -301,7 +321,9 @@ class Series0030(IntelGfxTest):
     root_msgid = '<1427726038-19718-1-git-send-email-deepak.s@linux.intel.com>'
     series_name = 'drm/i915: Clean-up idr table if context create fails.'
 
+
 class UpdatedPatchTest(Series0030):
+
     def testNewRevision(self):
         series = Series.objects.all()[0]
         self.assertEquals(series.last_revision.version, 2)
@@ -322,9 +344,11 @@ class UpdatedPatchTest(Series0030):
         self.assertEquals(r.patches.count(), 1)
         p = r.patches.all()[0]
         self.assertEquals(p.msgid,
-                '<1427980954-15015-1-git-send-email-deepak.s@linux.intel.com>')
+                          '<1427980954-15015-1-git-send-email-deepak.s@linux.intel.com>')
+
 
 class SinglePatchUpdateTest(GeneratedSeriesTest):
+
     def check_revision(self, series, revision):
         self.assertEquals(revision.series_id, series.id)
         self.assertEquals(revision.root_msgid, self.root_msgid)
@@ -402,6 +426,7 @@ class SinglePatchUpdateTest(GeneratedSeriesTest):
     def testNoCoverLetterUpdateLen3Patch3(self):
         self._test_internal(3, 3, has_cover_letter=False)
 
+
 class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
     fixtures = ['default_states', 'default_events']
 
@@ -416,7 +441,8 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
         if not references:
             mail['References'] = parent_mail.get('Message-Id')
             return
-        mail['References'] = ' '.join([m.get('Message-Id') for m in references])
+        mail['References'] = ' '.join(
+            [m.get('Message-Id') for m in references])
 
     def testSinglePatchUpdatesNotSerialized(self):
         """ + patch v1
@@ -531,7 +557,7 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
         self.setParentMail(series_mails[0], reply_2)
         for mail in series_mails[1:]:
             self.setParentMail(mail, series_mails[0],
-                    references=(reply_2, series_mails[0]))
+                               references=(reply_2, series_mails[0]))
         series.insert(series_mails)
 
         series = Series.objects.all()
@@ -544,6 +570,7 @@ class SinglePatchUpdatesVariousCornerCasesTest(TestCase):
 #
 # New version of a full series (separate mail thread)
 #
+
 
 class FullSeriesUpdateTest(GeneratedSeriesTest):
 
@@ -592,9 +619,9 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
         series1.insert(series1_mails)
         self.commonInsertionChecks()
 
-        (series2,series2_mails) = self._create_series(n_patches[1])
+        (series2, series2_mails) = self._create_series(n_patches[1])
         self._set_cover_letter_subject(series2_mails[0], n_patches[1],
-                                        subjects[1])
+                                       subjects[1])
         series2.insert(series2_mails)
 
         self.check(series1_mails, series2_mails, n_patches)
@@ -628,6 +655,7 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
 #
 
 class EventLogTest(SingleMailSeries):
+
     def setUp(self):
         # Create a 'chris' User and Person
         mail = 'chris@chris-wilson.co.uk'
@@ -647,6 +675,7 @@ class EventLogTest(SingleMailSeries):
         entry = EventLog.objects.all()[0]
         self.assertEquals(self.user, entry.user)
 
+
 class MultipleMailCoverLetterSeriesIncomplete(Series0010):
     mails = (
         '0010-multiple-mails-cover-letter.mbox',
@@ -655,7 +684,9 @@ class MultipleMailCoverLetterSeriesIncomplete(Series0010):
         '0014-multiple-mails-cover-letter.mbox',
     )
 
+
 class EventLogIncompleteTest(MultipleMailCoverLetterSeriesIncomplete):
+
     def testNoNewSeriesIfIncomplete(self):
         logs = EventLog.objects.all()
         self.assertEquals(logs.count(), 0)

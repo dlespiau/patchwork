@@ -42,16 +42,21 @@ if types.MethodType not in copy._deepcopy_dispatch:
         return type(x)(x.im_func, copy.deepcopy(x.im_self, memo), x.im_class)
     copy._deepcopy_dispatch[types.MethodType] = _deepcopy_method
 
+
 class lockwrapper(lock.lock):
+
     def __init__(self, pidoffset, *args, **kwargs):
         # lock.lock.__init__() calls lock(), so the pidoffset assignment needs
         # to be earlier
         self._pidoffset = pidoffset
         super(lockwrapper, self).__init__(*args, **kwargs)
+
     def _getpid(self):
         return os.getpid() + self._pidoffset
 
+
 class teststate(object):
+
     def __init__(self, testcase, dir, pidoffset=0):
         self._testcase = testcase
         self._acquirecalled = False
@@ -122,7 +127,9 @@ class teststate(object):
         else:
             return 'not exist'
 
+
 class testlock(unittest.TestCase):
+
     def testlock(self):
         state = teststate(self, tempfile.mkdtemp(dir=os.getcwd()))
         lock = state.makelock()
@@ -142,12 +149,12 @@ class testlock(unittest.TestCase):
         # recursive lock should not call acquirefn again
         state.assertacquirecalled(False)
 
-        lock.release() # brings lock refcount down from 2 to 1
+        lock.release()  # brings lock refcount down from 2 to 1
         state.assertreleasecalled(False)
         state.assertpostreleasecalled(False)
         state.assertlockexists(True)
 
-        lock.release() # releases the lock
+        lock.release()  # releases the lock
         state.assertreleasecalled(True)
         state.assertpostreleasecalled(True)
         state.assertlockexists(False)
@@ -273,6 +280,7 @@ class testlock(unittest.TestCase):
     def testinheritcheck(self):
         d = tempfile.mkdtemp(dir=os.getcwd())
         state = teststate(self, d)
+
         def check():
             raise error.LockInheritanceContractViolation('check failed')
         lock = state.makelock(inheritchecker=check)

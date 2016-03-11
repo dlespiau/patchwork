@@ -36,9 +36,9 @@ class ExtractTagsTest(TestCase):
     def assertTagsEqual(self, str, acks, reviews, tests):
         counts = extract_tags(str, Tag.objects.all())
         self.assertEqual((acks, reviews, tests),
-                (counts[Tag.objects.get(name='Acked-by')],
-                 counts[Tag.objects.get(name='Reviewed-by')],
-                 counts[Tag.objects.get(name='Tested-by')]))
+                         (counts[Tag.objects.get(name='Acked-by')],
+                          counts[Tag.objects.get(name='Reviewed-by')],
+                          counts[Tag.objects.get(name='Tested-by')]))
 
     def testEmpty(self):
         self.assertTagsEqual("", 0, 0, 0)
@@ -67,7 +67,7 @@ class ExtractTagsTest(TestCase):
 
     def testMultipleTypes(self):
         str = "Acked-by: %s\nAcked-by: %s\nReviewed-by: %s\n" % (
-                (self.name_email,) * 3)
+            (self.name_email,) * 3)
         self.assertTagsEqual(str, 2, 1, 0)
 
     def testLower(self):
@@ -78,6 +78,7 @@ class ExtractTagsTest(TestCase):
 
     def testAckInReply(self):
         self.assertTagsEqual("> Acked-by: %s\n" % self.name_email, 0, 0, 0)
+
 
 class PatchTagsTest(TransactionTestCase):
     ACK = 1
@@ -102,7 +103,7 @@ class PatchTagsTest(TransactionTestCase):
 
         self.assertEqual(counts, (acks, reviews, tests))
 
-    def create_tag(self, tagtype = None):
+    def create_tag(self, tagtype=None):
         tags = {
             self.ACK: 'Acked',
             self.REVIEW: 'Reviewed',
@@ -112,17 +113,17 @@ class PatchTagsTest(TransactionTestCase):
             return ''
         return '%s-by: %s\n' % (tags[tagtype], self.tagger)
 
-    def create_tag_comment(self, patch, tagtype = None):
+    def create_tag_comment(self, patch, tagtype=None):
         comment = Comment(patch=patch, msgid=str(datetime.datetime.now()),
-                submitter=defaults.patch_author_person,
-                content=self.create_tag(tagtype))
+                          submitter=defaults.patch_author_person,
+                          content=self.create_tag(tagtype))
         comment.save()
         return comment
 
     def setUp(self):
         settings.DEBUG = True
         project = Project(linkname='test-project', name='Test Project',
-            use_tags=True)
+                          use_tags=True)
         project.save()
         defaults.patch_author_person.save()
         self.patch = Patch(project=project,
@@ -189,6 +190,7 @@ class PatchTagsTest(TransactionTestCase):
         c1.save()
         self.assertTagsEqual(self.patch, 1, 1, 0)
 
+
 class PatchTagManagerTest(PatchTagsTest):
 
     def assertTagsEqual(self, patch, acks, reviews, tests):
@@ -205,7 +207,7 @@ class PatchTagManagerTest(PatchTagsTest):
         # projects table.
         with self.assertNumQueries(2):
             patch = Patch.objects.with_tag_counts(project=patch.project) \
-                    .get(pk = patch.pk)
+                .get(pk=patch.pk)
 
             counts = (
                 getattr(patch, tagattrs['Acked-by']),
@@ -214,4 +216,3 @@ class PatchTagManagerTest(PatchTagsTest):
             )
 
         self.assertEqual(counts, (acks, reviews, tests))
-

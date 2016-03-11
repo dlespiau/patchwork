@@ -25,11 +25,13 @@ from django.utils.six.moves import map, range
 
 from patchwork.models import Person
 
+
 class SubmitterCompletionTest(TestCase):
+
     def setUp(self):
         self.people = [
-            Person(name = "Test Name", email = "test1@example.com"),
-            Person(email = "test2@example.com"),
+            Person(name="Test Name", email="test1@example.com"),
+            Person(email="test2@example.com"),
         ]
         list(map(lambda p: p.save(), self.people))
 
@@ -48,8 +50,8 @@ class SubmitterCompletionTest(TestCase):
         self.assertEqual(data[0]['email'], 'test2@example.com')
 
     def testCompleteLimit(self):
-        for i in range(3,10):
-            person = Person(email = 'test%d@example.com' % i)
+        for i in range(3, 10):
+            person = Person(email='test%d@example.com' % i)
             person.save()
         response = self.client.get('/submitter/', {'q': 'test', 'l': 5})
         self.assertEqual(response.status_code, 200)

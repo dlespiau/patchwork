@@ -23,6 +23,7 @@ from patchwork.tests.utils import defaults
 
 
 class FilterQueryStringTest(TestCase):
+
     def testFilterQSEscaping(self):
         """test that filter fragments in a query string are properly escaped,
            and stray ampersands don't get reflected back in the filter

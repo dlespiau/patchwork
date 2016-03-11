@@ -42,16 +42,16 @@ class XMLRPCTest(LiveServerTestCase):
     def testGetRedirect(self):
         response = self.client.patch(self.url)
         self.assertRedirects(response,
-                reverse('patchwork.views.help',
-                    kwargs = {'path': 'pwclient/'}))
+                             reverse('patchwork.views.help',
+                                     kwargs={'path': 'pwclient/'}))
 
     def testList(self):
         defaults.project.save()
         defaults.patch_author_person.save()
-        patch = Patch(project = defaults.project,
-                submitter = defaults.patch_author_person,
-                msgid = defaults.patch_name,
-                content = defaults.patch)
+        patch = Patch(project=defaults.project,
+                      submitter=defaults.patch_author_person,
+                      msgid=defaults.patch_name,
+                      content=defaults.patch)
         patch.save()
 
         patches = self.rpc.patch_list()
