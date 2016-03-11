@@ -18,6 +18,5 @@ update_virtualenv venv $tests_dir/requirements.txt
 
 tox --recreate
 $tests_dir/test_js.sh
-$tests_dir/test_pep8.sh
 
 deactivate
