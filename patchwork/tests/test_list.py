@@ -49,16 +49,35 @@ class PatchOrderTest(TestCase):
 
     d = datetime.datetime
     patchmeta = [
-        ('AlCMyjOsx', 'AlxMyjOsx@nRbqkQV.wBw', d(2014, 3, 16, 13, 4, 50, 155643)),
-        ('MMZnrcDjT', 'MMmnrcDjT@qGaIfOl.tbk', d(2014, 1, 25, 13, 4, 50, 162814)),
-        ('WGirwRXgK', 'WGSrwRXgK@TriIETY.GhE', d(2014, 2, 14, 13, 4, 50, 169305)),
-        ('isjNIuiAc', 'issNIuiAc@OsEirYx.EJh', d(2014, 3, 15, 13, 4, 50, 176264)),
-        ('XkAQpYGws', 'XkFQpYGws@hzntTcm.JSE', d(2014, 1, 18, 13, 4, 50, 182493)),
-        ('uJuCPWMvi', 'uJACPWMvi@AVRBOBl.ecy', d(2014, 3, 12, 13, 4, 50, 189554)),
-        ('TyQmWtcbg', 'TylmWtcbg@DzrNeNH.JuB', d(2014, 2, 3, 13, 4, 50, 195685)),
-        ('FpvAhWRdX', 'FpKAhWRdX@agxnCAI.wFO', d(2014, 3, 15, 13, 4, 50, 201398)),
-        ('bmoYvnyWa', 'bmdYvnyWa@aeoPnlX.juy', d(2014, 3, 4, 13, 4, 50, 206800)),
-        ('CiReUQsAq', 'CiieUQsAq@DnOYRuf.TTI', d(2014, 3, 28, 13, 4, 50, 212169)),
+        ('AlCMyjOsx', 'AlxMyjOsx@nRbqkQV.wBw',
+         d(2014, 3, 16, 13, 4, 50, 155643)),
+
+        ('MMZnrcDjT', 'MMmnrcDjT@qGaIfOl.tbk',
+         d(2014, 1, 25, 13, 4, 50, 162814)),
+
+        ('WGirwRXgK', 'WGSrwRXgK@TriIETY.GhE',
+         d(2014, 2, 14, 13, 4, 50, 169305)),
+
+        ('isjNIuiAc', 'issNIuiAc@OsEirYx.EJh',
+         d(2014, 3, 15, 13, 4, 50, 176264)),
+
+        ('XkAQpYGws', 'XkFQpYGws@hzntTcm.JSE',
+         d(2014, 1, 18, 13, 4, 50, 182493)),
+
+        ('uJuCPWMvi', 'uJACPWMvi@AVRBOBl.ecy',
+         d(2014, 3, 12, 13, 4, 50, 189554)),
+
+        ('TyQmWtcbg', 'TylmWtcbg@DzrNeNH.JuB',
+         d(2014, 2, 3, 13, 4, 50, 195685)),
+
+        ('FpvAhWRdX', 'FpKAhWRdX@agxnCAI.wFO',
+         d(2014, 3, 15, 13, 4, 50, 201398)),
+
+        ('bmoYvnyWa', 'bmdYvnyWa@aeoPnlX.juy',
+         d(2014, 3, 4, 13, 4, 50, 206800)),
+
+        ('CiReUQsAq', 'CiieUQsAq@DnOYRuf.TTI',
+         d(2014, 3, 28, 13, 4, 50, 212169)),
     ]
 
     def setUp(self):
