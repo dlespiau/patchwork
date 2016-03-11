@@ -356,7 +356,7 @@ class TestResultTest(APITestBase):
             }, user=self.user)
             self.assertEqual(r.status_code, 403)
             self.assertEqual(data['detail'],
-                             "You do not have permission to perform this action.")
+                         "You do not have permission to perform this action.")
 
     def _cleanup_tests(self):
         TestResult.objects.all().delete()
@@ -383,8 +383,9 @@ class TestResultTest(APITestBase):
                 'state': 'invalid',
             }, user=self.maintainer)
             self.assertEqual(r.status_code, 400)
-            self.assertEqual(data['state'], ['Select a valid choice. '
-                                             'invalid is not one of the available choices.'])
+            self.assertEqual(data['state'],
+                 ['Select a valid choice. '
+                  'invalid is not one of the available choices.'])
 
     def testSubmitPartialTestResult(self):
         for url in self.test_urls:
@@ -531,8 +532,8 @@ class TestResultTest(APITestBase):
         for url in self.test_urls:
             self.assertEqual(len(mail.outbox), 0)
 
-            self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._configure_test(url, 'super test', Test.RECIPIENT_SUBMITTER,
+                                 Test.CONDITION_ALWAYS)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -555,8 +556,8 @@ class TestResultTest(APITestBase):
         for url in self.test_urls:
             self.assertEqual(len(mail.outbox), 0)
 
-            self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+            self._configure_test(url, 'super test', Test.RECIPIENT_SUBMITTER,
+                                 Test.CONDITION_ALWAYS)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -566,7 +567,8 @@ class TestResultTest(APITestBase):
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS)
+                                 Test.RECIPIENT_MAILING_LIST,
+                                 Test.CONDITION_ALWAYS)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -584,8 +586,8 @@ class TestResultTest(APITestBase):
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 0)
 
-            self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
+            self._configure_test(url, 'super test', Test.RECIPIENT_SUBMITTER,
+                                 Test.CONDITION_ALWAYS,
                                  to_list=to_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
@@ -597,7 +599,8 @@ class TestResultTest(APITestBase):
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
+                                 Test.RECIPIENT_MAILING_LIST,
+                                 Test.CONDITION_ALWAYS,
                                  to_list=to_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
@@ -627,8 +630,8 @@ class TestResultTest(APITestBase):
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 0)
 
-            self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS,
+            self._configure_test(url, 'super test', Test.RECIPIENT_SUBMITTER,
+                                 Test.CONDITION_ALWAYS,
                                  cc_list=cc_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
@@ -639,7 +642,8 @@ class TestResultTest(APITestBase):
             mail.outbox = []
 
             self._configure_test(url, 'super test',
-                                 Test.RECIPIENT_MAILING_LIST, Test.CONDITION_ALWAYS,
+                                 Test.RECIPIENT_MAILING_LIST,
+                                 Test.CONDITION_ALWAYS,
                                  cc_list=cc_list)
             self._post_result(url, 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
@@ -701,7 +705,8 @@ class TestResultTest(APITestBase):
         ]
         for test in sub_tests:
             self._configure_test(test[0], 'super test',
-                                 Test.RECIPIENT_SUBMITTER, Test.CONDITION_ALWAYS)
+                                 Test.RECIPIENT_SUBMITTER,
+                                 Test.CONDITION_ALWAYS)
             self._post_result(test[0], 'super test', 'success')
             self.assertEqual(len(mail.outbox), 1)
             email = mail.outbox[0]
@@ -736,7 +741,7 @@ class TestResultTest(APITestBase):
         self.assertEqual(self.series.revisions().count(), 2)
 
         self.assertEqual(self._test_state(ss, self.series), None,
-                         "'None' expected as a new revision must reset the testing state")
+             "'None' expected as a new revision must reset the testing state")
 
 
 class ReviewerNotificationTest(APITestBase):
