@@ -17,8 +17,6 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import json
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -95,7 +93,8 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
 
     def get_related_field(self, model_field, related_model, to_many):
         if self._pw_related == RelatedMode.expand:
-            return self._pw_get_nested_field(model_field, related_model, to_many)
+            return self._pw_get_nested_field(model_field, related_model,
+                                             to_many)
         else:
             return super(PatchworkModelSerializer, self). \
                 get_related_field(model_field, related_model, to_many)
