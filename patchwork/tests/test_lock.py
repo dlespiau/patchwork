@@ -65,8 +65,9 @@ class teststate(object):
         self._pidoffset = pidoffset
 
     def makelock(self, *args, **kwargs):
-        l = lockwrapper(self._pidoffset, testlockname, releasefn=self.releasefn,
-                        acquirefn=self.acquirefn, *args, **kwargs)
+        l = lockwrapper(self._pidoffset, testlockname,
+                        releasefn=self.releasefn, acquirefn=self.acquirefn,
+                        *args, **kwargs)
         l.postrelease.append(self.postreleasefn)
         return l
 
