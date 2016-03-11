@@ -172,8 +172,8 @@ class Series0010(IntelGfxTest):
 
     root_msgid = '<1400020344-17248-1-git-send-email-damien.lespiau@intel.com>'
 
-    cover_letter = """
-With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
+    cover_letter = \
+"""With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
 a series introducing macros to iterate through the CRTCs instead of using
 list_for_each_entry() and mode_config.crtc_list, a tiny bit more readable and
 easier to recall.
@@ -190,7 +190,7 @@ Damien Lespiau (4):
  drivers/gpu/drm/i915/intel_display.c | 71 +++++++++++++++---------------------
  drivers/gpu/drm/i915/intel_fbdev.c   |  6 +--
  drivers/gpu/drm/i915/intel_pm.c      | 12 +++---
- 6 files changed, 47 insertions(+), 54 deletions(-)"""
+ 6 files changed, 47 insertions(+), 54 deletions(-)"""  # noqa
 
 
 class MultipleMailCoverLetterSeries(Series0010):
