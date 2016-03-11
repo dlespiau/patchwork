@@ -408,10 +408,12 @@ class MultipleProjectsPerMailingListTest(TestCase):
 
     def setUp(self):
         self.project1 = Project(linkname='test-project-1', name='Project 1',
-                                listid='list.example.com', listemail='1@example.com')
+                                listid='list.example.com',
+                                listemail='1@example.com')
         self.project1.save()
         self.project2 = Project(linkname='test-project-2', name='Project 2',
-                                listid='list.example.com', listemail='2@example.com')
+                                listid='list.example.com',
+                                listemail='2@example.com')
         self.project2.save()
 
     def testTagList(self):
@@ -766,7 +768,8 @@ class GitSendEmailTest(MailFromPatchTest):
         self.p1.save()
         email = self.get_email()
         del email['Message-Id']
-        email['Message-Id'] = '<1454600601-21900-1-git-send-email-cpaul@redhat.com>'
+        email['Message-Id'] = \
+                '<1454600601-21900-1-git-send-email-cpaul@redhat.com>'
         parse_mail(email)
         self._assertNPatches(1)
 
