@@ -489,20 +489,13 @@ class PatchResultViewSet(viewsets.ViewSet, ResultMixin):
                                         {'patch': patch})
 
 
-class EventTimeFilter(django_filters.FilterSet):
+class EventFilter(django_filters.FilterSet):
 
-    def event_time_filter(query_set, date):
-        queryset = query_set
-        if date:
-            queryset = queryset.filter(event_time__gt=date)
-        return queryset
-
-    since = django_filters.CharFilter(
-        name='event_time', action=event_time_filter)
+    since = django_filters.CharFilter(name='event_time', lookup_type='gt')
 
     class Meta:
         model = EventLog
-        fields = ['since']
+        fields = []
 
 
 class EventLogViewSet(mixins.ListModelMixin,
@@ -512,7 +505,7 @@ class EventLogViewSet(mixins.ListModelMixin,
     queryset = EventLog.objects.all().select_related('event')
     serializer_class = EventLogSerializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter)
-    filter_class = EventTimeFilter
+    filter_class = EventFilter
 
     def get_queryset(self):
 
