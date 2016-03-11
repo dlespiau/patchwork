@@ -88,7 +88,7 @@ def readlock(pathname):
             raise
     except AttributeError:  # no symlink in os
         pass
-    fp = posixfile(pathname)
+    fp = open(pathname)
     r = fp.read()
     fp.close()
     return r
