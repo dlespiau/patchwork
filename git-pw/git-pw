@@ -913,7 +913,7 @@ if __name__ == '__main__':
     poll_events_parser = subparsers.add_parser('poll-events',
         help='list events since the last invocation')
     poll_events_parser.add_argument('--since', '-s', metavar='timestamp',
-        type=str, help='retrieve patches newer than the given ISO 8601 time')
+        type=str, help='retrieve events newer than the given ISO 8601 time')
 
     # post-result
     post_result_parser = subparsers.add_parser('post-result',
