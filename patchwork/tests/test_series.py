@@ -23,7 +23,7 @@ from django.test import TestCase
 from patchwork.models import Patch, Series, SeriesRevision, Project, \
     SERIES_DEFAULT_NAME, EventLog, User, Person
 from patchwork.tests.utils import read_mail
-from patchwork.tests.utils import defaults, read_mail, TestSeries
+from patchwork.tests.utils import defaults, TestSeries
 
 from patchwork.bin.parsemail import parse_mail, build_references_list, \
     clean_series_name
@@ -172,8 +172,8 @@ class Series0010(IntelGfxTest):
 
     root_msgid = '<1400020344-17248-1-git-send-email-damien.lespiau@intel.com>'
 
-    cover_letter = \
-        """With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
+    cover_letter = """
+With Daniel's help to figure out an arcane corner of coccinelle, here is v2 of
 a series introducing macros to iterate through the CRTCs instead of using
 list_for_each_entry() and mode_config.crtc_list, a tiny bit more readable and
 easier to recall.
@@ -344,7 +344,7 @@ class UpdatedPatchTest(Series0030):
         self.assertEquals(r.patches.count(), 1)
         p = r.patches.all()[0]
         self.assertEquals(p.msgid,
-                          '<1427980954-15015-1-git-send-email-deepak.s@linux.intel.com>')
+              '<1427980954-15015-1-git-send-email-deepak.s@linux.intel.com>')
 
 
 class SinglePatchUpdateTest(GeneratedSeriesTest):
