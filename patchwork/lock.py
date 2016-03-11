@@ -183,10 +183,10 @@ class lock(object):
             except (OSError, IOError) as why:
                 if why.errno == errno.EEXIST:
                     locker = self._readlock()
-                    # special case where a parent process holds the lock -- this
-                    # is different from the pid being different because we do
-                    # want the unlock and postrelease functions to be called,
-                    # but the lockfile to not be removed.
+                    # Special case where a parent process holds the lock.
+                    # this is different from the pid being different because we
+                    # do want the unlock and postrelease functions to be
+                    # called, but the lockfile to not be removed.
                     if locker == self.parentlock:
                         self._parentheld = True
                         self.held = 1
