@@ -592,9 +592,9 @@ API Revisions
 
   - /series/${id}/revisions/${version}/test-results/
 
-- Add the `submitter`, `reviewer`, `submitted_since`, `updated_since`,
-  `submitted_before` and `updated_before` query parameters to the list of
-  series entry points.
+- Add the `project`, `name`, `submitter`, `reviewer`, `submitted_since`,
+  `updated_since`, `submitted_before`, `updated_before` and `test_state` query
+  parameters to the list of series entry points.
 
 - Add the patch-state-change event.
 
