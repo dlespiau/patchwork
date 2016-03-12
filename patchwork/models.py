@@ -842,19 +842,18 @@ def _patch_change_callback(sender, instance, **kwargs):
     curr_user = threadlocalrequest.get_current_user()
     previous_state = str(orig_patch.state)
     new_state = str(instance.state)
-    changed_patch = Patch.objects.get(pk=instance.pk)
 
     # Do not log patch-state-change events for Patches that are not part of a
     # Series (ie patches older than the introduction of Series)
     series = find_series_for_patch(orig_patch)
     if series:
         log = EventLog(event=event_state_change,
-                      user=curr_user,
-                      series_id=series.id,
-                      patch=changed_patch,
-                      parameters={'previous_state': previous_state,
-                                  'new_state': new_state,
-                                 })
+                       user=curr_user,
+                       series_id=series.id,
+                       patch=orig_patch,
+                       parameters={'previous_state': previous_state,
+                                   'new_state': new_state,
+                                  })
         log.save()
 
     if not instance.project.send_notifications:
