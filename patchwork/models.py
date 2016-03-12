@@ -584,6 +584,24 @@ class Series(models.Model):
 # its patches)
 series_revision_complete = django.dispatch.Signal(providing_args=["revision"])
 
+
+class RevisionState:
+    INCOMPLETE = 0
+    INITIAL = 1
+    IN_PROGRESS = 2
+    DONE = 3
+    CHOICES = (
+        (INCOMPLETE, 'incomplete'),
+        (INITIAL, 'initial'),
+        (IN_PROGRESS, 'in progress'),
+        (DONE, 'done'),
+    )
+
+    @classmethod
+    def from_string(cls, s):
+        s2i = {s: i for i, s in cls.CHOICES}
+        return s2i[s]
+
 # A 'revision' of a series. Resending a new version of a patch or a full new
 # iteration of a series will create a new revision.
 
@@ -596,6 +614,9 @@ class SeriesRevision(models.Model):
     cover_letter = models.TextField(null=True, blank=True)
     n_patches = models.IntegerField(default=0)
     patches = models.ManyToManyField(Patch, through='SeriesRevisionPatch')
+    state = models.SmallIntegerField(choices=RevisionState.CHOICES,
+                                     default=RevisionState.INCOMPLETE)
+    state_summary = jsonfield.JSONField(null=True)
     test_state = models.SmallIntegerField(choices=TestState.STATE_CHOICES,
                                           null=True)
 
