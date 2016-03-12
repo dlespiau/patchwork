@@ -571,7 +571,7 @@ class Series(models.Model):
         name = self.name
         if name == SERIES_DEFAULT_NAME:
             name = "series starting with " + \
-                    self.las_revision.ordered_patches()[0].name
+                    self.last_revision.ordered_patches()[0].name
         return name
 
     def __str__(self):
