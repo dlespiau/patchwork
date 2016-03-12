@@ -819,6 +819,50 @@ def find_series_for_patch(patch):
         return None
 
 
+def _patch_change_log_event(old_patch, new_patch):
+    # If state changed, log the event
+    event_state_change = Event.objects.get(name='patch-state-change')
+    curr_user = threadlocalrequest.get_current_user()
+    previous_state = str(old_patch.state)
+    new_state = str(new_patch.state)
+
+    # Do not log patch-state-change events for Patches that are not part of a
+    # Series (ie patches older than the introduction of Series)
+    series = find_series_for_patch(old_patch)
+    if series:
+        log = EventLog(event=event_state_change,
+                       user=curr_user,
+                       series_id=series.id,
+                       patch=old_patch,
+                       parameters={'previous_state': previous_state,
+                                   'new_state': new_state,
+                                  })
+        log.save()
+
+
+def _patch_change_send_notification(old_patch, new_patch):
+    if not new_patch.project.send_notifications:
+        return
+
+    notification = None
+    try:
+        notification = PatchChangeNotification.objects.get(patch=new_patch)
+    except PatchChangeNotification.DoesNotExist:
+        pass
+
+    if notification is None:
+        notification = PatchChangeNotification(patch=new_patch,
+                                               orig_state=old_patch.state)
+
+    elif notification.orig_state == new_patch.state:
+        # If we're back at the original state, there is no need to notify
+        notification.delete()
+        return
+
+    notification.last_modified = datetime.datetime.now()
+    notification.save()
+
+
 def _patch_change_callback(sender, instance, **kwargs):
     # we only want notification of modified patches
     if instance.pk is None:
@@ -837,45 +881,8 @@ def _patch_change_callback(sender, instance, **kwargs):
     if orig_patch.state == instance.state:
         return
 
-    # If state changed, log the event
-    event_state_change = Event.objects.get(name='patch-state-change')
-    curr_user = threadlocalrequest.get_current_user()
-    previous_state = str(orig_patch.state)
-    new_state = str(instance.state)
-
-    # Do not log patch-state-change events for Patches that are not part of a
-    # Series (ie patches older than the introduction of Series)
-    series = find_series_for_patch(orig_patch)
-    if series:
-        log = EventLog(event=event_state_change,
-                       user=curr_user,
-                       series_id=series.id,
-                       patch=orig_patch,
-                       parameters={'previous_state': previous_state,
-                                   'new_state': new_state,
-                                  })
-        log.save()
-
-    if not instance.project.send_notifications:
-        return
-
-    notification = None
-    try:
-        notification = PatchChangeNotification.objects.get(patch=instance)
-    except PatchChangeNotification.DoesNotExist:
-        pass
-
-    if notification is None:
-        notification = PatchChangeNotification(patch=instance,
-                                               orig_state=orig_patch.state)
-
-    elif notification.orig_state == instance.state:
-        # If we're back at the original state, there is no need to notify
-        notification.delete()
-        return
-
-    notification.last_modified = datetime.datetime.now()
-    notification.save()
+    _patch_change_log_event(orig_patch, instance)
+    _patch_change_send_notification(orig_patch, instance)
 
 models.signals.pre_save.connect(_patch_change_callback, sender=Patch)
 
