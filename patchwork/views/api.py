@@ -31,7 +31,8 @@ from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.tasks import send_reviewer_notification
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
-                              Test, TestResult, TestState, Person)
+                              Test, TestResult, TestState, Person,
+                              RevisionState)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
                             status)
 from rest_framework.authentication import BasicAuthentication
@@ -192,6 +193,16 @@ class SeriesFilter(django_filters.FilterSet):
 
         return queryset
 
+    def filter_state(self, queryset, state_names):
+        if not state_names:
+            return queryset
+
+        try:
+            states = map(RevisionState.from_string, state_names.split(','))
+            return queryset.filter(last_revision__state__in=states)
+        except KeyError:
+            return queryset
+
     submitted_since = django_filters.CharFilter(name='submitted',
                                                 lookup_type='gt')
     updated_since = django_filters.CharFilter(name='last_updated',
@@ -204,6 +215,7 @@ class SeriesFilter(django_filters.FilterSet):
     reviewer = django_filters.MethodFilter()
     test_state = django_filters.MethodFilter()
     name = django_filters.CharFilter(lookup_type='icontains')
+    state = django_filters.MethodFilter()
 
     class Meta:
         model = Series
