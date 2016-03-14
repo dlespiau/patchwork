@@ -3,6 +3,72 @@ $(function () {
 
     var series_table = pw.setup_series_list('#serieslist');
 
+    /* status filter */
+    pw.create_filter({
+        table: series_table,
+        name: 'status',
+        change_background_on_apply: false,
+        init: function() {
+            var _this = this;
+
+            this.initial = $('#status-new');
+            this.in_progress = $('#status-in-progress');
+            this.done = $('#status-done');
+            this.incomplete = $('#status-incomplete');
+
+            $('#status-filter input:checkbox').change(function() {
+                _this.refresh_apply();
+            });
+        },
+        _collect_states: function() {
+            var filters = [];
+
+            if (this.initial.prop('checked'))
+                filters.push('initial');
+            if (this.in_progress.prop('checked'))
+                filters.push('in progress');
+            if (this.done.prop('checked'))
+                filters.push('done');
+            if (this.incomplete.prop('checked'))
+                filters.push('incomplete');
+
+            return filters;
+        },
+        set_filter: function(table) {
+            var filters = this._collect_states();
+
+            table.set_filter('state', filters.join(','));
+        },
+        reset_filter: function(table) {
+            this.initial.prop('checked', true);
+            this.in_progress.prop('checked', true);
+            this.done.prop('checked', false);
+            this.incomplete.prop('checked', true);
+            this.set_filter(table);
+            return true;
+        },
+        can_submit: function() {
+            return this._collect_states().length > 0;
+        },
+        humanize: function() {
+            var transform = {
+                'initial': "'new'",
+                'in progress': "'in progress'",
+                'done': "'done'",
+                'incomplete': "'incomplete'",
+            };
+            var filters = this._collect_states();
+
+            var states = [];
+            for (var i = 0; i < filters.length; i++) {
+                states.push(transform[filters[i]]);
+            }
+
+            return 'with status: ' + states.join(', ');
+        },
+    });
+
+
     /* date filter */
     pw.create_filter({
         table: series_table,

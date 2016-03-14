@@ -27,6 +27,43 @@
 
   <div class="collapse navbar-collapse" id="series-toolbar">
     <ul class="nav navbar-nav" id="serieslist-filters">
+      <li class="dropdown" id="status-filter">
+        <a data-toggle="dropdown" href='#' id="status-filter-dropdown">
+          Status
+          <span class="caret"></span>
+        </a>
+        <ul role="menu" class="dropdown-menu table-toolbar">
+          <li>
+            <form id="status-form">
+             <div class="checkbox">
+               <label>
+                 <input id="status-new" type="checkbox" value="new" name="status-options">
+                 New
+               </label>
+             </div>
+             <div class="checkbox">
+               <label>
+                 <input id="status-in-progress" type="checkbox" value="in progress" name="status-options">
+                 In progress
+               </label>
+             </div>
+             <div class="checkbox">
+               <label>
+                 <input id="status-done" type="checkbox" value="done" name="status-options">
+                 Done
+               </label>
+             </div>
+             <div class="checkbox">
+               <label>
+                 <input id="status-incomplete" type="checkbox" value="incomplete" name="status-options">
+                 Missing patches
+               </label>
+             </div>
+             <button type="submit" class="btn btn-default apply-filter">Apply</button>
+           </form>
+          </li>
+        </ul>
+      </li>
       <li>
         <p class="navbar-text">Filter by:</p>
       </li>
