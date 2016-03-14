@@ -23,7 +23,7 @@ from django.test import TestCase
 
 from patchwork.models import (Patch, Series, SeriesRevision, Project,
                               SERIES_DEFAULT_NAME, EventLog, User, Person,
-                              State)
+                              State, RevisionState)
 from patchwork.tests.utils import read_mail
 from patchwork.tests.utils import defaults, TestSeries
 
@@ -82,6 +82,14 @@ class SeriesTest(TestCase):
         # entry
         logs = EventLog.objects.all()
         self.assertEquals(logs.count(), 1)
+
+    def check_revision_summary(self, revision, expected):
+        self.assertIsNotNone(revision.state_summary)
+        summary = revision.state_summary
+        for entry in summary:
+            state = entry['name']
+            count = entry['count']
+            self.assertEquals(expected[state], count)
 
 
 class GeneratedSeriesTest(SeriesTest):
@@ -650,6 +658,54 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
 
     def testNewSeriesDifferentNumberOfPatches(self):
         self._test_internal((3, 7), ('Awesome series', 'Awesome series v2'))
+
+
+class SeriesStateTest(GeneratedSeriesTest):
+
+    def testPartialRevision(self):
+        series, mails = self._create_series(3)
+        # insert cover letter and 2 patches
+        for i in range(0, 3):
+            parse_mail(mails[i])
+
+        revision = SeriesRevision.objects.all()[0]
+        self.assertEqual(revision.state, RevisionState.INCOMPLETE)
+        self.check_revision_summary(revision, {'New': 2})
+
+    def testInitialInsert(self):
+        series, mails = self._create_series(3)
+        series.insert(mails)
+
+        revision = SeriesRevision.objects.all()[0]
+        self.assertEqual(revision.state, RevisionState.INITIAL)
+        self.check_revision_summary(revision, {'New': 3})
+
+    def testInProgress(self):
+        series, mails = self._create_series(3)
+        series.insert(mails)
+        patch = Patch.objects.all()[1]
+        patch.state = State.objects.get(name='Under Review')
+        patch.save()
+
+        revision = SeriesRevision.objects.all()[0]
+        self.assertEqual(revision.state, RevisionState.IN_PROGRESS)
+        self.check_revision_summary(revision, {'New': 2, 'Under Review': 1})
+
+    def testDone(self):
+        series, mails = self._create_series(3)
+        series.insert(mails)
+        patches = Patch.objects.all()
+        for i in (0, 1):
+            patch = patches[i]
+            patch.state = State.objects.get(name='Accepted')
+            patch.save()
+        patch = patches[2]
+        patch.state = State.objects.get(name='Rejected')
+        patch.save()
+
+        revision = SeriesRevision.objects.all()[0]
+        self.assertEqual(revision.state, RevisionState.DONE)
+        self.check_revision_summary(revision, {'Accepted': 2, 'Rejected': 1})
 
 
 #

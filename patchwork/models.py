@@ -884,7 +884,67 @@ def _patch_change_send_notification(old_patch, new_patch):
     notification.save()
 
 
-def _patch_change_callback(sender, instance, **kwargs):
+def _revision_is_done(revision, summary):
+    for entry in summary:
+        if entry[2]:  # state__action_required
+            return False
+    return True
+
+
+def _revision_update_state(revision):
+    # the order_by() clears the default ordering (from the Meta class) which
+    # would be used in the GROUP BY clause otherwise. See:
+    # https://docs.djangoproject.com/en/1.8/topics/db/aggregation/#interaction-with-default-ordering-or-order-by
+    summary = revision.patches.values_list('state', 'state__name',
+                                           'state__action_required',
+                                           'state__ordering') \
+                              .annotate(count=models.Count('state')) \
+                              .order_by()
+    summary = list(summary)
+    summary.sort(key=lambda e: e[3])
+    revision.state_summary = [{
+        'name': s[1],
+        'final': not s[2],
+        'count': s[4],
+    } for s in summary]
+
+    # revision not yet complete
+    revision_complete = revision.patches.count() == revision.n_patches
+    if not revision_complete:
+        revision.state = RevisionState.INCOMPLETE
+
+    # initial state
+    elif len(summary) == 1 and \
+       summary[0][0] == get_default_initial_patch_state().pk:
+        revision.state = RevisionState.INITIAL
+
+    # done: all patches are in a 'final' state, ie. a state that doesn't
+    # require any more action
+    elif _revision_is_done(revision, summary):
+        revision.state = RevisionState.DONE
+
+    # in progress
+    else:
+        revision.state = RevisionState.IN_PROGRESS
+
+    revision.save()
+
+
+def _patch_change_update_revision_state(new_patch):
+    # gather all the revisions we need to update (a patch can be part of more
+    # than one revision)
+    revisions = new_patch.seriesrevision_set.all()
+
+    # we shouldn't hit this since we're careful to not call this function on
+    # brand new patches that haven't been linked to a revision yet
+    if len(revisions) == 0:
+        return
+
+    for rev in revisions:
+        _revision_update_state(rev)
+
+
+def _patch_pre_change_callback(sender, instance, **kwargs):
     # we only want notification of modified patches
     if instance.pk is None:
         return
@@ -905,7 +965,32 @@ def _patch_change_callback(sender, instance, **kwargs):
     _patch_change_log_event(orig_patch, instance)
     _patch_change_send_notification(orig_patch, instance)
 
-models.signals.pre_save.connect(_patch_change_callback, sender=Patch)
+
+def _patch_post_change_callback(sender, instance, created, **kwargs):
+    # We filter out brand new patches because the SeriesRevisionPatch m2m table
+    # isn't populated at that point and so we can't query for the
+    # SeriesRevision <-> Patch relationship.
+    if created:
+        return
+
+    _patch_change_update_revision_state(instance)
+
+
+def _series_revision_patch_post_change_callback(sender, instance, created,
+                                                **kwargs):
+    # We only hook into that many to many table to cover the case when the
+    # patches are first inserted and the SeriesRevision <-> Patch link wasn't
+    # established until now.
+    if not created:
+        return
+
+    _revision_update_state(instance.revision)
+
+
+models.signals.pre_save.connect(_patch_pre_change_callback, sender=Patch)
+models.signals.post_save.connect(_patch_post_change_callback, sender=Patch)
+models.signals.post_save.connect(_series_revision_patch_post_change_callback,
+                                 sender=SeriesRevisionPatch)
 
 
 def _on_revision_complete(sender, revision, **kwargs):
