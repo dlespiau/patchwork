@@ -20,8 +20,9 @@
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from patchwork.models import Project, Series, SeriesRevision, Patch, Person, \
-    State, EventLog, Test, TestResult, TestState
+from patchwork.models import (Project, Series, SeriesRevision, Patch, Person,
+                              State, EventLog, Test, TestResult, TestState,
+                              RevisionState)
 from rest_framework import serializers
 from rest_framework import fields
 from enum import Enum
@@ -149,6 +150,8 @@ class SeriesSerializer(PatchworkModelSerializer):
     version = serializers.SerializerMethodField('get_version')
     n_patches = serializers.SerializerMethodField('get_n_patches')
     test_state = serializers.SerializerMethodField('get_test_state')
+    state = serializers.SerializerMethodField('get_state')
+    state_summary = serializers.SerializerMethodField('get_state_summary')
 
     def get_version(self, obj):
         if not obj.last_revision:
@@ -168,11 +171,21 @@ class SeriesSerializer(PatchworkModelSerializer):
             return dict(TestState.STATE_CHOICES)[state]
         return state
 
+    def get_state(self, obj):
+        if not obj.last_revision:
+            return RevisionState.to_string(0)
+        return RevisionState.to_string(obj.last_revision.state)
+
+    def get_state_summary(self, obj):
+        if not obj.last_revision:
+            return None
+        return obj.last_revision.state_summary
+
     class Meta:
         model = Series
         fields = ('id', 'project', 'name', 'n_patches', 'submitter',
                   'submitted', 'last_updated', 'version', 'reviewer',
-                  'test_state')
+                  'test_state', 'state', 'state_summary')
         read_only_fields = ('project', 'submitter', 'submitted',
                             'last_updated')
         expand_serializers = {

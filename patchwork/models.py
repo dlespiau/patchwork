@@ -597,6 +597,12 @@ class RevisionState:
         (DONE, 'done'),
     )
 
+    i2s = dict(CHOICES)
+
+    @classmethod
+    def to_string(cls, i):
+        return cls.i2s[i]
+
     @classmethod
     def from_string(cls, s):
         s2i = {s: i for i, s in cls.CHOICES}
