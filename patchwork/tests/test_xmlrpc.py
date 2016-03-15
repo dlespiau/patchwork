@@ -18,14 +18,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import unittest
+import urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import LiveServerTestCase
 from django.utils.six.moves import xmlrpc_client
 
-from patchwork.models import Patch
-from patchwork.tests.utils import defaults
+from patchwork.models import Patch, State, EventLog
+from patchwork.tests.test_user import TestUser
+from patchwork.tests.utils import defaults, TestSeries
 
 
 @unittest.skipUnless(settings.ENABLE_XMLRPC,
@@ -45,7 +47,12 @@ class XMLRPCTest(LiveServerTestCase):
     def setUp(self):
         defaults.project.save()
         defaults.patch_author_person.save()
-        self.url = (self.live_server_url +
+        self.maintainer = TestUser(username='maintainer')
+        self.maintainer.add_to_maintainers(defaults.project)
+
+        p = urlparse.urlparse(self.live_server_url)
+        self.url = (p.scheme + '://' + self.maintainer.username + ':' +
+                    self.maintainer.password + '@' + p.netloc + p.path +
                     reverse('patchwork.views.xmlrpc.xmlrpc'))
         self.rpc = xmlrpc_client.Server(self.url)
 
@@ -61,3 +68,20 @@ class XMLRPCTest(LiveServerTestCase):
         patches = self.rpc.patch_list()
         self.assertEqual(len(patches), 1)
         self.assertEqual(patches[0]['id'], patch.id)
+
+    def testSetPatchState(self):
+        series = TestSeries(1, has_cover_letter=False)
+        series.insert()
+        patch = Patch.objects.all()[0]
+
+        superseded = State.objects.get(name='Superseded')
+        self.rpc.patch_set(patch.pk, {'state': superseded.pk})
+        patch = Patch.objects.get(pk=patch.pk)
+        self.assertEqual(patch.state, superseded)
+
+        # make sure we've logged the correct user with the change event
+        self.assertEqual(Patch.objects.count(), 1)
+        events = EventLog.objects.filter(event_id=2)
+        self.assertEqual(events.count(), 1)
+        event = events[0]
+        self.assertEquals(event.user, self.maintainer.user)

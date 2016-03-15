@@ -40,6 +40,7 @@ from django.utils.six.moves import map, xmlrpc_client
 from django.utils.six.moves.xmlrpc_server import SimpleXMLRPCDispatcher
 
 from patchwork.models import Patch, Project, Person, State
+from patchwork.threadlocalrequest import ThreadLocalRequestMiddleware
 from patchwork.views import patch_to_mbox
 
 
@@ -63,6 +64,8 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
 
         # map of name => (auth, func)
         self.func_map = {}
+
+        self.threadlocal = ThreadLocalRequestMiddleware()
 
     def register_function(self, fn, auth_required):
         self.funcs[fn.__name__] = fn  # needed by superclass methods
@@ -105,6 +108,8 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
             if not user:
                 raise Exception('Invalid username/password')
 
+            request.user = user
+            self.threadlocal.process_request(request)
             params = (user,) + params
 
         return fn(*params)
