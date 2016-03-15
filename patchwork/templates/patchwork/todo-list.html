@@ -7,10 +7,12 @@
 {% block headers %}
 <script language="JavaScript" type="text/javascript">
 $(function () {
-    pw.setup_series_list('#serieslist', '/series/', {
+    var series = pw.setup_series_list('#serieslist', '/series/', {
         project: pw.project.pk,
         reviewer: pw.user.pk,
     });
+    /* initial load */
+    series.refresh();
 });
 </script>
 {% endblock %}

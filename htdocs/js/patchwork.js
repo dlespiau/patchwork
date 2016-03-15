@@ -734,7 +734,7 @@ var pw = (function() {
             dataset: {
                 ajax: true,
                 ajaxUrl: ctx.table.url(),
-                ajaxOnLoad: true,
+                ajaxOnLoad: false,
                 records: []
             }
         });

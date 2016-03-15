@@ -327,4 +327,7 @@ $(function () {
         },
 
     });
+
+    /* initial load */
+    series_table.refresh();
 });
