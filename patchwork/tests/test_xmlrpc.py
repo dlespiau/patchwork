@@ -34,7 +34,17 @@ from patchwork.tests.utils import defaults
 class XMLRPCTest(LiveServerTestCase):
     fixtures = ['default_states', 'default_events']
 
+    def _insert_patch(self):
+        patch = Patch(project=defaults.project,
+                      submitter=defaults.patch_author_person,
+                      msgid=defaults.patch_name,
+                      content=defaults.patch)
+        patch.save()
+        return patch
+
     def setUp(self):
+        defaults.project.save()
+        defaults.patch_author_person.save()
         self.url = (self.live_server_url +
                     reverse('patchwork.views.xmlrpc.xmlrpc'))
         self.rpc = xmlrpc_client.Server(self.url)
@@ -46,13 +56,7 @@ class XMLRPCTest(LiveServerTestCase):
                                      kwargs={'path': 'pwclient/'}))
 
     def testList(self):
-        defaults.project.save()
-        defaults.patch_author_person.save()
-        patch = Patch(project=defaults.project,
-                      submitter=defaults.patch_author_person,
-                      msgid=defaults.patch_name,
-                      content=defaults.patch)
-        patch.save()
+        patch = self._insert_patch()
 
         patches = self.rpc.patch_list()
         self.assertEqual(len(patches), 1)
