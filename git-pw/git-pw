@@ -409,8 +409,11 @@ class Table(object):
                 layout[key]['ellipsis'] = True
                 continue
             for item in items:
-                layout[key]['width'] = max(layout[key]['width'],
-                                           len(str(item[key])))
+                if isinstance(item[key], int):
+                    it = str(item[key])
+                else:
+                    it = item[key]
+                layout[key]['width'] = max(layout[key]['width'], len(it))
 
         # width of the table
         width = 0
@@ -485,7 +488,7 @@ class Table(object):
         for item in items:
             for key, _ in columns.iteritems():
                 fmt = layout[key]['format']
-                sys.stdout.write(fmt.format(item[key]))
+                sys.stdout.write(fmt.decode().format(item[key]))
             sys.stdout.write("\n")
 
 
