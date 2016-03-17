@@ -285,7 +285,16 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "submitted": "2015-10-09T11:51:38",
                     "last_updated": "2015-10-09T11:51:59.013345",
                     "version": 1,
-                    "reviewer": null
+                    "reviewer": null,
+                    "test_state": null,
+                    "state": "initial",
+                    "state_summary": [
+                        {
+                            "count": 1,
+                            "name": "New",
+                            "final": false
+                        }
+                    ]
                 },
                 {
                     "id": 5,
@@ -297,9 +306,28 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "last_updated": "2015-10-09T12:21:58.657976",
                     "version": 1,
                     "reviewer": null,
+                    "test_state": null,
+                    "state": "initial",
+                    "state_summary": [
+                        {
+                            "count": 1,
+                            "name": "New",
+                            "final": false
+                        }
+                    ]
                 }
             ]
         }
+
+    :>json state: The state of the series. One of ``initial``,
+                  ``in progress``, ``done`` or ``incomplete``.
+
+    :>json state_summary: A summary of the patch status in the more recent
+                          revision of the series. This a a list of objects
+                          containing the number of patches (``count``) in a
+                          given state (``name``). ``final`` is whether the
+                          state is final or not, if a final decision (ie.
+                          merged or rejected) has been made about a patch.
 
     :query project: Filter series by project ``id``.
 
@@ -362,7 +390,16 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "submitted": "2015-01-02T11:06:40",
                     "last_updated": "2015-10-09T07:55:18.608251",
                     "version": 1,
-                    "reviewer": null
+                    "reviewer": null,
+                    "test_state": null,
+                    "state": "initial",
+                    "state_summary": [
+                        {
+                            "count": 1,
+                            "name": "New",
+                            "final": false
+                        }
+                    ]
                 },
                 {
                     "id": 1,
@@ -374,6 +411,14 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     "last_updated": "2015-10-09T07:55:01.558523",
                     "version": 1,
                     "reviewer": null,
+                    "state": "initial",
+                    "state_summary": [
+                        {
+                            "count": 4,
+                            "name": "New",
+                            "final": false
+                        }
+                    ]
                 },
             ]
         }
@@ -402,7 +447,15 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
             "submitted": "2015-01-13T09:32:24",
             "last_updated": "2015-10-09T07:57:23.541373",
             "version": 1,
-            "reviewer": null
+            "reviewer": null,
+            "state": "initial",
+            "state_summary": [
+                {
+                    "count": 2,
+                    "name": "New",
+                    "final": false
+                }
+            ]
         }
 
 .. http:get:: /api/1.0/series/(int: series_id)/revisions/
@@ -598,6 +651,8 @@ API Revisions
 - Add the `project`, `name`, `submitter`, `reviewer`, `submitted_since`,
   `updated_since`, `submitted_before`, `updated_before` and `test_state` query
   parameters to the list of series entry points.
+
+- Add the `test_state`, `state` and `test_summary` series fields.
 
 - Add the patch-state-change event.
 
