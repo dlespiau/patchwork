@@ -333,9 +333,15 @@ var pw = (function() {
      *             submit (apply) the filter?
      * humanize: return a string with a description of the active filter for
      *           humans to read
+     *
+     * change_background_on_apply: boolean indicating we grey out the
+     *                             background of the filter when applied
+     *                             (defaults to true)
      */
     exports.create_filter = function(config) {
-        var o = {};
+        var o = {
+            change_background_on_apply: true,
+        };
 
         $.extend(o, config);
         $.extend(o, filter_mixin);
@@ -350,7 +356,7 @@ var pw = (function() {
         };
 
         o.refresh_active = function() {
-            if (o.is_active) {
+            if (o.is_active && o.change_background_on_apply) {
                 $('#clear-' + o.name + '-filter, ' +
                   '#' + o.name + '-filter .btn-link').fadeIn();
                 $('#' + o.name + '-filter').addClass('filter-applied');
