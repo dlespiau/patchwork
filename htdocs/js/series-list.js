@@ -27,7 +27,7 @@ $(function () {
             table.set_filter('updated_since', $('#date-from').val());
             table.set_filter('updated_before', $('#date-to').val());
         },
-        clear_filter: function(table) {
+        reset_filter: function(table) {
             $('.input-group.date').datepicker('update', '');
             table.set_filter('updated_since', null);
             table.set_filter('updated_before', null);
@@ -91,7 +91,7 @@ $(function () {
 
             table.set_filter('submitter', filter);
         },
-        clear_filter: function(table) {
+        reset_filter: function(table) {
             this.me.prop('checked', false);
             this.by.prop('checked', true);
             table.set_filter('submitter', null);
@@ -155,7 +155,7 @@ $(function () {
 
             table.set_filter('reviewer', filter);
         },
-        clear_filter: function(table) {
+        reset_filter: function(table) {
             this.none.prop('checked', false);
             this.me.prop('checked', false);
             this.to.prop('checked', true);
@@ -209,7 +209,7 @@ $(function () {
 
             table.set_filter('test_state', filters.join(','));
         },
-        clear_filter: function(table) {
+        reset_filter: function(table) {
             this.success.prop('checked', false);
             this.warning.prop('checked', false);
             this.failure.prop('checked', false);
@@ -244,7 +244,7 @@ $(function () {
         set_filter: function(table) {
             table.set_filter('name', this.input.val());
         },
-        clear_filter: function(table) {
+        reset_filter: function(table) {
             this.input.val('');
             table.set_filter('name', null);
         },

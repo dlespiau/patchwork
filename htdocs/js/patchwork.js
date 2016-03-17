@@ -287,8 +287,7 @@ var pw = (function() {
                 if (!filter.is_active)
                     continue;
 
-                filter.clear_filter(o);
-                filter.set_active(false);
+                filter._reset_filter(o);
             }
             o.refresh();
         });
@@ -315,9 +314,9 @@ var pw = (function() {
             this.refresh_active();
         },
 
-        _clear_filter: function() {
-            this.clear_filter(this.table);
-            this.set_active(false);
+        _reset_filter: function() {
+            var active = this.reset_filter(this.table);
+            this.set_active(active);
         },
     };
 
@@ -326,8 +325,11 @@ var pw = (function() {
      * name: name of the filter, used to lookup HTML elements
      * init: setup the filter
      * set_filter(table): set the filter(s) on 'table'
-     * clear_filter(table): clear the filter(s) on 'table' and reset the
-     *                      filter fields
+     * reset_filter(table): reset the filter(s) on 'table' and filter fields.
+     *                      This function returns the 'active' status after
+     *                      reset, for the case where we want the reset
+     *                      state to be active (ie the default state of the
+     *                      filter is to actually select objects to display).
      * can_submit: are the filter fields populated in such a way one can
      *             submit (apply) the filter?
      * humanize: return a string with a description of the active filter for
@@ -369,7 +371,7 @@ var pw = (function() {
 
         /* initialize the filter */
         o.init();
-        o.clear_filter(o.table);
+        o._reset_filter(o.table);
 
         $('#' + o.name + '-form').submit(function(e) {
             e.preventDefault();
@@ -385,17 +387,16 @@ var pw = (function() {
         $('#clear-' + o.name + '-filter').tooltip();
         $('#clear-' + o.name + '-filter').click(function(e) {
             e.stopPropagation();
-            o._clear_filter();
+            o._reset_filter();
             o.table.refresh();
         });
         $('#' + o.name + '-filter .btn-link').click(function(e) {
             e.preventDefault();
-            o._clear_filter();
+            o._reset_filter();
             o.table.refresh();
             $('#' + o.name + '-filter-dropdown').dropdown('toggle');
         });
 
-        o.set_active(false);
         o.refresh_apply();
 
         o.table.add_filter(o);
@@ -436,14 +437,13 @@ var pw = (function() {
         $('#' + o.name + '-filter .btn-link').click(function(e) {
             e.preventDefault();
             e.stopPropagation();
-            o._clear_filter();
+            o._reset_filter();
             o.table.refresh();
         });
 
         /* initialize the filter */
         o.init();
-        o.clear_filter(o.table);
-        o.set_active(false);
+        o._reset_filter(o.table);
         o.table.add_filter(o);
 
     };
