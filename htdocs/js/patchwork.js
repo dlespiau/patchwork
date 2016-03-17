@@ -317,7 +317,6 @@ var pw = (function() {
 
         _clear_filter: function() {
             this.clear_filter(this.table);
-            this.table.refresh();
             this.set_active(false);
         },
     };
@@ -387,10 +386,12 @@ var pw = (function() {
         $('#clear-' + o.name + '-filter').click(function(e) {
             e.stopPropagation();
             o._clear_filter();
+            o.table.refresh();
         });
         $('#' + o.name + '-filter .btn-link').click(function(e) {
             e.preventDefault();
             o._clear_filter();
+            o.table.refresh();
             $('#' + o.name + '-filter-dropdown').dropdown('toggle');
         });
 
@@ -436,6 +437,7 @@ var pw = (function() {
             e.preventDefault();
             e.stopPropagation();
             o._clear_filter();
+            o.table.refresh();
         });
 
         /* initialize the filter */
