@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
 {% load person %}
 
 {% block title %}{{ user }}'s todo list{% endblock %}
@@ -15,6 +16,7 @@ $(function () {
     var series = pw.setup_series_list('#serieslist', '/series/', {
         project: pw.project.pk,
         reviewer: pw.user.pk,
+        state: 'initial,in progress,incomplete',
     });
     /* initial load */
     series.refresh();

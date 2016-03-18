@@ -189,7 +189,8 @@ class UserProfile(models.Model):
         else:
             qs = Series.objects
 
-        qs = qs.filter(reviewer=self.user)
+        qs = qs.filter(Q(reviewer=self.user),
+                       ~Q(last_revision__state=RevisionState.DONE))
         return qs
 
     def __str__(self):
