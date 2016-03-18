@@ -4,11 +4,18 @@
 {% load person %}
 
 {% block title %}{{project.name}}{% endblock %}
+
+{% block headers_prepatchwork %}
+{% include "patchwork/series-list-templates.html" %}
+<script type="text/javascript" src="{% static "js/mustache.min.js" %}"></script>
+{% endblock %}
+
 {% block headers %}
   <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-datepicker3.min.css" %}"/>
   <script type="text/javascript" src="{% static "js/bootstrap-datepicker.min.js" %}"></script>
   <script type="text/javascript" src="{% static "js/series-list.js" %}"></script>
 {% endblock %}
+
 {% block series_active %}active{% endblock %}
 
 {% block body %}

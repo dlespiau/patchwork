@@ -214,6 +214,10 @@ label.disabled {
 	background-color: #eee;
 }
 
+.glyphicon-warning-sign, .in-progress-info {
+	cursor: pointer;
+}
+
 /* completion */
 
 small.completion-details {

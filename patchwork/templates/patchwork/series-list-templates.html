@@ -1,0 +1,14 @@
+{% verbatim %}
+<script id="series-info-list-tmpl" type="x-tmpl-mustache">
+<ul class='list-unstyled'>
+{{#state_summary}}
+  <li>{{count}} {{object_name}} in state <strong>{{name}}</strong></li>
+{{/state_summary}}
+</ul>
+<a href='/series/{{id}}/'>View patches</a>
+</script>
+<script id="series-info-tmpl" type="x-tmpl-mustache">
+<span role="button" title="" data-original-title="<strong>{{title}}</strong>"
+      class="glyphicon {{class}}" data-content="{{{content}}}"></span>
+</script>
+{% endverbatim %}

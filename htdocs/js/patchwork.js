@@ -198,12 +198,19 @@ var pw = (function() {
             o._highlight_objects = [];
         };
 
+        o._initialize_popovers = function() {
+            $('.in-progress-info, .glyphicon-warning-sign').popover({
+                'html': true
+            });
+        };
+
         /* called when dynatable has finished populating the DOM */
         o.on_update_finished = function() {
             this._refresh_select_checkboxes();
             this.refresh_info();
             this._refresh_highlight();
             this._refresh_actions();
+            this._initialize_popovers();
         };
 
         o._for_each_checkbox = function(callback) {
@@ -560,6 +567,43 @@ var pw = (function() {
         return "<span class='label result-" + state + "'>" + state + "</span>";
     }
 
+    var tmpl_series_info = $('#series-info-tmpl').html(),
+        tmpl_series_info_list = $('#series-info-list-tmpl').html();
+
+    function patch_name() {
+        if (this.count > 1) // jshint ignore:line
+            return 'patches';
+        return 'patch';
+    }
+
+    var series_state_transform = {
+        'initial': function() { return 'New'; },
+        'in progress': function(record) {
+            record.object_name = patch_name;
+            var list = Mustache.render(tmpl_series_info_list, record);
+
+            return 'In progress ' + Mustache.render(tmpl_series_info, {
+                'class': 'glyphicon-info-sign status-info in-progress-info',
+                'title': 'Patch Status',
+                'content': list,
+            });
+        },
+        'done': function() { return 'Done'; },
+        'incomplete': function() {
+            return Mustache.render(tmpl_series_info, {
+                'class': 'glyphicon-warning-sign text-warning',
+                'title': 'This series is missing patches',
+                'content': 'Either Patchwork is still receiving patches for ' +
+                           'a new revision submitted recently, or something ' +
+                           'has gone wrong with this series.',
+            });
+        },
+    };
+
+    function state_writer(record) {
+        return series_state_transform[record.state](record);
+    }
+
     function date_writer(record) {
         return record[this.id].substr(0, 10);   // jshint ignore:line
     }
@@ -615,6 +659,7 @@ var pw = (function() {
                 'reviewer.name': name_writer,
                 'submitter.name': name_writer,
                 'test_state': test_state_writer,
+                'state': state_writer,
             }
         });
 
@@ -707,6 +752,9 @@ var pw = (function() {
                         '?' + $.param({ ordering: all_params.ordering }));
         }
 
+        Mustache.parse(tmpl_series_info);
+        Mustache.parse(tmpl_series_info_list);
+
         exports.table = ctx.table = create_table({
             'ctx': ctx,
             'selector': selector,
@@ -719,6 +767,7 @@ var pw = (function() {
                 'Reviewer': 'reviewer.name',
                 'Updated': 'last_updated',
                 'Tests':'test_state',
+                'Status':'state',
             },
             'api_url': ctx.api_base_url + url,
             'api_params': all_params,

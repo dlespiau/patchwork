@@ -4,6 +4,11 @@
 
 {% block title %}{{ user }}'s todo list{% endblock %}
 
+{% block headers_prepatchwork %}
+{% include "patchwork/series-list-templates.html" %}
+<script type="text/javascript" src="{% static "js/mustache.min.js" %}"></script>
+{% endblock %}
+
 {% block headers %}
 <script language="JavaScript" type="text/javascript">
 $(function () {
