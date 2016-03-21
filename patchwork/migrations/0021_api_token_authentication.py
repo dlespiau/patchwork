@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('patchwork', '0015_remove_version_n_patches'),
+        ('patchwork', '0020_series_state'),
     ]
 
     operations = [
