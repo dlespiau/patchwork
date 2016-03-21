@@ -31,10 +31,11 @@ from django.db.models import Q
 from django.http import HttpResponse
 from patchwork.tasks import send_reviewer_notification
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
-                              Test, TestResult, TestState, Person)
-                              RevisionState)
+                              Test, TestResult, TestState, Person,
+                              RevisionState, APIToken)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
-                            status, generics)
+                            status  # , generics
+                            )
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -538,6 +539,7 @@ class EventLogViewSet(mixins.ListModelMixin,
             queryset = self.queryset.filter(series__project__linkname=pk)
         return queryset
 
+
 class APITokenView(viewsets.GenericViewSet,
                     mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
@@ -557,13 +559,13 @@ class APITokenView(viewsets.GenericViewSet,
     def create(self, request):
         serializer = self.get_serializer(data=request.DATA)
         if serializer.is_valid():
-            apitoken, entry = APIToken.create(serializer.init_data['name'], user=request.user)
+            apitoken, entry = APIToken.create(serializer.init_data['name'],
+                                              user=request.user)
             serializer = self.get_serializer(entry)
             serializer.data['apitoken'] = apitoken
             return Response(serializer.data)
         return Response(serializer.errors)
 
     def update(self, request, *args, **kwargs):
-        entry = get_object_or_404(self.get_queryset(),pk=kwargs['pk'])
-        return super(APITokenView,self).update(request, *args, **kwargs)
-
+        get_object_or_404(self.get_queryset(), pk=kwargs['pk'])
+        return super(APITokenView, self).update(request, *args, **kwargs)

@@ -17,16 +17,19 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from rest_framework.authentication import BaseAuthentication, get_authorization_header
+from rest_framework.authentication import BaseAuthentication, \
+    get_authorization_header
 from rest_framework import exceptions
 from patchwork.models import APIToken
+
 
 class APITokenAuthentication(BaseAuthentication):
     """
     Simple api token based authentication.
 
-    Clients should authenticate by passing the api token key in the "Authorization"
-    HTTP header, prepended with the string "APIToken ".  For example:
+    Clients should authenticate by passing the api token key in the
+    "Authorization" HTTP header, prepended with the string "APIToken ".
+    For example:
 
         Authorization: APIToken 401f7ac837da42b97f613d789819ff93537bee6a
     """
@@ -42,14 +45,15 @@ class APITokenAuthentication(BaseAuthentication):
             msg = 'Invalid API token header. No credentials provided.'
             raise exceptions.AuthenticationFailed(msg)
         elif len(auth) > 2:
-            msg = 'Invalid API token header. API token string should not contain spaces.'
+            msg = 'Invalid API token header. API token string should ' \
+                  'not contain spaces.'
             raise exceptions.AuthenticationFailed(msg)
 
         return self.authenticate_credentials(auth[1])
 
     def authenticate_credentials(self, apitoken):
         apitoken = self.model.authenticate(apitoken)
-        
+
         if apitoken is None:
             msg = 'Invalid API token'
             raise exceptions.AuthenticationFailed(msg)
@@ -68,4 +72,3 @@ class APITokenAuthentication(BaseAuthentication):
 
     def authenticate_header(self, request):
         return 'APIToken'
-

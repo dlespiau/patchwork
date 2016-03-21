@@ -21,8 +21,8 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
 from patchwork.models import (Project, Series, SeriesRevision, Patch, Person,
-    State, EventLog, Test, TestResult, TestState
-                              RevisionState)
+                              State, EventLog, Test, TestResult, TestState,
+                              RevisionState, APIToken)
 from rest_framework import serializers
 from rest_framework import fields
 from enum import Enum
@@ -298,8 +298,10 @@ class TestResultSerializer(serializers.Serializer):
             return self.update(instance, validated_data)
         return self.create(validated_data)
 
+
 class APITokenSerializer(PatchworkModelSerializer):
     parameters = JSONField(read_only=True)
+
     class Meta:
         model = APIToken
         fields = ('id', 'name', 'user', 'state', 'created')
@@ -311,7 +313,6 @@ class APITokenSerializer(PatchworkModelSerializer):
     def validate_name(self, data, field):
         name = data['name']
         user = self.context['request'].user
-        if APIToken.objects.filter(name=name,user=user).count():
+        if APIToken.objects.filter(name=name, user=user).count():
             raise serializers.ValidationError("Name exists")
         return data
-

@@ -20,9 +20,6 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.test import Client, TestCase
-import patchwork.tests.test_series as test_series
-from patchwork.models import Series, Patch, APIToken, User
-from patchwork.tests.test_user import TestUser
 
 import datetime
 import dateutil.parser
@@ -38,7 +35,7 @@ import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.tests.utils import TestSeries
 from patchwork.models import (
-    Series, Patch, SeriesRevision, Test, TestResult, TestState, State
+    Series, Patch, SeriesRevision, Test, TestResult, TestState, State, APIToken
 )
 from patchwork.serializers import SeriesSerializer
 
@@ -179,7 +176,6 @@ class APITestBase(test_series.Series0010):
 
 
 class APITest(APITestBase):
-
     def testEntryPointPresence(self):
         for entry_point in entry_points:
             r = self.get(entry_point)
@@ -768,6 +764,7 @@ class TestResultTest(APITestBase):
         self.assertEqual(self._test_state(ss, self.series), None,
              "'None' expected as a new revision must reset the testing state")
 
+
 class ReviewerNotificationTest(APITestBase):
 
     def _set_reviewer(self, reviewer):
@@ -833,18 +830,18 @@ class ReviewerNotificationTest(APITestBase):
         self.assertEqual(email.to, [self.user.user.email])
         mail.outbox = []
 
-class APITokenTest(TestCase):
 
-    #user with 2 tokens
+class APITokenTest(TestCase):
+    # user with 2 tokens
     user1 = None
     user1_at1 = None
     user1_at2 = None
 
-    #user with 1 token
+    # user with 1 token
     user2 = None
     user2_at = None
 
-    #user with no token
+    # user with no token
     user3 = None
 
     @staticmethod
@@ -853,26 +850,27 @@ class APITokenTest(TestCase):
         if inactive:
             entry.state = 'Inavtive'
             entry.save()
-        setattr(entry,'apitoken',apitoken)
+        setattr(entry, 'apitoken', apitoken)
         return entry
 
     def setUp(self):
-        #create user1 object and tokens
+        # create user1 object and tokens
         self.user1 = TestUser(username='user1').user
         self.user1_at1 = self._new_apitoken('user1_at1', self.user1)
-        self.user1_at2 = self._new_apitoken('user1_at2', self.user1, inactive=True)
+        self.user1_at2 = self._new_apitoken('user1_at2', self.user1,
+                                            inactive=True)
 
-        #create 2 users
+        # create 2 users
         self.user2 = TestUser(username='user2').user
         self.user2_at = self._new_apitoken('user2_at', self.user2)
 
-        #create request client
+        # create request client
         self.c = Client()
 
     def _request(self, url, method='get', apitoken=None,
-        format_token=True, data=None, decode=True):
+                 format_token=True, data=None, decode=True):
 
-        url = '/api/1.0/'+url
+        url = '/api/1.0/' + url
         if apitoken and format_token:
             apitoken = 'APIToken ' + apitoken
 
@@ -891,229 +889,231 @@ class APITokenTest(TestCase):
         return code, data
 
     def testAuth(self):
-        #no auth
+        # no auth
         status, data = self._request('tokens/')
         self.assertEqual(status, 401)
         self.assertTrue('detail' in data)
 
-        #wrong header format
+        # wrong header format
         status, data = self._request('tokens/',
-            apitoken=self.user1_at1.apitoken,
-            format_token=False)
+                                     apitoken=self.user1_at1.apitoken,
+                                     format_token=False)
         self.assertEqual(status, 401)
         self.assertTrue('detail' in data)
 
-        #wrong header format
+        # wrong header format
         status, data = self._request('tokens/',
-            apitoken=self.user1_at1.apitoken,
-            format_token=False)
+                                     apitoken=self.user1_at1.apitoken,
+                                     format_token=False)
         self.assertEqual(status, 401)
         self.assertTrue('detail' in data)
 
-        #invalid apitoken
+        # invalid apitoken
         status, data = self._request('tokens/',
-            apitoken='hoperandomwillnevergeneratethis')
+                                 apitoken='hoperandomwillnevergeneratethis')
         self.assertEqual(status, 401)
         self.assertTrue('detail' in data)
 
-        #auth inactive token
+        # auth inactive token
         status, data = self._request('tokens/',
-            apitoken=self.user1_at2.apitoken)
+                                     apitoken=self.user1_at2.apitoken)
         self.assertEqual(status, 401)
         self.assertTrue('detail' in data)
 
-        #auth active token
+        # auth active token
         status, data = self._request('tokens/',
-            apitoken=self.user1_at1.apitoken)
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 200)
 
     def testAPITokenGet(self):
-        #get user1 / 2 entries
+        # get user1 / 2 entries
         status, data = self._request('tokens/',
-            apitoken=self.user1_at1.apitoken)
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 200)
         self.assertEqual(len(data), 2)
 
-        #get user2 / 1 entry
+        # get user2 / 1 entry
         status, data = self._request('tokens/',
-            apitoken=self.user2_at.apitoken)
+                                     apitoken=self.user2_at.apitoken)
         self.assertEqual(status, 200)
         self.assertEqual(len(data), 1)
 
     def testAPITokenDetails(self):
-        #details on  own apitoken
+        # details on  own apitoken
         status, data = self._request('tokens/1/',
-            apitoken=self.user1_at1.apitoken)
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 200)
         self.assertEqual(data['id'], 1)
         self.assertEqual(data['name'], 'user1_at1')
         self.assertEqual(data['user'], 1)
         self.assertEqual(data['state'], 'active')
 
-        #details on other user apitoken
+        # details on other user apitoken
         status, data = self._request('tokens/3/',
-            apitoken=self.user1_at1.apitoken)
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
 
-        #details on inexisting id
+        # details on inexisting id
         status, data = self._request('tokens/123/',
-            apitoken=self.user1_at1.apitoken)
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
 
     def testAPITokenCreate(self):
-        #post without data
+        # post without data
         status, data = self._request('tokens/',
-            method='post',
-            apitoken=self.user1_at1.apitoken)
+                                     method='post',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 400)
         self.assertTrue('detail' in data)
 
-        #post without name
+        # post without name
         status, data = self._request('tokens/',
-            method='post',
-            apitoken=self.user1_at1.apitoken,
-            data = {"foo":"bar"})
+                                     method='post',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={"foo": "bar"})
         self.assertEqual(status, 200)
         self.assertEqual(['name'], data.keys())
 
-        #post with name
+        # post with name
         status, data = self._request('tokens/',
-            method='post',
-            apitoken=self.user1_at1.apitoken,
-            data = {"name":"foo"})
+                                     method='post',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={"name": "foo"})
         self.assertEqual(status, 200)
         self.assertTrue('apitoken' in data)
         apitoken_id = data['id']
 
-        #post with same name
+        # post with same name
         status, data = self._request('tokens/',
-            method='post',
-            apitoken=self.user1_at1.apitoken,
-            data = {"name":"foo"})
+                                     method='post',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={"name": "foo"})
         self.assertEqual(status, 200)
         self.assertEqual(['name'], data.keys())
 
-        #remove created token
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='delete',
-            apitoken=self.user1_at1.apitoken,
-            decode = False)
+        # remove created token
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='delete',
+                                     apitoken=self.user1_at1.apitoken,
+                                     decode=False)
         self.assertEqual(status, 204)
 
     def testAPITokenDelete(self):
 
-        #delete on invalid id
+        # delete on invalid id
         status, data = self._request('tokens/1234/',
-            method='delete',
-            apitoken=self.user1_at1.apitoken)
+                                     method='delete',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
         self.assertTrue('detail' in data)
 
-        #delete other token
+        # delete other token
         apitoken_id = self.user2_at.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='delete',
-            apitoken=self.user1_at1.apitoken)
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='delete',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
         self.assertTrue('detail' in data)
 
-        #test deleted apitoken don't apear in list
+        # test deleted apitoken don't apear in list
         apitoken = self._new_apitoken('test', self.user1)
 
         status, data = self._request('tokens/',
-            method='get',
-            apitoken=self.user1_at1.apitoken)
+                                     method='get',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 200)
         self.assertEqual(len(data), 3)
 
-        status, data = self._request('tokens/%d/'%apitoken.id,
-            method='delete',
-            apitoken=self.user1_at1.apitoken,
-            decode=False)
+        status, data = self._request('tokens/%d/' % apitoken.id,
+                                     method='delete',
+                                     apitoken=self.user1_at1.apitoken,
+                                     decode=False)
         self.assertEqual(status, 204)
 
         status, data = self._request('tokens/',
-            method='get',
-            apitoken=self.user1_at1.apitoken)
+                                     method='get',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 200)
         self.assertEqual(len(data), 2)
 
     def testAPITokenPatch(self):
-        old_name = self.user1_at2.name
+        # old_name = self.user1_at2.name
 
-        #patch on invalid id
+        # patch on invalid id
         status, data = self._request('tokens/1234/',
-            method='patch',
-            apitoken=self.user1_at1.apitoken)
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
         self.assertTrue('detail' in data)
 
-        #patch other's token
+        # patch other's token
         apitoken_id = self.user2_at.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken)
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
         self.assertTrue('detail' in data)
 
-        #change name
+        # change name
         apitoken_id = self.user1_at2.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'foo'})
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'foo'})
         self.assertEqual(status, 200)
         self.assertEqual(data['name'], 'foo')
         self.assertEqual(data['state'], 'Inavtive')
 
-        #change to existing name
+        # change to existing name
         apitoken_id = self.user1_at2.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'foo'})
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'foo'})
         self.assertEqual(status, 400)
         self.assertTrue('name' in data)
 
-        #change state
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'state':'bar'})
+        # change state
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'state': 'bar'})
         self.assertEqual(status, 200)
         self.assertEqual(data['name'], 'foo')
         self.assertEqual(data['state'], 'bar')
 
-        #change both name & state
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'user1_at2','state':'Inactive'})
+        # change both name & state
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'user1_at2',
+                                           'state': 'Inactive'})
         self.assertEqual(status, 200)
         self.assertEqual(data['name'], 'user1_at2')
         self.assertEqual(data['state'], 'Inactive')
 
-        #change user
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'user':'1234'})
+        # change user
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'user': '1234'})
         self.assertEqual(status, 200)
         self.assertEqual(data['user'], self.user1.id)
 
-        #change id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'id':'1234'})
+        # change id
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'id': '1234'})
         self.assertEqual(status, 200)
         self.assertEqual(data['id'], apitoken_id)
 
-        #change creation time
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'created':'2000-01-01T00:00:00.000000'})
+        # change creation time
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'created':
+                                               '2000-01-01T00:00:00.000000'})
         self.assertEqual(status, 200)
         self.assertEqual(data['created'], self.user1_at2.created.isoformat())
 
@@ -1121,86 +1121,89 @@ class APITokenTest(TestCase):
 
         old_name = self.user1_at2.name
 
-        #put on invalid id
+        # put on invalid id
         status, data = self._request('tokens/1234/',
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'aaa'})
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'aaa'})
         self.assertEqual(status, 404)
         self.assertTrue('detail' in data)
 
-        #put other's token
+        # put other's token
         apitoken_id = self.user2_at.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken)
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken)
         self.assertEqual(status, 404)
         self.assertTrue('detail' in data)
 
-        #change name
+        # change name
         apitoken_id = self.user1_at2.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'foo'})
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'foo'})
         self.assertEqual(status, 200)
         self.assertEqual(data['name'], 'foo')
         self.assertEqual(data['state'], 'active')
 
-        #change to existing name
+        # change to existing name
         apitoken_id = self.user1_at2.id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='patch',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'foo'})
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='patch',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'foo'})
         self.assertEqual(status, 400)
         self.assertTrue('name' in data)
 
-        #change state
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'state':'bar'})
+        # change state
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'state': 'bar'})
         self.assertEqual(status, 400)
         self.assertTrue('name' in data)
 
-        #change both name & state
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':'user1_at2','state':'Inactive'})
+        # change both name & state
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': 'user1_at2',
+                                           'state': 'Inactive'})
         self.assertEqual(status, 200)
         self.assertEqual(data['name'], 'user1_at2')
         self.assertEqual(data['state'], 'Inactive')
 
-        #change user
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'user':'1234','name':'foo'})
+        # change user
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'user': '1234', 'name': 'foo'})
         self.assertEqual(status, 200)
         self.assertEqual(data['user'], self.user1.id)
 
-        #change id
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'id':'1234','name':'bar'})
+        # change id
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'id': '1234', 'name': 'bar'})
         self.assertEqual(status, 200)
         self.assertEqual(data['id'], apitoken_id)
 
-        #change creation time
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'created':'2000-01-01T00:00:00.000000','name':'foo1'})
+        # change creation time
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'created':
+                                               '2000-01-01T00:00:00.000000',
+                                         'name': 'foo1'})
         self.assertEqual(status, 200)
         self.assertEqual(data['created'], self.user1_at2.created.isoformat())
 
-        #set name and state to default
-        status, data = self._request('tokens/%d/'%apitoken_id,
-            method='put',
-            apitoken=self.user1_at1.apitoken,
-            data={'name':old_name,'state':'inactive'})
+        # set name and state to default
+        status, data = self._request('tokens/%d/' % apitoken_id,
+                                     method='put',
+                                     apitoken=self.user1_at1.apitoken,
+                                     data={'name': old_name,
+                                           'state': 'inactive'})
         self.assertEqual(status, 200)
-

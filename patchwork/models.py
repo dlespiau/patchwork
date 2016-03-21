@@ -1021,7 +1021,6 @@ def _on_revision_complete(sender, revision, **kwargs):
 series_revision_complete.connect(_on_revision_complete)
 
 
-
 class APIToken(models.Model):
     name = models.CharField(max_length=40)
     user = models.ForeignKey(AUTH_USER_MODEL, related_name='auth_token')
