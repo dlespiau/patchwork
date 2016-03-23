@@ -161,6 +161,12 @@ urlpatterns = patterns(
     (r'^help/(?P<path>.*)$', 'patchwork.views.help'),
 )
 
+if 'debug_toolbar' in settings.INSTALLED_APPS:
+    import debug_toolbar
+    urlpatterns += [
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    ]
+
 if settings.ENABLE_XMLRPC:
     urlpatterns += patterns('',
                             (r'xmlrpc/$', 'patchwork.views.xmlrpc.xmlrpc'),

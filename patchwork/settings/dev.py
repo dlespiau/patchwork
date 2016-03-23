@@ -61,6 +61,27 @@ else:
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 #
+# Third-party application settings
+#
+
+# django-debug-toolbar
+
+if django.VERSION >= (1, 7):
+    INSTALLED_APPS += [
+        'debug_toolbar'
+    ]
+
+    DEBUG_TOOLBAR_PATCH_SETTINGS = False
+
+    # This should go first in the middleware classes
+    MIDDLEWARE_CLASSES = [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ] + MIDDLEWARE_CLASSES
+
+    INTERNAL_IPS = ['127.0.0.1', '::1']
+
+
+#
 # Patchwork settings
 #
 
