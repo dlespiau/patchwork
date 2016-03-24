@@ -19,7 +19,6 @@
 
 import datetime
 
-from django.conf import settings
 from django.test import TestCase, TransactionTestCase
 
 from patchwork.models import Project, Patch, Comment, Tag, PatchTag
@@ -121,7 +120,6 @@ class PatchTagsTest(TransactionTestCase):
         return comment
 
     def setUp(self):
-        settings.DEBUG = True
         project = Project(linkname='test-project', name='Test Project',
                           use_tags=True)
         project.save()
