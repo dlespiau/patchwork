@@ -18,11 +18,18 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from collections import Counter, OrderedDict
+import datetime
+import jsonfield
+import random
+import re
+import threadlocalrequest
+
+from django.conf import settings
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
 from django.contrib.sites.models import Site
-from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import Q
 import django.dispatch
@@ -30,15 +37,8 @@ from django.utils import six
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.six import add_metaclass
-import jsonfield
-import threadlocalrequest
 
 from patchwork.parser import hash_patch, extract_tags
-
-import re
-import datetime
-import random
-from collections import Counter, OrderedDict
 
 
 @python_2_unicode_compatible
