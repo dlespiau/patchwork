@@ -148,7 +148,7 @@ class UserProfile(models.Model):
     maintainer_projects = models.ManyToManyField(Project,
              related_name='maintainer_project', blank=True)
     send_email = models.BooleanField(default=False,
-             help_text='Selecting this option allows patchwork to send ' +
+             help_text='Selecting this option allows patchwork to send '
              'email on your behalf')
     patches_per_page = models.PositiveIntegerField(
             default=100, null=False, blank=False,
