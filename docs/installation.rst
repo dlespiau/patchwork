@@ -230,12 +230,12 @@ it can be served (by Apache or nginx, for example):
 
     PYTHONPATH=lib/python ./manage.py collectstatic
 
-You'll also need to load the initial tags and states into the patchwork
-database:
+You'll also need to load the initial tags, states and actions into the
+patchwork database:
 
 ::
 
-    PYTHONPATH=lib/python ./manage.py loaddata default_tags default_states
+    PYTHONPATH=lib/python ./manage.py loaddata default_tags default_states default_actions
 
 Apache Setup
 ------------
