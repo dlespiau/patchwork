@@ -17,6 +17,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from email.utils import make_msgid
 import unittest
 import urlparse
 
@@ -39,10 +40,18 @@ class XMLRPCTest(LiveServerTestCase):
     def _insert_patch(self):
         patch = Patch(project=defaults.project,
                       submitter=defaults.patch_author_person,
-                      msgid=defaults.patch_name,
+                      msgid=make_msgid(),
                       content=defaults.patch)
         patch.save()
         return patch
+
+    def _insert_patches(self, n):
+        patches = []
+
+        for _ in range(0, n):
+            patches.append(self._insert_patch())
+
+        return patches
 
     def setUp(self):
         defaults.project.save()
@@ -68,6 +77,17 @@ class XMLRPCTest(LiveServerTestCase):
         patches = self.rpc.patch_list()
         self.assertEqual(len(patches), 1)
         self.assertEqual(patches[0]['id'], patch.id)
+
+    def testListMultiple(self):
+        self._insert_patches(5)
+        patches = self.rpc.patch_list()
+        self.assertEqual(len(patches), 5)
+
+    def testListMaxCount(self):
+        patch_objs = self._insert_patches(5)
+        patches = self.rpc.patch_list({'max_count': 2})
+        self.assertEqual(len(patches), 2)
+        self.assertEqual(patches[0]['id'], patch_objs[0].id)
 
     def testSetPatchState(self):
         series = TestSeries(1, has_cover_letter=False)
