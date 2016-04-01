@@ -580,6 +580,8 @@ var pw = (function() {
         'initial': function() { return 'New'; },
         'in progress': function(record) {
             record.object_name = patch_name;
+            record.link = ctx.base_url + '/series/' + record.id + '/';
+
             var list = Mustache.render(tmpl_series_info_list, record);
 
             return 'In progress ' + Mustache.render(tmpl_series_info, {
