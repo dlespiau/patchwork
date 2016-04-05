@@ -225,6 +225,10 @@ Events
     :query name: Filter the events by name. This field is a comma separated
                  list of events names.
 
+    :query series: Filter the events by series id.
+
+    :query patch: Filter the events by patch id.
+
 Each event type has some ``parameters`` specific to that event. At the moment,
 two events are possible:
 
@@ -673,7 +677,8 @@ API Revisions
 - Document how lists of objects work.
 - Make all DateTime field serialize to ISO 8061 format and not the ECMA 262
   subset.
-- Add a ``since`` GET parameter to /projects/${id,linkname}/events/
+- Add ``since``, ``name``, ``series`` and ``patch`` GET parameters to
+  /projects/${id,linkname}/events/
 
 **Revision 1**
 

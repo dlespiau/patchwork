@@ -512,6 +512,8 @@ class EventFilter(django_filters.FilterSet):
 
     since = django_filters.CharFilter(name='event_time', lookup_type='gt')
     name = django_filters.MethodFilter()
+    series = django_filters.NumberFilter()
+    patch = django_filters.NumberFilter()
 
     class Meta:
         model = EventLog
