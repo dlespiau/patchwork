@@ -23,6 +23,7 @@ import datetime
 import dateutil.parser
 import dateutil.tz
 import email
+import re
 
 from django.test import TestCase
 
@@ -91,6 +92,31 @@ class MboxPatchSplitResponseTest(TestCase):
         response = self.client.get('/patch/%d/mbox/' % self.patch.id)
         self.assertContains(response,
                             'Acked-by: 1\nAcked-by: 2\n')
+
+
+class MboxPatchworkLink(TestCase):
+    fixtures = ['default_states', 'default_events']
+
+    """ Test that the mbox view appends the patch link """
+
+    def setUp(self):
+        defaults.project.save()
+
+        self.person = defaults.patch_author_person
+        self.person.save()
+
+        self.patch = Patch(project=defaults.project,
+                           msgid='p1', name='testpatch',
+                           submitter=self.person, content='')
+        self.patch.save()
+
+    def testPatchResponse(self):
+        response = self.client.get('/patch/%d/mbox/' % self.patch.id,
+                                   {'link': 'Patchwork'})
+
+        m = re.search(r'^Patchwork:.*/%d/$' % self.patch.pk, response.content,
+                      re.M)
+        self.assertTrue(m)
 
 
 class MboxPassThroughHeaderTest(TestCase):

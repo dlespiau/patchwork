@@ -102,12 +102,16 @@ def content(request, patch_id):
 
 def mbox(request, patch_id):
     patch = get_object_or_404(Patch, id=patch_id)
+    options = {
+        'patch-link': request.GET.get('link', None),
+        'request': request,
+    }
     response = HttpResponse(content_type="text/plain")
     # NOTE(stephenfin) http://stackoverflow.com/a/28584090/613428
     if six.PY3:
-        response.write(patch_to_mbox(patch).as_bytes(True).decode())
+        response.write(patch_to_mbox(patch, options).as_bytes(True).decode())
     else:
-        response.write(patch_to_mbox(patch).as_string(True))
+        response.write(patch_to_mbox(patch, options).as_string(True))
     response['Content-Disposition'] = 'attachment; filename=' + \
         patch.filename().replace(';', '').replace('\n', '')
     return response

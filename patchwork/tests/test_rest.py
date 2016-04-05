@@ -233,10 +233,17 @@ class APITest(APITestBase):
                         'for_each_-intel_-crtc-v2.mbox',
                         '42e2b2c9eeccf912c998be41683f50d7')
 
+    def _check_mbox_link(self, url, n):
+        response = self.client.get('/api/1.0' + url, {'link': 'Patchwork'})
+        m = re.findall('^Patchwork:.*http.*$', response.content, re.M)
+        self.assertEqual(len(m), n)
+
+    def testSeriesMboxPatchworkLink(self):
+        self._check_mbox_link(
+            "/series/%s/revisions/1/mbox/" % self.series2.pk, 3)
+
     def testPatchMbox(self):
-        self.check_mbox("/patches/%s/mbox/" % self.patch.pk,
-                        '3-4-drm-i915-Introduce-a-for_each_crtc-macro.patch',
-                        'b951af09618c6360516f16ed97a30753')
+        self._check_mbox_link("/patches/%s/mbox/" % self.patch.pk, 1)
 
     def testSeriesNewRevisionEvent(self):
         # no 'since' parameter

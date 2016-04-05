@@ -306,9 +306,14 @@ class SeriesViewSet(mixins.ListModelMixin,
                                              old, new)
 
 
-def series_mbox(revision):
+def series_mbox(request, revision):
+    options = {
+        'patch-link': request.GET.get('link', None),
+        'request': request,
+    }
     patches = revision.ordered_patches()
-    data = '\n'.join([patch_to_mbox(x).as_string(True) for x in patches])
+    data = '\n'.join([patch_to_mbox(x, options).as_string(True)
+                      for x in patches])
     response = HttpResponse(content_type="text/plain")
     response.write(data)
     response['Content-Disposition'] = 'attachment; filename=' + \
@@ -335,7 +340,7 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
     @detail_route(methods=['get'])
     def mbox(self, request, series_pk=None, pk=None):
         rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
-        return series_mbox(rev)
+        return series_mbox(request, rev)
 
 
 class ResultMixin(object):

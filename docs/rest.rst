@@ -525,6 +525,10 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
     order in which to apply them. This mbox file can be directly piped into
     ``git am``.
 
+    :query link: Add an HTTP link to the Patchwork patch page in each commit
+                 message. This link is preceded by a tag which name is given
+                 as argument of this parameter, eg. ``?link=Patchwork``.
+
 ::
 
     $ curl -s http://patchwork.example.com/api/1.0/series/42/revisions/2/mbox/ | git am -3
@@ -638,6 +642,10 @@ Patches
 .. http:get:: /api/1.0/patches/(int: patch_id)/mbox/
 
     Retrieve an mbox file. This mbox file can be directly piped into ``git am``.
+
+    :query link: Add an HTTP link to the Patchwork patch page in the commit
+                 message. This link is preceded by a tag which name is given
+                 as argument of this parameter, eg. ``?link=Patchwork``.
 
 ::
 

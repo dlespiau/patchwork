@@ -167,8 +167,14 @@ class PatchMbox(MIMENonMultipart):
         encode_7or8bit(self)
 
 
-def patch_to_mbox(patch):
+def patch_to_mbox(patch, mbox_options={}):
     postscript_re = re.compile('\n-{2,3} ?\n')
+
+    options = {
+        'patch-link': None,
+        'request': None,                 # needed to build the link URL
+    }
+    options.update(mbox_options)
 
     comment = None
     try:
@@ -191,6 +197,12 @@ def patch_to_mbox(patch):
     for comment in Comment.objects.filter(patch=patch) \
             .exclude(msgid=patch.msgid):
         body += comment.patch_responses()
+
+    request = options.get('request')
+    link_name = options['patch-link']
+    if link_name and request:
+        body += link_name + ': ' + \
+                request.build_absolute_uri(patch.get_absolute_url()) + '\n'
 
     if postscript:
         body += '---\n' + postscript + '\n'
