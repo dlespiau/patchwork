@@ -910,9 +910,9 @@ if __name__ == '__main__':
         type=int, help='the series id to retrieve')
 
     # mbox-patch
-    mbox_parser = subparsers.add_parser('mbox-patch',
+    mbox_patch_parser = subparsers.add_parser('mbox-patch',
         help='retrieve a mbox file of the patch and print it on stdout')
-    mbox_parser.add_argument('patch_id', metavar='patch_id',
+    mbox_patch_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
 
     # poll-events
