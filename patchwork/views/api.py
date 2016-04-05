@@ -469,15 +469,6 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
         return response
 
 
-def endpoint(endpoint):
-    """Used to rename a method on a ViewSet"""
-
-    def decorator(func):
-        func.endpoint = endpoint
-        return func
-    return decorator
-
-
 class PatchViewSet(mixins.ListModelMixin,
                    mixins.RetrieveModelMixin,
                    ListMixin, ResultMixin,
