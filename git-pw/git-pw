@@ -574,7 +574,11 @@ class GitPatchwork(object):
         self.pw.setup()
 
     def am(self, mailbox_url):
-        r = requests.get(mailbox_url)
+        params = {}
+        if self.cmd.link:
+            params['link'] = self.cmd.link_name
+
+        r = requests.get(mailbox_url, params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
 
@@ -622,7 +626,11 @@ class GitPatchwork(object):
             die('No patch with id %d.' % self.cmd.patch_id)
 
     def _print_mbox(self, mailbox_url):
-        r = requests.get(mailbox_url)
+        params = {}
+        if self.cmd.link:
+            params['link'] = self.cmd.link_name
+
+        r = requests.get(mailbox_url, params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
         print r.content
@@ -859,6 +867,24 @@ def parser_add_result_options(parser):
         help='the state of the test. One of pending, success, warning or '
              ' failure')
 
+
+def parser_add_link_options(parser):
+    parser.add_argument(
+        '--link', '-l', action='store_true', default=False,
+        help='Add a tag with a link to the patch page in the commit message')
+    parser.add_argument(
+        '--link-name', metavar='tag name', type=str, default='Patchwork',
+        help='Specify a tag name for the link')
+
+
+def parser_add_apply_options(parser):
+    parser_add_link_options(parser)
+
+
+def parser_add_mbox_options(parser):
+    parser_add_link_options(parser)
+
+
 if __name__ == '__main__':
     # on SIGINT, return back to the directory the script was launched from
     start_directory = os.getcwd()
@@ -891,6 +917,8 @@ if __name__ == '__main__':
     apply_series_parser.add_argument('series_id', metavar='series_id',
         type=int, help='the series id to apply')
 
+    parser_add_apply_options(apply_series_parser)
+
     # apply-patch
     apply_patch_parser = subparsers.add_parser('apply-patch', aliases=('ap',),
         help='apply a patch to the current branch')
@@ -901,6 +929,8 @@ if __name__ == '__main__':
     apply_patch_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
 
+    parser_add_apply_options(apply_patch_parser)
+
     # mbox
     mbox_parser = subparsers.add_parser('mbox',
         help='retrieve a mbox file of the series and print it on stdout')
@@ -909,11 +939,15 @@ if __name__ == '__main__':
     mbox_parser.add_argument('series_id', metavar='series_id',
         type=int, help='the series id to retrieve')
 
+    parser_add_mbox_options(mbox_parser)
+
     # mbox-patch
     mbox_patch_parser = subparsers.add_parser('mbox-patch',
         help='retrieve a mbox file of the patch and print it on stdout')
     mbox_patch_parser.add_argument('patch_id', metavar='patch_id',
         type=int, help='the patch id to apply')
+
+    parser_add_mbox_options(mbox_patch_parser)
 
     # poll-events
     poll_events_parser = subparsers.add_parser('poll-events',
