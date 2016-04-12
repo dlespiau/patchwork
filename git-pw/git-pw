@@ -497,9 +497,27 @@ class GitPatchwork(object):
     def __init__(self):
         self.cmd = Command()
 
+    def _git_python_version(self):
+        # remove anything after a first space ('0.3.2 RC1' -> '0.3.2')
+        version = git.__version__.split()[0]
+        # return (major, minor, path)
+        return tuple(map(int, version.split('.')))
+
+    def _create_repo(self, path):
+        # we want to recurse through parent directories:
+        #   - early versions of GitPython's Repo constructor doesn't have the
+        #     search_parent_directories named argument, but do recurse
+        #   - at some point, GitPython introduced said argument and defaults
+        #     to non-recursive. Only try that if the first call fails to
+        #     create the repo object
+        if self._git_python_version() >= (0, 3, 5):
+            return git.Repo(os.getcwd(), search_parent_directories=True)
+        else:
+            return git.Repo(os.getcwd())
+
     def setup(self):
         try:
-            self.repo = git.Repo(os.getcwd())
+            self.repo = self._create_repo(os.getcwd())
         except git.exc.InvalidGitRepositoryError:
             if self.cmd.need_git_repo:
                 die('Not a git repository.')
