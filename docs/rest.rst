@@ -569,6 +569,13 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     be used for full logs, which can be rather large.
 
 
+.. http:post /api/1.0/series/(int: series_id)/revisions/(int: version)/newrevision/
+
+    Create a new ``series-new-revision`` event for this revision. This can be
+    used to re-trigger testing on the series as CI systems listen for those
+    events.
+
+
 Patches
 ~~~~~~~
 
@@ -659,6 +666,7 @@ API Revisions
 - Add test results entry points:
 
   - /series/${id}/revisions/${version}/test-results/
+  - /series/${id}/revisions/${version}/newrevision/
 
 - Add the `project`, `name`, `submitter`, `reviewer`, `submitted_since`,
   `updated_since`, `submitted_before`, `updated_before` and `test_state` query

@@ -32,7 +32,7 @@ from django.http import HttpResponse
 from patchwork.tasks import send_reviewer_notification
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
                               Test, TestResult, TestState, Person,
-                              RevisionState)
+                              RevisionState, Event)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
                             status)
 from rest_framework.authentication import BasicAuthentication
@@ -341,6 +341,21 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
     def mbox(self, request, series_pk=None, pk=None):
         rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
         return series_mbox(request, rev)
+
+    @detail_route(methods=['post'])
+    def newrevision(self, request, series_pk=None, pk=None):
+        rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
+
+        # make sure the user is a maintainer
+        self.check_object_permissions(request, rev.series)
+
+        # log event
+        new_revision = Event.objects.get(name='series-new-revision')
+        log = EventLog(event=new_revision, series=rev.series,
+                       user=request.user,
+                       parameters={'revision': rev.version})
+        log.save()
+        return HttpResponse()
 
 
 class ResultMixin(object):
