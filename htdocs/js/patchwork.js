@@ -516,9 +516,7 @@ var pw = (function() {
         o.clear_action();
         o.refresh_apply();
 
-        $('#set-' + o.name + '-form').submit(function(e) {
-            e.preventDefault();
-
+        o._do_action = function() {
             var pending_objects = [];
             o.table._for_each_checkbox(function() {
                 if (!$(this).is(':checked'))
@@ -533,6 +531,13 @@ var pw = (function() {
             for (var i = 0; i < pending_objects.length; i++) {
                 o.do_action(pending_objects[i]);
             }
+        };
+
+        /* handle actions with a menu */
+        $('#set-' + o.name + '-form').submit(function(e) {
+            e.preventDefault();
+
+            o._do_action();
 
             $('#' + o.name + '-action-dropdown').dropdown('toggle');
             o.clear_action();
