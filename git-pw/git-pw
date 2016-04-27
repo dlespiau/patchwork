@@ -71,6 +71,10 @@ def die(message):
     sys.exit(1)
 
 
+def perror(message):
+    print >>sys.stderr, message
+
+
 class HttpError(Exception):
 
     def __init__(self, status_code):
@@ -92,9 +96,9 @@ class HttpError(Exception):
         elif self.status_code == 400:
             data = self.response.json()
             for field in data:
-                print(field + ':')
+                perror(field + ':')
                 for reason in data[field]:
-                    print('  ' + reason)
+                    perror('  ' + reason)
             die("Invalid input")
         elif self.status_code in msg:
             die(msg[self.status_code])
@@ -713,9 +717,9 @@ class GitPatchwork(object):
 
         if len(series_list) == 0:
             if filter_applied:
-                print('No series found!')
+                perror('No series found!')
             else:
-                print('No series in this project yet!')
+                perror('No series in this project yet!')
             return
 
         # JSON
