@@ -235,7 +235,7 @@ patchwork database:
 
 ::
 
-    PYTHONPATH=lib/python ./manage.py loaddata default_tags default_states default_actions
+    PYTHONPATH=lib/python ./manage.py loaddata default_tags default_states default_events
 
 Apache Setup
 ------------
