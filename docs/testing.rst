@@ -135,7 +135,8 @@ usage is as input to a filter that would take each event one at a time and do
 something with it, test a new revision for instance.
 
 As a quick example of the above, to print the list of series created or updated
-since a specific date, a simple filter can be written:
+since a specific date (we need to use ``--name`` to select that type of event
+only), a simple filter can be written:
 
 .. code-block:: python
 
@@ -151,7 +152,7 @@ since a specific date, a simple filter can be written:
 
 Which gives::
 
-    $ git pw poll-events --since=2016-02-12 | ./show-series
+    $ git pw poll-events --name=series-new-revision --since=2016-02-12 | ./show-series
     series 3324 (rev 1)
     series 3304 (rev 3)
     series 3072 (rev 2)
