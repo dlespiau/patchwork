@@ -769,6 +769,7 @@ var pw = (function() {
             'columns': {
                 'ID': 'id',
                 'Series': 'name',
+                'Version': 'version',
                 'Patches': 'n_patches',
                 'Submitter': 'submitter.name',
                 'Reviewer': 'reviewer.name',
