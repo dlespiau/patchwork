@@ -600,7 +600,7 @@ class GitPatchwork(object):
         if self.cmd.link:
             params['link'] = self.cmd.link_name
 
-        r = requests.get(mailbox_url, params)
+        r = requests.get(mailbox_url, params=params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
 
@@ -652,7 +652,7 @@ class GitPatchwork(object):
         if self.cmd.link:
             params['link'] = self.cmd.link_name
 
-        r = requests.get(mailbox_url, params)
+        r = requests.get(mailbox_url, params=params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
         print r.content
