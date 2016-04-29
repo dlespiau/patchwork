@@ -369,6 +369,8 @@ class ResultMixin(object):
     def _prepare_mail(self, request, result, obj, check_obj):
         if result.state == TestState.STATE_SUCCESS:
             tick = u"✓"
+        elif result.state == TestState.STATE_INFO:
+            tick = u"○"
         else:
             tick = u"✗"
         subject = tick + u" %s: %s for %s" % (result.test.name,
