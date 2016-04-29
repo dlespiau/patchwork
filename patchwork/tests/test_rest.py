@@ -752,13 +752,16 @@ class TestResultTest(APITestBase):
         self._post_result(self.rev_url, "test1", 'pending')
         self.assertEqual(self._test_state(ss, self.series), 'pending')
 
-        self._post_result(self.rev_url, "test2", 'success')
+        self._post_result(self.rev_url, "test2", 'info')
+        self.assertEqual(self._test_state(ss, self.series), 'info')
+
+        self._post_result(self.rev_url, "test3", 'success')
         self.assertEqual(self._test_state(ss, self.series), 'success')
 
-        self._post_result(self.rev_url, "test3", 'warning')
+        self._post_result(self.rev_url, "test4", 'warning')
         self.assertEqual(self._test_state(ss, self.series), 'warning')
 
-        self._post_result(self.rev_url, "test4", 'failure')
+        self._post_result(self.rev_url, "test5", 'failure')
         self.assertEqual(self._test_state(ss, self.series), 'failure')
 
         # Create a new revision
