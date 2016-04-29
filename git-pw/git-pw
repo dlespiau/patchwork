@@ -173,11 +173,13 @@ class User(object):
 
 class TestState(object):
     PENDING = 0
-    SUCCESS = 1
-    WARNING = 2
-    FAILURE = 3
+    INFO = 1
+    SUCCESS = 2
+    WARNING = 3
+    FAILURE = 4
     CHOICES = (
         (PENDING, 'pending'),
+        (INFO, 'info'),
         (SUCCESS, 'success'),
         (WARNING, 'warning'),
         (FAILURE, 'failure'),
@@ -886,8 +888,8 @@ def parser_add_result_options(parser):
     parser.add_argument('test_name', metavar='test_name', type=str,
         help='the name of the test')
     parser.add_argument('state', metavar='state', type=str,
-        help='the state of the test. One of pending, success, warning or '
-             ' failure')
+        help='the state of the test. One of pending, info, success, warning '
+             'or failure')
 
 
 def parser_add_link_options(parser):
