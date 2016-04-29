@@ -378,7 +378,7 @@ $(function () {
             else
                 reviewer = this.completion.getValue();
 
-            this.post_data('/series/' + id + '/', { reviewer: reviewer });
+            this.patch_data('/series/' + id + '/', { reviewer: reviewer });
         },
         clear_action: function() {
             this.none.prop('checked', false);

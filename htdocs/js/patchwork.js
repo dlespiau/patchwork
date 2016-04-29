@@ -73,7 +73,7 @@ var pw = (function() {
             table: null,
         };
 
-    exports.post_data = function(url, data, success_cb, error_cb) {
+    exports.patch_data = function(url, data, success_cb, error_cb) {
         $.ajax({
             url: ctx.api_base_url + url,
             headers: {
@@ -517,9 +517,9 @@ var pw = (function() {
             o._on_post_complete();
         };
 
-        o.post_data = function(url, data) {
-            exports.post_data(url, data,
-                              this._on_post_success, this._on_post_failure);
+        o.patch_data = function(url, data) {
+            exports.patch_data(url, data,
+                               this._on_post_success, this._on_post_failure);
         };
 
         /* initialize the action */
