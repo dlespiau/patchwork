@@ -191,7 +191,7 @@ var pw = (function() {
 
         o._refresh_highlight = function() {
             this._for_each_checkbox(function() {
-                var id = o.id_from_checkbox($(this));
+                var id = o._column_from_checkbox($(this), 'ID');
                 if (o._highlight_objects.indexOf(id) != -1)
                     $(this).parent().parent().addClass('flash');
             });
@@ -217,8 +217,10 @@ var pw = (function() {
             $(o.selector + ' tbody tr td input:checkbox').each(callback);
         };
 
-        o.id_from_checkbox = function(checkbox) {
-            return checkbox.parent().next().html();
+        o._column_from_checkbox = function(checkbox, name) {
+            var nth = this.columns[name].order + 1;
+
+            return checkbox.parent().parent().find('td:nth-child(' + nth +')').html();
         };
 
         o._refresh_actions = function() {
@@ -522,7 +524,8 @@ var pw = (function() {
                 if (!$(this).is(':checked'))
                     return;
 
-                var id = o.table.id_from_checkbox($(this));
+                var id = o.table._column_from_checkbox($(this), 'ID');
+
                 pending_objects.push(id);
             });
             o._pending_posts += pending_objects.length;
