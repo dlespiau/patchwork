@@ -767,15 +767,15 @@ var pw = (function() {
             'selector': selector,
             'name': 'series',
             'columns': {
-                'ID': 'id',
-                'Series': 'name',
-                'Version': 'version',
-                'Patches': 'n_patches',
-                'Submitter': 'submitter.name',
-                'Reviewer': 'reviewer.name',
-                'Updated': 'last_updated',
-                'Tests':'test_state',
-                'Status':'state',
+                'ID': { field: 'id', order: 1 },
+                'Series': { field: 'name', order: 2 },
+                'Tests': { field: 'test_state', order: 3 },
+                'Status': { field: 'state', order: 4 },
+                'Version': { field: 'version', order: 5 },
+                'Patches': { field: 'n_patches', order: 6 },
+                'Submitter': { field: 'submitter.name', order: 7 },
+                'Reviewer': { field: 'reviewer.name', order: 8 },
+                'Updated': { field: 'last_updated', order: 9 },
             },
             'api_url': ctx.api_base_url + url,
             'api_params': all_params,
@@ -783,7 +783,7 @@ var pw = (function() {
 
         table.bind('dynatable:preinit', function(e, dynatable) {
             dynatable.utility.textTransform.PatchworkSeries = function(text) {
-                return ctx.table.columns[text];
+                return ctx.table.columns[text].field;
             };
         }).bind('dynatable:afterUpdate', function(e, rows) {
             ctx.table.on_update_finished();
