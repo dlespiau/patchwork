@@ -73,13 +73,16 @@ var pw = (function() {
             table: null,
         };
 
-    exports.patch_data = function(url, data, success_cb, error_cb) {
+    exports.post_data = function(url, data, success_cb, error_cb, headers) {
+        if (headers === undefined) {
+            headers = {
+                'X-CSRFToken': get_cookie('csrftoken'),
+            };
+        }
+
         $.ajax({
             url: ctx.api_base_url + url,
-            headers: {
-                'X-HTTP-Method-Override': 'PATCH',
-                'X-CSRFToken': get_cookie('csrftoken'),
-            },
+            headers: headers,
             type: 'POST',
             data: data,
             success: function(response) {
@@ -90,6 +93,13 @@ var pw = (function() {
                 if (error_cb) error_cb();
             }
         });
+    };
+
+    exports.patch_data = function(url, data, success_cb, error_cb) {
+        exports.post_data(url, data, success_cb, error_cb, {
+                'X-HTTP-Method-Override': 'PATCH',
+                'X-CSRFToken': get_cookie('csrftoken'),
+            });
     };
 
     function create_table(config) {
@@ -515,6 +525,11 @@ var pw = (function() {
 
         o._on_post_failure = function() {
             o._on_post_complete();
+        };
+
+        o.post_data = function(url, data) {
+            exports.post_data(url, data,
+                              this._on_post_success, this._on_post_failure);
         };
 
         o.patch_data = function(url, data) {
