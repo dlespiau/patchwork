@@ -522,7 +522,7 @@ div.box table.vertical {
 /* test resuts */
 .result-pending {
 	margin: 0px 8px;
-	background-color: #5bc0de;
+	background-color: #777;
 }
 
 .result-warning {
@@ -538,6 +538,11 @@ div.box table.vertical {
 .result-success {
 	margin: 0px 8px;
 	background-color: #5cb85c;
+}
+
+.result-info {
+	margin: 0px 8px;
+	background-color: #5bc0de;
 }
 
 pre.test-result {

@@ -360,9 +360,10 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                              ``last_updated`` in response, an ISO 8601 date.
 
     :query test_state: Filter series by test state. Possible values are
-                       ``pending``, ``success``, ``warning``, ``failure`` or
-                       ``null`` series that don't have any test result. It's
-                       also possible to give a comma separated list of states.
+                       ``pending``, ``info``, ``success``, ``warning``,
+                       ``failure`` or ``null`` series that don't have any test
+                        result. It's also possible to give a comma separated
+                        list of states.
 
 
 .. http:get:: /api/1.0/series/
