@@ -253,6 +253,7 @@ $(function () {
             this.success = $('#tests-success');
             this.warning = $('#tests-warning');
             this.failure = $('#tests-failure');
+            this.info = $('#tests-info');
 
             $('#tests-filter input:checkbox').change(function() {
                 _this.refresh_apply();
@@ -267,6 +268,8 @@ $(function () {
                 filters.push('warning');
             if (this.failure.prop('checked'))
                 filters.push('failure');
+            if (this.info.prop('checked'))
+                filters.push('info');
 
             return filters;
         },
@@ -279,11 +282,13 @@ $(function () {
             this.success.prop('checked', false);
             this.warning.prop('checked', false);
             this.failure.prop('checked', false);
+            this.info.prop('checked', false);
             table.set_filter('test_state', null);
         },
         can_submit: function() {
             return this.success.prop('checked') ||
                    this.warning.prop('checked') ||
+                   this.info.prop('checked') ||
                    this.failure.prop('checked');
         },
         humanize: function() {
