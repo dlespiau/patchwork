@@ -394,6 +394,19 @@ $(function () {
 
     });
 
+    /* test action */
+    pw.create_action({
+        table: series_table,
+        name: 'test',
+        init: function() {},
+        do_action: function(id, revision) {
+            this.post_data('/series/' + id + '/revisions/' + revision +
+                           '/newrevision/');
+        },
+        clear_action: function() {},
+        can_submit: function() { return true; },
+    });
+
     /* initial load */
     series_table.refresh();
 });

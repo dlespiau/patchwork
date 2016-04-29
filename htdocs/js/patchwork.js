@@ -571,6 +571,12 @@ var pw = (function() {
             o.clear_action();
         });
 
+        /* and action without a menu */
+        $('#do-' + o.name + '-action').on('click', function(e) {
+            e.preventDefault();
+            o._do_action();
+            o.clear_action();
+        });
 
         return o;
     };
