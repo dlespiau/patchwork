@@ -189,10 +189,19 @@ var pw = (function() {
             this.set_info(text);
         };
 
+        function find_highlight(objs, id) {
+            for (var i = 0, l = objs.length; i < l; i++) {
+                if (objs[i].id == id)
+                    return i;
+            }
+
+            return -1;
+        }
+
         o._refresh_highlight = function() {
             this._for_each_checkbox(function() {
                 var id = o._column_from_checkbox($(this), 'ID');
-                if (o._highlight_objects.indexOf(id) != -1)
+                if (find_highlight(o._highlight_objects, id) != -1)
                     $(this).parent().parent().addClass('flash');
             });
             o._highlight_objects = [];
@@ -524,15 +533,16 @@ var pw = (function() {
                 if (!$(this).is(':checked'))
                     return;
 
-                var id = o.table._column_from_checkbox($(this), 'ID');
+                var id = o.table._column_from_checkbox($(this), 'ID'),
+                    version = o.table._column_from_checkbox($(this), 'Version');
 
-                pending_objects.push(id);
+                pending_objects.push({id: id, revision: version});
             });
             o._pending_posts += pending_objects.length;
             o.table._highlight_next_refresh(pending_objects);
 
             for (var i = 0; i < pending_objects.length; i++) {
-                o.do_action(pending_objects[i]);
+                o.do_action(pending_objects[i].id, pending_objects[i].revision);
             }
         };
 
