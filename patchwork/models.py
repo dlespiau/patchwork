@@ -478,11 +478,13 @@ SERIES_DEFAULT_NAME = "Series without cover letter"
 
 class TestState:
     STATE_PENDING = 0
-    STATE_SUCCESS = 1
-    STATE_WARNING = 2
-    STATE_FAILURE = 3
+    STATE_INFO = 1
+    STATE_SUCCESS = 2
+    STATE_WARNING = 3
+    STATE_FAILURE = 4
     STATE_CHOICES = (
         (STATE_PENDING, 'pending'),
+        (STATE_INFO, 'info'),
         (STATE_SUCCESS, 'success'),
         (STATE_WARNING, 'warning'),
         (STATE_FAILURE, 'failure'),
