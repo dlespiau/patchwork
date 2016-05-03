@@ -647,8 +647,10 @@ class SeriesRevision(models.Model):
         results = TestResult.objects.filter(revision=self)
         if results.count() > 0:
             self.test_state = max([r.state for r in results])
-            self.save()
-            self.series.save()
+        else:
+            self.test_state = None
+        self.save()
+        self.series.save()
 
     def human_name(self):
         name = self.series.name
