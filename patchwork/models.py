@@ -596,7 +596,7 @@ class SeriesRevision(models.Model):
                                      default=RevisionState.INCOMPLETE)
     state_summary = jsonfield.JSONField(null=True)
     test_state = models.SmallIntegerField(choices=TestState.STATE_CHOICES,
-                                          null=True)
+                                          null=True, blank=True)
 
     class Meta:
         unique_together = [('series', 'version')]
