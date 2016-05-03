@@ -81,6 +81,30 @@ class SeriesAdmin(admin.ModelAdmin):
 admin.site.register(Series, SeriesAdmin)
 
 
+class SeriesRevisionAdmin(admin.ModelAdmin):
+    list_display = ('name', 'series_name', 'n_patches', 'submitter_name',)
+    list_filter = ('series__project', )
+    search_fields = ('series__name', 'series__pk', 'series__submitter__name',
+                     'series__submitter__email',)
+
+    def name(self, obj):
+        return "Series %d, rev %d" % (obj.series.pk, obj.version)
+    name.short_description = 'Series, Revision'
+    name.admin_order_field = 'series_id'
+
+    def series_name(self, obj):
+        return obj.series.name
+    series_name.short_description = 'Series'
+    series_name.admin_order_field = 'series__name'
+
+    def submitter_name(self, obj):
+        return obj.series.submitter.name
+    submitter_name.short_description = 'Submitter'
+    submitter_name.admin_order_field = 'series__submitter__name'
+
+admin.site.register(SeriesRevision, SeriesRevisionAdmin)
+
+
 class PatchAdmin(admin.ModelAdmin):
     list_display = ('name', 'submitter', 'project', 'state', 'date',
                     'archived', 'is_pull_request')
