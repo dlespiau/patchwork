@@ -39,7 +39,7 @@ Because we're going to recompile our dependencies, we'll also need
 development headers. For the MySQL/MariaDB setups these are
 ``mariadb-devel`` (Fedora), ``libmysqlclient-dev`` (Debian)
 
-2. Create a new virtual environement.
+2. Create a new virtual environment.
 
 Inside a virtual env, we'll just install the dependencies needed for
 patchwork and run it from there.
@@ -58,7 +58,7 @@ directory.
     $ source django-1.8/bin/activate
     (django-1.8)$
 
-The shell prompt is preprended with the virtual env name.
+The shell prompt is prepended with the virtual env name.
 
 4. Install the required dependencies
 
@@ -121,7 +121,7 @@ PW_TEST_DB_NAME
   Name of the database. Defaults to ``patchwork``.
 
 PW_TEST_DB_USER
-  Username to access the database with. Defaults to ``patchwork``.
+  User name to access the database with. Defaults to ``patchwork``.
 
 PW_TEST_DB_PASS
   Password to access the database with. Defaults to ``password``.

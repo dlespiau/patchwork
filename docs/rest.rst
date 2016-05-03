@@ -690,7 +690,7 @@ API Revisions
   ``series-new-revision`` event.
 - Change /series/${id}/revisions/ to follow the same list system as other
   entry points. This is technically an API change, but the impact is limited
-  at this early point. Hopefully noone will ever find out.
+  at this early point. Hopefully no one will ever find out.
 - Document how lists of objects work.
 - Make all DateTime field serialize to ISO 8061 format and not the ECMA 262
   subset.

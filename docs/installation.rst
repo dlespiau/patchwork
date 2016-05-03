@@ -16,7 +16,7 @@ are in brackets):
 -  A Python interpreter
 -  `Django <https://www.djangoproject.com/>`__ >= 1.7. The latest
    version is recommended
--  A webserver and suitable WSGI plugin. Options include
+-  A web server and suitable WSGI plugin. Options include
    `Apache <http://httpd.apache.org/>`__ with the
    `mod\_python <http://modpython.org/>`__ plugin, or
    `Gunicorn <http://gunicorn.org/>`__ with
@@ -240,9 +240,9 @@ patchwork database:
 Apache Setup
 ------------
 
-Example apache configuration files are in ``lib/apache2/``.
+Example Apache configuration files are in ``lib/apache2/``.
 
-wsgi
+WSGI
 ~~~~
 
 django has built-in support for WSGI, which supersedes the fastcgi
@@ -284,7 +284,7 @@ subscribed to the list. Depending on the mailing list, you will probably
 need to confirm the subscription - temporarily direct the alias to
 yourself to do this.
 
-Setup your MTA to Deliver Mail to the Parsemail Script
+Setup your MTA to Deliver Mail to the parsemail Script
 ------------------------------------------------------
 
 Your MTA will need to deliver mail to the parsemail script in the
@@ -349,7 +349,7 @@ Some errors:
 -  pwclient fails for actions that require authentication, but a
    username and password is given in ~/.pwclientrc. Server reports "No
    authentication credentials given". If you're using the FastCGI
-   interface to apache, you'll need the ``-pass-header Authorization``
+   interface to Apache, you'll need the ``-pass-header Authorization``
    option to the FastCGIExternalServer configuration directive.
 
 
