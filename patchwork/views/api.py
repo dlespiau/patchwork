@@ -291,7 +291,6 @@ class SeriesViewSet(mixins.ListModelMixin,
                     SeriesListMixin,
                     viewsets.GenericViewSet):
     permission_classes = (MaintainerPermission, )
-    queryset = Series.objects.all()
 
     def pre_update(self, series):
         self._old_reviewer = series.reviewer
