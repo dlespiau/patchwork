@@ -606,6 +606,7 @@ Patches
                     "project": 1,
                     "name": "[RFC,1/4] drm/i915: Define a common data structure for Panel Info",
                     "date": "2014-12-26T10:23:27",
+                    "last_updated": "2014-12-26T10:23:27",
                     "submitter": 1,
                     "state": 1,
                     "content": "<diff content>"
@@ -615,6 +616,7 @@ Patches
                     "project": 1,
                     "name": "[RFC,2/4] drm/i915: Add a drm_panel over INTEL_SOC_PMIC",
                     "date": "2014-12-26T10:23:28",
+                    "last_updated": "2014-12-26T10:23:28",
                     "submitter": 1,
                     "state": 1,
                     "content": "<diff content>"
@@ -642,6 +644,7 @@ Patches
                 "id": 120,
                 "name": "[1/2] drm/i915: Balance context pinning on reset cleanup",
                 "date": "2015-01-13T09:32:24",
+                "last_updated": "2015-01-13T09:32:24",
                 "submitter": 21,
                 "state": 1,
                 "content": "<diff content>"

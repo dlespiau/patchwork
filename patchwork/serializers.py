@@ -199,10 +199,10 @@ class PatchSerializer(PatchworkModelSerializer):
 
     class Meta:
         model = Patch
-        fields = ('id', 'project', 'name', 'date', 'submitter', 'state',
-                  'content')
-        read_only_fields = ('id', 'project', 'name', 'date', 'submitter',
-                            'content')
+        fields = ('id', 'project', 'name', 'date', 'last_updated', 'submitter',
+                  'state', 'content')
+        read_only_fields = ('id', 'project', 'name', 'date', 'last_updated',
+                            'submitter', 'content',)
         expand_serializers = {
             'project': ProjectSerializer,
             'submitter': PersonSerializer,
