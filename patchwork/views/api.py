@@ -489,13 +489,20 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
         return response
 
 
-class PatchViewSet(mixins.ListModelMixin,
-                   mixins.RetrieveModelMixin,
-                   ListMixin, ResultMixin,
-                   viewsets.GenericViewSet):
-    permission_classes = (MaintainerPermission, )
+class PatchListMixin(ListMixin):
     queryset = Patch.objects.all()
     serializer_class = PatchSerializer
+    select_fields__expand = ('project', 'submitter', 'state')
+    filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
+    permission_classes = (MaintainerPermission, )
+
+
+
+
+class PatchViewSet(mixins.ListModelMixin,
+                   mixins.RetrieveModelMixin,
+                   PatchListMixin, ResultMixin,
+                   viewsets.GenericViewSet):
 
     @detail_route(methods=['get'])
     def mbox(self, request, pk=None):
