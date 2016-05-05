@@ -229,6 +229,7 @@ class SeriesListMixin(ListMixin):
     select_fields__expand = ('project', 'submitter', 'reviewer')
     filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
     filter_class = SeriesFilter
+    permission_classes = (MaintainerPermission, )
 
 
 class SelectRelatedMixin(object):
@@ -273,7 +274,6 @@ class SeriesListViewSet(mixins.ListModelMixin,
                         SeriesListMixin,
                         SelectRelatedMixin,
                         viewsets.GenericViewSet):
-    permission_classes = (MaintainerPermission, )
 
     def get_queryset(self):
 
@@ -290,7 +290,6 @@ class SeriesViewSet(mixins.ListModelMixin,
                     UpdateModelMixin,
                     SeriesListMixin,
                     viewsets.GenericViewSet):
-    permission_classes = (MaintainerPermission, )
 
     def pre_update(self, series):
         self._old_reviewer = series.reviewer
