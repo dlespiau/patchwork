@@ -301,6 +301,7 @@ class Patch(models.Model):
     msgid = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     date = models.DateTimeField(default=datetime.datetime.now)
+    last_updated = models.DateTimeField(auto_now=True)
     submitter = models.ForeignKey(Person)
     delegate = models.ForeignKey(User, blank=True, null=True)
     state = models.ForeignKey(State, null=True)
