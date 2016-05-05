@@ -30,6 +30,10 @@ import patchwork.views.api as api
 # /projects/$project/
 project_router = routers.SimpleRouter()
 project_router.register('projects', api.ProjectViewSet)
+# /projects/$project/patches/
+patches_list_router = routers.NestedSimpleRouter(project_router, 'projects',
+                                                 lookup='project')
+patches_list_router.register(r'patches', api.PatchListViewSet)
 # /projects/$project/series/
 series_list_router = routers.NestedSimpleRouter(project_router, 'projects',
                                                 lookup='project')
@@ -71,6 +75,7 @@ urlpatterns = patterns(
     # API
     url(r'^api/1.0/$', api.API.as_view(), name='api-root'),
     (r'^api/1.0/', include(project_router.urls)),
+    (r'^api/1.0/', include(patches_list_router.urls)),
     (r'^api/1.0/', include(series_list_router.urls)),
     (r'^api/1.0/', include(series_router.urls)),
     (r'^api/1.0/', include(revisions_router.urls)),

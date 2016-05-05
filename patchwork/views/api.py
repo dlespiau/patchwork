@@ -497,6 +497,19 @@ class PatchListMixin(ListMixin):
     permission_classes = (MaintainerPermission, )
 
 
+class PatchListViewSet(mixins.ListModelMixin,
+                       PatchListMixin,
+                       SelectRelatedMixin,
+                       viewsets.GenericViewSet):
+
+    def get_queryset(self):
+
+        pk = self.kwargs['project_pk']
+        if is_integer(pk):
+            queryset = self.queryset.filter(project__pk=pk)
+        else:
+            queryset = self.queryset.filter(project__linkname=pk)
+        return self.select_related(queryset)
 
 
 class PatchViewSet(mixins.ListModelMixin,

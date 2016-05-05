@@ -65,6 +65,14 @@ entry_points = {
         'flags': ('is_list', 'is_series_list', ),
         'ordering': ('last_updated', 'submitter.name', ),
     },
+    '/projects/%(project_linkname)s/patches/': {
+        'flags': ('is_list', 'is_patch_list', ),
+        'ordering': ('last_updated', 'submitter.name', ),
+    },
+    '/projects/%(project_id)s/patches/': {
+        'flags': ('is_list', 'is_patch_list', ),
+        'ordering': ('last_updated', 'submitter.name', ),
+    },
     '/series/': {
         'flags': ('is_list', 'is_series_list', ),
         'ordering': ('last_updated', 'submitter.name', ),
@@ -82,7 +90,7 @@ entry_points = {
         'flags': ('not_json',),
     },
     '/patches/': {
-        'flags': ('is_list',),
+        'flags': ('is_list', 'is_patch_list'),
     },
     '/patches/%(patch_id)s/': {
         'flags': (),
@@ -213,9 +221,7 @@ class APITest(APITestBase):
                 self.assertTrue('count' in json1)
                 self.assertEqual(json0['count'], json1['count'])
                 self.assertTrue(json0['count'] > 1)
-                results1 = json1['results']
-                results1.reverse()
-                self.assertEqual(json0['results'], results1)
+                self.assertNotEqual(json0['results'], json1['results'])
 
     def testRevisionPatchOrdering(self):
         revision = self.get_json('/series/%(series_id)s/revisions/1/')

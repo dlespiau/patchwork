@@ -580,6 +580,52 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
 Patches
 ~~~~~~~
 
+.. http:get:: /api/1.0/projects/(string: linkname)/patches/
+.. http:get:: /api/1.0/projects/(int: project_id)/patches/
+
+    List of all patches belonging to a specific project. The project can be
+    specified using either its ``linkname`` or ``id``.
+
+    .. sourcecode:: http
+
+        GET /api/1.0/projects/intel-gfx/patches/ HTTP/1.1
+        Accept: application/json
+
+    .. sourcecode:: http
+
+        HTTP/1.1 200 OK
+        Content-Type: application/json
+        Vary: Accept
+        Allow: GET, HEAD, OPTIONS
+
+        {
+            "count": 1392,
+            "next": "http://patchwork.example.com/api/1.0/projects/intel-gfx/patches/?page=2",
+            "previous": null,
+            "results": [
+                {
+                    "id": 1,
+                    "project": 1,
+                    "name": "[RFC,1/4] drm/i915: Define a common data structure for Panel Info",
+                    "date": "2014-12-26T10:23:27",
+                    "last_updated": "2014-12-26T10:23:27",
+                    "submitter": 1,
+                    "state": 1,
+                    "content": "<diff content>"
+                },
+                {
+                    "id": 4,
+                    "project": 1,
+                    "name": "[RFC,2/4] drm/i915: Add a drm_panel over INTEL_SOC_PMIC",
+                    "date": "2014-12-26T10:23:28",
+                    "last_updated": "2014-12-26T10:23:28",
+                    "submitter": 1,
+                    "state": 1,
+                    "content": "<diff content>"
+                }
+            ]
+        }
+
 .. http:get:: /api/1.0/patches/
 
     List of all patches.
