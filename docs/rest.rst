@@ -626,6 +626,29 @@ Patches
             ]
         }
 
+    :query project: Filter patches by project ``id``.
+
+    :query name: Filter patches by name.
+
+    :query submitter: Filter patches by submitter ``id``. ``self`` can be used
+                      as a special value meaning the current logged in user.
+
+    :query submitted_since: Retrieve only submitted patches newer than a
+                            specified time. Format is the same as ``date``
+                            in response, an ISO 8601 date.
+
+    :query updated_since:   Retrieve only updated patches newer than a
+                            specified time. Format is the same as
+                            ``last_updated`` in response, an ISO 8601 date.
+
+    :query submitted_before: Retrieve only submitted patches older than the
+                             specified time. Format is the same as
+                             ``date`` in response, an ISO 8601 date.
+
+    :query updated_before:   Retrieve only updated patches older than a
+                             specified time. Format is the same as
+                             ``last_updated`` in response, an ISO 8601 date.
+
 .. http:get:: /api/1.0/patches/
 
     List of all patches.

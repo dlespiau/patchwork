@@ -213,6 +213,10 @@ class State(models.Model):
     ordering = models.IntegerField(unique=True)
     action_required = models.BooleanField(default=True)
 
+    @classmethod
+    def from_string(cls, name):
+        return State.objects.get(name__iexact=name)
+
     def __str__(self):
         return self.name
 
