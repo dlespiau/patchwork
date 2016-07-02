@@ -32,7 +32,7 @@
 #
 #   - On Fedora:
 #
-#     $ sudo dnf install python-GitPython python-requests
+#     $ sudo dnf install GitPython python-requests
 #
 #   - On Debian/Ubuntu
 #
