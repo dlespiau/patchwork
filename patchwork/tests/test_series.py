@@ -612,9 +612,10 @@ class FullSeriesUpdateTest(GeneratedSeriesTest):
         self.check_revision(series, revisions[0], series1_mails, n_patches[0])
         self.check_revision(series, revisions[1], series2_mails, n_patches[1])
 
-        # Make sure we've created an event per revision (and so we've correctly
-        # picked up the 2 revisions even if the number of patches changes)
-        self.assertEquals(EventLog.objects.all().count(), 2)
+        # Make sure we've created a "series-new-revision" event per revision
+        # (and so we've correctly picked up the 2 revisions even if the
+        # number of patches changes)
+        self.assertEquals(EventLog.objects.filter(event_id=1).count(), 2)
 
     def _set_cover_letter_subject(self, mail, n_patches, subject):
         del mail['Subject']
