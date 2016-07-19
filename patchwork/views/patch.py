@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import
 
-from django.http import HttpResponse, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseForbidden, Http404
 from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.utils import six
 
@@ -124,6 +124,13 @@ def list(request, project_id):
     return render_to_response('patchwork/list.html', context)
 
 
+def _get_patch_or_404(request, msgid):
+    patch = Patch.objects.filter(msgid='<' + msgid + '>').first()
+    if patch is None:
+        raise Http404("Patch not found")
+    return patch
+
+
 def msgid(request, msgid):
-    patch = get_object_or_404(Patch, msgid='<' + msgid + '>')
+    patch = _get_patch_or_404(Patch, msgid)
     return redirect(patch)
