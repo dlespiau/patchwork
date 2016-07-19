@@ -850,7 +850,7 @@ def lock():
         l.lock()
         return l
 
-    l = lockmod.lock("/tmp/patchwork.parsemail.lock", timeout=30)
+    l = lockmod.lock("/tmp/patchwork.parsemail.lock", timeout=60)
     _lockref = weakref.ref(l)
     return l
 
