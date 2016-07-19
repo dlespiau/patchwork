@@ -451,7 +451,7 @@ def find_content(project, mail):
     return ret
 
 
-def find_previous_patch(revision, order, refs):
+def find_previous_patch(project, revision, order, refs):
     if not refs:
         return None
 
@@ -461,7 +461,7 @@ def find_previous_patch(revision, order, refs):
     parent_patch = None
     for ref in refs:
         try:
-            patch = Patch.objects.get(msgid=ref)
+            patch = Patch.objects.get(project=project, msgid=ref)
             parent_patch = patch
             break
         except Patch.DoesNotExist:
@@ -526,7 +526,8 @@ def find_series_for_mail(project, name, msgid, is_patch, order, n_patches,
         if name:
             series.name = name
         if is_patch:
-            previous_patch = find_previous_patch(revision, order, refs)
+            previous_patch = find_previous_patch(project, revision,
+                                                 order, refs)
             if previous_patch:
                 (order, n_patches) = find_patch_order(revisions,
                                                       previous_patch,
