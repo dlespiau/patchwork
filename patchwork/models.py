@@ -666,7 +666,7 @@ class SeriesRevision(models.Model):
         return name
 
     def __str__(self):
-        return "Revision " + str(self.version)
+        return "Revision: " + str(self.version)
 
 
 class SeriesRevisionPatch(models.Model):

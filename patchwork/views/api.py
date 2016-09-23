@@ -377,6 +377,7 @@ class ResultMixin(object):
         body = ''
         body += '== %s Details ==\n\n' % self._object_type(obj)
         body += 'Series: ' + obj.human_name() + '\n'
+        body += obj.__str__() + '\n'
         body += 'URL   : ' + \
                 request.build_absolute_uri(check_obj.get_absolute_url()) + '\n'
         body += 'State : ' + result.get_state_display() + '\n'

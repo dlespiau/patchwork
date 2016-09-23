@@ -128,7 +128,7 @@ class BasicGeneratedSeriesTests(GeneratedSeriesTest):
         series = Series.objects.all()[0]
         self.assertEquals(str(series), defaults.series_name)
         revision = series.revisions()[0]
-        self.assertEquals(str(revision), 'Revision 1')
+        self.assertEquals(str(revision), 'Revision: 1')
 
 
 class SeriesViewTest(GeneratedSeriesTest):
