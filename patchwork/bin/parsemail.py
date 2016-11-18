@@ -195,8 +195,8 @@ def mail_headers(mail):
 
 def find_pull_request(content):
     git_re = re.compile(r'^The following changes since commit.*' +
-                        r'^are available in the git repository at:\n'
-                        r'^\s*([\S]+://[^\n]+)$',
+                        r'^are available in the git repository at:.*'+
+                        r'^\s*([\S]+://[^\n]+)[$]*',
                         re.DOTALL | re.MULTILINE)
     match = git_re.search(content)
     if match:
