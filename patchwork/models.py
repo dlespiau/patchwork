@@ -1042,6 +1042,22 @@ def _series_supersede_previous_patches(series):
 def _on_revision_complete(sender, revision, **kwargs):
     series = revision.series
 
+    # Now we know how many patches are in the revision,
+    # so we can update the name for series without a cover letter
+    if series.name == SERIES_DEFAULT_NAME:
+        try:
+            name = series.latest_revision().ordered_patches()[0].name
+            n = re.compile(r'(\[\d+\/\d+\]\s?)')
+            name = n.sub('', name)
+            c = len(series.latest_revision().ordered_patches())
+            # For one-patch series (1/1) without cover letter
+            if c == 1:
+                series.name = name
+            else:
+                series.name = "\"%s...\" and %s more" % (name[:30], c-1)
+        except:
+            pass
+
     # update series.last_revision
     series.last_revision = series.latest_revision()
     series.save()
