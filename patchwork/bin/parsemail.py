@@ -195,8 +195,8 @@ def mail_headers(mail):
 
 def find_pull_request(content):
     git_re = re.compile(r'^The following changes since commit.*' +
-                        r'^are available in the git repository at:\n'
-                        r'^\s*([\S]+://[^\n]+)$',
+                        r'^are available in the git repository at:.*'+
+                        r'^\s*([\S]+://[^\n]+)[$]*',
                         re.DOTALL | re.MULTILINE)
     match = git_re.search(content)
     if match:
@@ -284,9 +284,18 @@ def build_references_from_db(msgid):
 
 
 def build_references_from_mail(mail):
-    return build_references_from_headers(mail.get('In-Reply-To', None),
-                                         mail.get('References', None))
-
+    replies = ""
+    references = ""
+    parser = HeaderParser()
+    headers = parser.parsestr(mail.as_string())
+    for h in headers.items():
+        # Patch emails created with send-pull-Request script
+        # may contain two set of references, so use only the oldest
+        if h[0] == 'In-Reply-To':
+            replies = "%s" % h[1]
+        if h[0] == 'References':
+            references = "%s" % h[1]
+    return build_references_from_headers(replies, references)
 
 def build_references_list(mail):
     """Construct the list of msgids from 'mail' to the root of the thread"""
@@ -396,9 +405,10 @@ def find_content(project, mail):
         project.git_send_email_only and not is_git_send_email(mail)
 
     if pullurl or (is_patch and not drop_patch):
-        ret.patch_order = x or 1
-        ret.patch = Patch(name=name, pull_url=pullurl, content=patchbuf,
-                          date=mail_date(mail), headers=mail_headers(mail))
+        if project.git_send_email_only or not is_cover_letter:
+            ret.patch_order = x or 1
+            ret.patch = Patch(name=name, pull_url=pullurl, content=patchbuf,
+                              date=mail_date(mail), headers=mail_headers(mail))
 
     if patchbuf:
         ret.filenames = patch_get_filenames(patchbuf)
