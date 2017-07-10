@@ -168,15 +168,18 @@ def find_author(mail):
     if name is not None:
         name = name.strip()
 
-    new_person = False
+    save_required = False
 
     try:
         person = Person.objects.get(email__iexact=email)
+        if person.name !=  name:
+            person.name = name
+            save_required = True
     except Person.DoesNotExist:
         person = Person(name=name, email=email)
-        new_person = True
+        save_required = True
 
-    return (person, new_person)
+    return (person, save_required)
 
 
 def mail_date(mail):
