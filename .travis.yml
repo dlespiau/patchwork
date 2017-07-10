@@ -12,6 +12,9 @@ addons:
 services:
     - mysql
 
+before_install:
+    - firefox --version
+
 install:
     - npm install jshint
     - npm install karma
