@@ -172,7 +172,7 @@ def find_author(mail):
 
     try:
         person = Person.objects.get(email__iexact=email)
-        if person.name !=  name:
+        if person.name != name:
             person.name = name
             save_required = True
     except Person.DoesNotExist:

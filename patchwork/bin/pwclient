@@ -359,6 +359,7 @@ def patch_id_from_hash(rpc, project, hash):
         sys.exit(1)
     return patch_id
 
+
 auth_actions = ['update']
 
 
@@ -735,6 +736,7 @@ def main():
         sys.stderr.write("Unknown action '%s'\n" % action)
         action_parser.print_help()
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

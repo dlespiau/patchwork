@@ -153,6 +153,7 @@ def user_complete(request):
 
     return HttpResponse(json.dumps(data), content_type="application/json")
 
+
 help_pages = {'':           'index.html',
               'about/':     'about.html',
               }

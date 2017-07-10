@@ -122,6 +122,7 @@ def user_name(user):
         return u' '.join(names)
     return user.username
 
+
 auth.models.User.add_to_class('name', user_name)
 
 
@@ -203,6 +204,7 @@ def _user_saved_callback(sender, created, instance, **kwargs):
     except UserProfile.DoesNotExist:
         profile = UserProfile(user=instance)
     profile.save()
+
 
 models.signals.post_save.connect(_user_saved_callback, sender=User)
 
@@ -478,6 +480,7 @@ class BundlePatch(models.Model):
         unique_together = [('bundle', 'patch')]
         ordering = ['order']
 
+
 SERIES_DEFAULT_NAME = "Series without cover letter"
 
 
@@ -556,6 +559,7 @@ class Series(models.Model):
 
     class Meta:
         verbose_name_plural = 'Series'
+
 
 # Signal one can listen to to know when a revision is complete (ie. has all of
 # its patches)
@@ -991,5 +995,6 @@ def _on_revision_complete(sender, revision, **kwargs):
                    user=series.submitter.user,
                    parameters={'revision': revision.version})
     log.save()
+
 
 series_revision_complete.connect(_on_revision_complete)

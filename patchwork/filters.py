@@ -407,6 +407,7 @@ class DelegateFilter(Filter):
             self.applied = False
             self.forced = True
 
+
 filterclasses = [SubmitterFilter,
                  StateFilter,
                  SearchFilter,
