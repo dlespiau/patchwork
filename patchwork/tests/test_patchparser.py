@@ -242,6 +242,10 @@ class SubjectUTF8QPMultipleEncodingTest(SubjectEncodingTest):
 
 class SenderCorrelationTest(TestCase):
     existing_sender = 'Existing Sender <existing@example.com>'
+    existing_sender_upper = 'Existing Sender <EXISTING@EXAMPLE.COM>'
+    existing_sender_new_name = 'Sender Existing <existing@example.com>'
+    existing_sender_alternate_format = 'existing@example.com (Existing Sender)'
+
     non_existing_sender = 'Non-existing Sender <nonexisting@example.com>'
 
     def mail(self, sender):
@@ -258,25 +262,31 @@ class SenderCorrelationTest(TestCase):
         self.person.save()
 
     def testExisingSender(self):
-        (person, new) = find_author(self.existing_sender_mail)
-        self.assertEqual(new, False)
+        (person, save_required) = find_author(self.existing_sender_mail)
+        self.assertEqual(save_required, False)
         self.assertEqual(person.id, self.person.id)
 
     def testNonExisingSender(self):
-        (person, new) = find_author(self.non_existing_sender_mail)
-        self.assertEqual(new, True)
+        (person, save_required) = find_author(self.non_existing_sender_mail)
+        self.assertEqual(save_required, True)
         self.assertEqual(person.id, None)
 
     def testExistingDifferentFormat(self):
-        mail = self.mail('existing@example.com')
-        (person, new) = find_author(mail)
-        self.assertEqual(new, False)
+        mail = self.mail(self.existing_sender_alternate_format)
+        (person, save_required) = find_author(mail)
+        self.assertEqual(save_required, False)
         self.assertEqual(person.id, self.person.id)
 
-    def testExistingDifferentCase(self):
-        mail = self.mail(self.existing_sender.upper())
-        (person, new) = find_author(mail)
-        self.assertEqual(new, False)
+    def testExistingDifferentEmailCase(self):
+        mail = self.mail(self.existing_sender_upper)
+        (person, save_required) = find_author(mail)
+        self.assertEqual(save_required, False)
+        self.assertEqual(person.id, self.person.id)
+
+    def testExistingUpdateName(self):
+        mail = self.mail(self.existing_sender_new_name)
+        (person, save_required) = find_author(mail)
+        self.assertEqual(save_required, True)
         self.assertEqual(person.id, self.person.id)
 
     def tearDown(self):

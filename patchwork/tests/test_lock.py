@@ -295,5 +295,6 @@ class testlock(unittest.TestCase):
 
         lock.release()
 
+
 if __name__ == '__main__':
     unittest.main(__name__)

@@ -132,7 +132,13 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         return self.selenium.find_element_by_css_selector(selector)
 
     def focused_element(self):
-        return self.selenium.switch_to.active_element
+        active_element = self.selenium.switch_to.active_element
+        # XXX: WA for Firefox driver
+        #      selenium does not perform w3c conformance negotiation
+        #      resulting in focused element being wrapped in a dict
+        if isinstance(active_element, dict):
+            active_element = active_element['value']
+        return active_element
 
     def wait_until_present(self, name):
         def is_present(driver):

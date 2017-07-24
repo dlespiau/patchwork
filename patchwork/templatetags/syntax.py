@@ -34,6 +34,7 @@ def _compile(t):
     (r, str) = t
     return (re.compile(r, re.M | re.I), str)
 
+
 _patch_span_res = list(map(_compile, [
     ('^(Index:?|diff|\-\-\-|\+\+\+|\*\*\*) .*$', 'p_header'),
     ('^\+.*$', 'p_add'),

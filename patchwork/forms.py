@@ -256,5 +256,6 @@ class MultiplePatchForm(forms.Form):
 class EmailForm(forms.Form):
     email = forms.EmailField(max_length=200)
 
+
 UserPersonLinkForm = EmailForm
 OptinoutRequestForm = EmailForm

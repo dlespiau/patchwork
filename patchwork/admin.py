@@ -37,6 +37,8 @@ class ProjectAdmin(admin.ModelAdmin):
     inlines = [
         DelegationRuleInline,
     ]
+
+
 admin.site.register(Project, ProjectAdmin)
 
 
@@ -50,16 +52,22 @@ class PersonAdmin(admin.ModelAdmin):
     has_account.boolean = True
     has_account.admin_order_field = 'user'
     has_account.short_description = 'Account'
+
+
 admin.site.register(Person, PersonAdmin)
 
 
 class UserProfileAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__first_name', 'user__last_name')
+
+
 admin.site.register(UserProfile, UserProfileAdmin)
 
 
 class StateAdmin(admin.ModelAdmin):
     list_display = ('name', 'action_required')
+
+
 admin.site.register(State, StateAdmin)
 
 
@@ -77,6 +85,7 @@ class SeriesAdmin(admin.ModelAdmin):
     search_fields = ('name', 'submitter__name', 'submitter__email',
                      'reviewer__first_name', 'reviewer__last_name')
     date_hierarchy = 'submitted'
+
 
 admin.site.register(Series, SeriesAdmin)
 
@@ -102,6 +111,7 @@ class SeriesRevisionAdmin(admin.ModelAdmin):
     submitter_name.short_description = 'Submitter'
     submitter_name.admin_order_field = 'series__submitter__name'
 
+
 admin.site.register(SeriesRevision, SeriesRevisionAdmin)
 
 
@@ -118,6 +128,8 @@ class PatchAdmin(admin.ModelAdmin):
     is_pull_request.boolean = True
     is_pull_request.admin_order_field = 'pull_url'
     is_pull_request.short_description = 'Pull'
+
+
 admin.site.register(Patch, PatchAdmin)
 
 
@@ -125,6 +137,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('patch', 'submitter', 'date')
     search_fields = ('patch__name', 'submitter__name', 'submitter__email')
     date_hierarchy = 'date'
+
+
 admin.site.register(Comment, CommentAdmin)
 
 
@@ -137,12 +151,16 @@ class EventAdmin(admin.ModelAdmin):
 
     def event_name(self, log):
         return log.event.name
+
+
 admin.site.register(EventLog, EventAdmin)
 
 
 class TestAdmin(admin.ModelAdmin):
     list_display = ('name', 'project')
     list_filter = ('project', )
+
+
 admin.site.register(Test, TestAdmin)
 
 
@@ -152,6 +170,8 @@ class TestResultAdmin(admin.ModelAdmin):
     search_fields = ('test__name', 'patch__name', 'revision__series__name',
                      'test__project__name')
     date_hierarchy = 'date'
+
+
 admin.site.register(TestResult, TestResultAdmin)
 
 
@@ -159,9 +179,13 @@ class BundleAdmin(admin.ModelAdmin):
     list_display = ('name', 'owner', 'project', 'public')
     list_filter = ('public', 'project')
     search_fields = ('name', 'owner')
+
+
 admin.site.register(Bundle, BundleAdmin)
 
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('name',)
+
+
 admin.site.register(Tag, TagAdmin)

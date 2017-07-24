@@ -307,6 +307,7 @@ def main(args):
         filenames = patch_get_filenames(content)
         print("File names: ----\n" + '\n'.join(filenames))
 
+
 if __name__ == '__main__':
     import sys
     sys.exit(main(sys.argv))
