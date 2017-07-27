@@ -81,6 +81,7 @@ def patch(request, patch_id):
                 context.add_message('Patch updated')
 
     context['patch'] = patch
+    context['series'] = patch.series()
     context['patchform'] = form
     context['createbundleform'] = createbundleform
     context['project'] = patch.project
