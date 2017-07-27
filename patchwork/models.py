@@ -334,6 +334,13 @@ class Patch(models.Model):
            answers"""
         return Comment.objects.filter(patch=self)
 
+    def series(self):
+        try:
+            rev = SeriesRevisionPatch.objects.filter(patch=self)[0].revision
+            return rev.series
+        except:
+            return None
+
     def _set_tag(self, tag, count):
         if count == 0:
             self.patchtag_set.filter(tag=tag).delete()
@@ -821,14 +828,6 @@ class PatchChangeNotification(models.Model):
     orig_state = models.ForeignKey(State)
 
 
-def find_series_for_patch(patch):
-    try:
-        revision = SeriesRevisionPatch.objects.filter(patch=patch)[0].revision
-        return revision.series
-    except:
-        return None
-
-
 def _patch_change_log_event(old_patch, new_patch):
     # If state changed, log the event
     event_state_change = Event.objects.get(name='patch-state-change')
@@ -838,7 +837,7 @@ def _patch_change_log_event(old_patch, new_patch):
 
     # Do not log patch-state-change events for Patches that are not part of a
     # Series (ie patches older than the introduction of Series)
-    series = find_series_for_patch(old_patch)
+    series = old_patch.series()
     if series:
         log = EventLog(event=event_state_change,
                        user=curr_user,

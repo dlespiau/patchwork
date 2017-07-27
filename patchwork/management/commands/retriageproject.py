@@ -21,16 +21,8 @@ from email.parser import HeaderParser
 import sys
 
 from django.core.management.base import BaseCommand
-from patchwork.models import Patch, Project, SeriesRevisionPatch
+from patchwork.models import Patch, Project
 from patchwork.bin.parsemail import find_project
-
-
-def find_series_for_patch(patch):
-    try:
-        revision = SeriesRevisionPatch.objects.filter(patch=patch)[0].revision
-        return revision.series
-    except:
-        return None
 
 
 class Command(BaseCommand):
@@ -65,7 +57,7 @@ class Command(BaseCommand):
 
             patch.project = new_project
             patch.save()
-            series = find_series_for_patch(patch)
+            series = patch.series()
             if not series:
                 continue
             series.project = new_project
