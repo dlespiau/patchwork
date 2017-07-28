@@ -405,7 +405,7 @@ class Comment(models.Model):
     content = models.TextField()
 
     response_re = re.compile(
-        '^(Tested|Reviewed|Acked|Signed-off|Nacked|Reported)-by: .*$',
+        '^((Tested|Reviewed|Acked|Signed-off|Nacked|Reported)-by|Fixes): .*$',
         re.M | re.I)
 
     def patch_responses(self):
