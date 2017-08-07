@@ -387,7 +387,8 @@ def find_content(project, mail):
 
     ret = MailContent()
 
-    drop_prefixes = [project.linkname] + project.get_subject_prefix_tags()
+    drop_prefixes = [project.linkname, project.get_listemail_tag()]
+    drop_prefixes += project.get_subject_prefix_tags()
     (name, prefixes) = clean_subject(mail.get('Subject'), drop_prefixes)
     (x, n) = parse_series_marker(prefixes)
     refs = build_references_list(mail)

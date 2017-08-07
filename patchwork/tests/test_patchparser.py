@@ -426,6 +426,11 @@ class MultipleProjectsPerMailingListTest(TestCase):
                                 listemail='2@example.com')
         self.project2.save()
 
+        self.project3 = Project(linkname='test-project-3', name='Project 3',
+                                listid='list.example.com',
+                                listemail='3@example.com')
+        self.project3.save()
+
     def testTagList(self):
         self.project1.subject_prefix_tags = ''
         self.assertEquals(self.project1.get_subject_prefix_tags(), [])
@@ -486,6 +491,16 @@ class MultipleProjectsPerMailingListTest(TestCase):
         self.project2.save()
         email = create_email(defaults.patch, project=self.project1,
                              subject='[PATCH i-g-t] Subject')
+        parse_mail(email)
+        patch = Patch.objects.all()[0]
+        self.assertEquals(patch.name, 'Subject')
+
+    def testStripListemailTag(self):
+        self.project3.subject_prefix_tags = 'i-g-t'
+        self.project3.listemail = 'intel-gfx@example.com'
+        self.project3.save()
+        email = create_email(defaults.patch, project=self.project3,
+                             subject='[intel-gfx] [PATCH i-g-t] Subject')
         parse_mail(email)
         patch = Patch.objects.all()[0]
         self.assertEquals(patch.name, 'Subject')
