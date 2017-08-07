@@ -109,6 +109,9 @@ class Project(models.Model):
     def get_subject_prefix_tags(self):
         return get_comma_separated_field(self.subject_prefix_tags)
 
+    def get_listemail_tag(self):
+        return self.listemail.split("@")[0]
+
     def __str__(self):
         return self.name
 
