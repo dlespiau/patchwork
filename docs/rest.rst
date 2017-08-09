@@ -570,6 +570,35 @@ A series has then ``n`` revisions, ``n`` going from ``1`` to ``version``.
                     be used for full logs, which can be rather large.
 
 
+.. http:get:: /api/1.0/series/(int: series_id)/revisions/(int: version)/test-results/
+
+     Get test results for this revision.
+
+    .. sourcecode:: http
+
+        GET /api/1.0/series/47/revisions/1/test-results/ HTTP/1.1
+
+        [
+         {
+             "date": "2017-08-09T23:00:03.529",
+             "state": "pending",
+             "summary": "total: 0 errors, 0 warnings, 10 lines checked"
+             "test_name": "checkpatch.pl",
+             "url": "http://jenkins.example.com/logs/47/checkpatch.log"
+         },
+         {
+             "date": "2017-08-09T23:00:05.551",
+             "state": "warning",
+             "summary": "total: 0 errors, 2 warnings, 20 passes"
+             "test_name": "BAT",
+             "url": "http://jenkins.example.com/logs/47/BAT.log"
+         }
+        ]
+
+
+    :<json date: Date when the results were posted to the patchwork (ISO 8061).
+
+
 .. http:post /api/1.0/series/(int: series_id)/revisions/(int: version)/newrevision/
 
     Create a new ``series-new-revision`` event for this revision. This can be
