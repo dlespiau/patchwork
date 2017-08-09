@@ -26,6 +26,7 @@ import json
 import re
 import time
 
+import dateutil.parser as dateparse
 from django.core import mail
 from django.test.utils import override_settings
 
@@ -778,6 +779,27 @@ class TestResultTest(APITestBase):
 
         self.assertEqual(self._test_state(ss, self.series), None,
              "'None' expected as a new revision must reset the testing state")
+
+    def testGetResultsForRevision(self):
+        self.assertEqual(TestResult.objects.all().count(), 0)
+
+        pre_time = datetime.datetime.now()
+        self._post_result(self.rev_url, "test1", 'pending')
+        self._post_result(self.rev_url, "test2", 'warning')
+        post_time = datetime.datetime.now()
+
+        test_results = self.get_json(self.rev_url)
+
+        # check that we have both
+        self.assertEqual(len(test_results), 2)
+        self.assertTrue(any(test_results), lambda x: x["test_name"] == "test1")
+        self.assertTrue(any(test_results), lambda x: x["test_name"] == "test2")
+
+        # check that they are recent
+        self.assertTrue(all(test_results),
+                lambda x: dateparse.parse(x["date"]) > pre_time)
+        self.assertTrue(all(test_results),
+                lambda x: dateparse.parse(x["date"]) < post_time)
 
 
 class ReviewerNotificationTest(APITestBase):

@@ -488,6 +488,18 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
 
         return response
 
+    def list(self, request, series_pk, version_pk):
+        rev = get_object_or_404(SeriesRevision, series=series_pk,
+                                version=version_pk)
+
+        test_results = TestResult.objects \
+            .filter(revision=rev, patch=None) \
+            .order_by('test__name').select_related('test')
+
+        serializer = TestResultSerializer(test_results, many=True)
+
+        return Response(serializer.data)
+
 
 class PatchFilter(django_filters.FilterSet):
 

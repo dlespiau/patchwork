@@ -266,6 +266,7 @@ class TestResultSerializer(serializers.Serializer):
     state = ValueChoiceField(choices=TestState.STATE_CHOICES)
     url = serializers.URLField(required=False, allow_none=True)
     summary = serializers.CharField(required=False, allow_none=True)
+    date = serializers.CharField(required=False, allow_none=True)
 
     def resolve_fields(self, validated_data):
         project = self.context['project']
