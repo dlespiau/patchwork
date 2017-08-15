@@ -303,9 +303,9 @@ class APITest(APITestBase):
     def testNumQueries(self):
         # using the related=expand parameter shouldn't make the number of
         # queries explode.
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.get('/projects/%(project_id)s/series/')
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(3):
             self.get('/projects/%(project_id)s/series/',
                      params={'related': 'expand'})
 
