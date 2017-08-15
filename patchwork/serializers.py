@@ -152,6 +152,7 @@ class SeriesSerializer(PatchworkModelSerializer):
     test_state = serializers.SerializerMethodField('get_test_state')
     state = serializers.SerializerMethodField('get_state')
     state_summary = serializers.SerializerMethodField('get_state_summary')
+    name = serializers.SerializerMethodField('get_human_name')
 
     def get_version(self, obj):
         if not obj.last_revision:
@@ -170,6 +171,9 @@ class SeriesSerializer(PatchworkModelSerializer):
         if state is not None:
             return dict(TestState.STATE_CHOICES)[state]
         return state
+
+    def get_human_name(self, obj):
+        return obj.human_name()
 
     def get_state(self, obj):
         if not obj.last_revision:
