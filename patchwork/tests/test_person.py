@@ -57,3 +57,10 @@ class SubmitterCompletionTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content.decode())
         self.assertEqual(len(data), 5)
+
+
+class PersonModelTest(TestCase):
+
+    def testEmailNameQuoted(self):
+        p = Person(name="Name, Test", email="test@example.com")
+        self.assertEqual(p.email_name(), '"Name, Test" <test@example.com>')
