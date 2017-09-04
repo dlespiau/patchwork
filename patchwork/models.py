@@ -56,7 +56,7 @@ class Person(models.Model):
 
     def email_name(self):
         if (self.name):
-            return "%s <%s>" % (self.name, self.email)
+            return "\"%s\" <%s>" % (self.name, self.email)
         else:
             return self.email
 
