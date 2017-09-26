@@ -558,11 +558,14 @@ class Series(models.Model):
         return filename(self.name, '.mbox')
 
     def human_name(self):
-        name = self.name
-        if name == SERIES_DEFAULT_NAME:
-            name = "series starting with " + \
-                    self.last_revision.ordered_patches()[0].name
-        return name
+        if self.name == SERIES_DEFAULT_NAME:
+            if self.last_revision:
+                ordered_patches = self.last_revision.ordered_patches()
+                if ordered_patches:
+                    return "series starting with " + ordered_patches[0].name
+            return "Incomplete Series"
+        else:
+            return self.name
 
     def __str__(self):
         return self.name
