@@ -866,3 +866,13 @@ class ReviewerNotificationTest(APITestBase):
         email = mail.outbox[0]
         self.assertEqual(email.to, [self.user.user.email])
         mail.outbox = []
+
+
+class AccessControlAllowOriginTest(APITestBase):
+    def testGet(self):
+        response = self.client.get('/api/1.0')
+        self.assertEqual(response['Access-Control-Allow-Origin'], '*')
+
+    def testPost(self):
+        response = self.client.post('/api/1.0')
+        self.assertTrue('Access-Control-Allow-Origin' not in response)

@@ -37,6 +37,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'patchwork.threadlocalrequest.ThreadLocalRequestMiddleware',
+    'patchwork.middleware.AccessControlAllowOriginMiddleware',
 ]
 
 if django.VERSION >= (1, 7):
