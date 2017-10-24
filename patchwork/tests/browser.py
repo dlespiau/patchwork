@@ -23,7 +23,7 @@ import time
 
 try:  # django 1.7+
     from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-except:
+except ImportError:
     from django.test import LiveServerTestCase as StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait

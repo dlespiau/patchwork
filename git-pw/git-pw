@@ -537,7 +537,7 @@ class GitPatchwork(object):
         default_config = None
         try:
             default_config = config.get('patchwork', 'defaultconfig')
-        except:
+        except Exception:
             pass
 
         if not self.cmd.config and default_config:
@@ -552,7 +552,7 @@ class GitPatchwork(object):
         # optional, not all commands need one and we allow not setting it.
         try:
             web_root = config.get(section, 'url')
-        except:
+        except Exception:
             die("git-pw isn't configured.\n\n"
                 "Please set up the patchwork url and project, e.g.:\n\n"
                 "   git config patchwork.%(config)s.url "
@@ -564,7 +564,7 @@ class GitPatchwork(object):
         project = None
         try:
             project = config.get(section, 'project')
-        except:
+        except Exception:
             pass
 
         if not project and self.cmd.need_project:
@@ -583,7 +583,7 @@ class GitPatchwork(object):
             username = config.get(section, 'user')
             password = config.get(section, 'password')
             user = User(username, password)
-        except:
+        except Exception:
             pass
 
         if not user and self.cmd.need_auth:

@@ -92,7 +92,7 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
         try:
             decoded = base64.decodestring(header)
             username, password = decoded.split(':', 1)
-        except:
+        except Exception:
             raise Exception('Invalid authentication credentials')
 
         return authenticate(username=username, password=password)
@@ -124,7 +124,7 @@ class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
             response = self.dumps(response, methodresponse=1)
         except six.moves.xmlrpc_client.Fault as fault:
             response = self.dumps(fault)
-        except:
+        except Exception:
             # report exception back to server
             response = self.dumps(
                 six.moves.xmlrpc_client.Fault(1,

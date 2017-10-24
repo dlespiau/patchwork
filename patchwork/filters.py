@@ -102,7 +102,7 @@ class SubmitterFilter(Filter):
             submitter_id = int(str)
         except ValueError:
             pass
-        except:
+        except Exception:
             return
 
         if submitter_id:
@@ -167,7 +167,7 @@ class StateFilter(Filter):
 
         try:
             self.state = State.objects.get(id=int(str))
-        except:
+        except Exception:
             return
 
         self.applied = True
@@ -349,7 +349,7 @@ class DelegateFilter(Filter):
         try:
             self.delegate = User.objects.get(id=str)
             self.applied = True
-        except:
+        except Exception:
             pass
 
     def kwargs(self):

@@ -229,9 +229,9 @@ class lock(object):
         # if locker dead, break lock.  must do this with another lock
         # held, or can race and break valid lock.
         try:
-            l = lock(self.f + '.break', timeout=0)
+            lk = lock(self.f + '.break', timeout=0)
             os.unlink(self.f)
-            l.release()
+            lk.release()
         except LockError:
             return locker
 

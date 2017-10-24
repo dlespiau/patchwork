@@ -268,7 +268,7 @@ def action_get(rpc, patch_id):
 
     try:
         f = open(fname, "w")
-    except:
+    except Exception:
         sys.stderr.write("Unable to open %s for writing\n" % fname)
         sys.exit(1)
 
@@ -276,7 +276,7 @@ def action_get(rpc, patch_id):
         f.write(unicode(s).encode("utf-8"))
         f.close()
         print('Saved patch to %s' % fname)
-    except:
+    except Exception:
         sys.stderr.write("Failed to write to %s\n" % fname)
         sys.exit(1)
 
@@ -354,7 +354,7 @@ def patch_id_from_hash(rpc, project, hash):
     # be super paranoid
     try:
         patch_id = int(patch_id)
-    except:
+    except Exception:
         sys.stderr.write("Invalid patch ID obtained from server\n")
         sys.exit(1)
     return patch_id
@@ -546,13 +546,13 @@ def main():
     if args.get('n') is not None:
         try:
             filt.add("max_count", args.get('n'))
-        except:
+        except Exception:
             action_parser.error("Invalid maximum count '%s'" % args.get('n'))
 
     if args.get('N') is not None:
         try:
             filt.add("max_count", 0 - args.get('N'))
-        except:
+        except Exception:
             action_parser.error("Invalid maximum count '%s'" % args.get('N'))
 
     do_signoff = args.get('signoff')
@@ -597,7 +597,7 @@ def main():
     if not project_str:
         try:
             project_str = config.get('options', 'default')
-        except:
+        except Exception:
             action_parser.error(
                 "No default project configured in ~/.pwclientrc")
 
@@ -647,7 +647,7 @@ def main():
 
     try:
         rpc = xmlrpclib.Server(url, transport=transport)
-    except:
+    except Exception:
         sys.stderr.write("Unable to connect to %s\n" % url)
         sys.exit(1)
 

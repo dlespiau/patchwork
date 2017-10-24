@@ -341,7 +341,7 @@ class Patch(models.Model):
         try:
             rev = SeriesRevisionPatch.objects.filter(patch=self)[0].revision
             return rev.series
-        except:
+        except Exception:
             return None
 
     def _set_tag(self, tag, count):

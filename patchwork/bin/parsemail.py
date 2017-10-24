@@ -849,14 +849,14 @@ _lockref = None
 def lock():
     global _lockref
 
-    l = _lockref and _lockref()
-    if l is not None and l.held:
-        l.lock()
-        return l
+    lk = _lockref and _lockref()
+    if lk is not None and lk.held:
+        lk.lock()
+        return lk
 
-    l = lockmod.lock("/tmp/patchwork.parsemail.lock", timeout=60)
-    _lockref = weakref.ref(l)
-    return l
+    lk = lockmod.lock("/tmp/patchwork.parsemail.lock", timeout=60)
+    _lockref = weakref.ref(lk)
+    return lk
 
 
 def main(args):
@@ -881,7 +881,7 @@ def main(args):
     try:
         parse_lock = lock()
         return parse_mail(mail)
-    except:
+    except Exception:
         if logger:
             logger.exception('Error when parsing incoming email', extra={
                 'mail': mail.as_string(),

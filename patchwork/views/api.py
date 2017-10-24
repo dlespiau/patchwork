@@ -22,7 +22,7 @@
 try:
     # django 1.8+
     from django.core.exceptions import FieldDoesNotExist
-except:
+except ImportError:
     from django.db.models.fields import FieldDoesNotExist
 from django.core.exceptions import ValidationError
 from django.conf import settings
