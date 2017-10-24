@@ -543,7 +543,7 @@ class PatchFilter(django_filters.FilterSet):
 class PatchListMixin(ListMixin):
     queryset = Patch.objects.all()
     serializer_class = PatchSerializer
-    select_fields__expand = ('project', 'submitter', 'state')
+    select_fields__expand = ('project', 'submitter', 'state', 'pull_url')
     filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
     filter_class = PatchFilter
     permission_classes = (MaintainerPermission, )
@@ -613,10 +613,13 @@ class EventLogViewSet(mixins.ListModelMixin,
     filter_class = EventFilter
 
     def get_queryset(self):
-
+        qs = self.queryset
         pk = self.kwargs['project_pk']
         if is_integer(pk):
-            queryset = self.queryset.filter(series__project__pk=pk)
+            qs = qs.filter(Q(patch__project__pk=pk) |
+                           Q(series__project__pk=pk)).distinct()
+
         else:
-            queryset = self.queryset.filter(series__project__linkname=pk)
-        return queryset
+            qs = qs.filter(Q(patch__project__linkname=pk) |
+                           Q(series__project__linkname=pk)).distinct()
+        return qs

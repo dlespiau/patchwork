@@ -26,8 +26,8 @@ from django.test import TestCase
 from patchwork.bin.parsemail import (find_content, find_author, find_project,
                                      parse_mail, split_prefixes, clean_subject,
                                      parse_series_marker)
-from patchwork.models import (Project, Person, Patch, Comment, State,
-                              get_default_initial_patch_state)
+from patchwork.models import (Project, Person, Patch, Comment, State, EventLog,
+                              Event, get_default_initial_patch_state)
 from patchwork.tests.utils import (read_patch, read_mail, create_email,
                                    defaults, create_user)
 
@@ -510,6 +510,34 @@ class MBoxPatchTest(PatchTest):
 
     def setUp(self):
         self.mail = read_mail(self.mail_file, project=self.project)
+
+
+class GitPullEventTest(PatchTest):
+    def setUp(self):
+        self.mail = read_mail('0001-git-pull-request.mbox',
+                               project=self.project)
+        self.p1 = Project(linkname='oss-dev', name='OSS Dev',
+                          listid='cbe-oss-dev.ozlabs.org',
+                          listemail='cbe-oss-dev.ozlabs.org')
+        self.p1.save()
+
+    def testGitPullRequest(self):
+        self.assertEqual(parse_mail(self.mail), 0)
+        self.patch = Patch.objects.filter(project=self.p1)[0]
+
+        self.assertTrue(self.patch.pull_url is not None)
+
+        events = EventLog.objects.filter(patch=self.patch)
+        self.assertEqual(len(events), 1)
+
+        el = events[0]
+        self.assertEqual(Event.objects.get(name='pull-request-new'), el.event)
+        self.assertEqual(self.patch.pull_url, el.parameters['pull_url'])
+
+    def tearDown(self):
+        self.p1.delete()
+        if self.patch:
+            self.patch.delete()
 
 
 class GitPullTest(MBoxPatchTest):

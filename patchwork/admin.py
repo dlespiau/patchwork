@@ -147,7 +147,12 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ('series__project', 'event__name')
 
     def project_name(self, log):
-        return log.series.project.name
+        if log.series:
+            return log.series.project.name
+        elif log.patch:
+            return log.patch.project.name
+        else:
+            return "Unknown"
 
     def event_name(self, log):
         return log.event.name

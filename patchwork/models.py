@@ -703,7 +703,7 @@ class Event(models.Model):
 class EventLog(models.Model):
     event = models.ForeignKey(Event)
     event_time = models.DateTimeField(auto_now=True)
-    series = models.ForeignKey(Series)
+    series = models.ForeignKey(Series, null=True)
     user = models.ForeignKey(User, null=True)
     parameters = jsonfield.JSONField(null=True)
     patch = models.ForeignKey(Patch, null=True)
@@ -970,6 +970,20 @@ def _patch_post_change_callback(sender, instance, created, **kwargs):
     _patch_change_update_revision_state(instance)
 
 
+def _patch_pull_request_log_event(instance, created, **kwargs):
+    if not instance.pull_url or not created:
+        return
+
+    event_pull_req = Event.objects.get(name='pull-request-new')
+    curr_user = threadlocalrequest.get_current_user()
+
+    log = EventLog(event=event_pull_req,
+                   user=curr_user,
+                   patch=instance,
+                   parameters={'pull_url': instance.pull_url})
+    log.save()
+
+
 def _series_revision_patch_post_change_callback(sender, instance, created,
                                                 **kwargs):
     # We only hook into that many to many table to cover the case when the
@@ -983,6 +997,7 @@ def _series_revision_patch_post_change_callback(sender, instance, created,
 
 models.signals.pre_save.connect(_patch_pre_change_callback, sender=Patch)
 models.signals.post_save.connect(_patch_post_change_callback, sender=Patch)
+models.signals.post_save.connect(_patch_pull_request_log_event, sender=Patch)
 models.signals.post_save.connect(_series_revision_patch_post_change_callback,
                                  sender=SeriesRevisionPatch)
 

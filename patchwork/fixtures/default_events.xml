@@ -6,4 +6,7 @@
   <object pk="2" model="patchwork.event">
     <field type="CharField" name="name">patch-state-change</field>
   </object>
+  <object pk="3" model="patchwork.event">
+    <field type="CharField" name="name">pull-request-new</field>
+  </object>
 </django-objects>

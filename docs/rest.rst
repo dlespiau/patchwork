@@ -212,6 +212,16 @@ Events
                         "new_state": "Under Review",
                         "previous_state": "New"
                     }
+                },
+                {
+                    "name": "pull-request-new",
+                    "event_time": "2016-02-16T07:22:20.753101",
+                    "series": null,
+                    "patch": 682
+                    "user": null,
+                    "parameters": {
+                        "pull_url": "git://foo.bar/baz.git master"
+                    }
                 }
             ]
         }

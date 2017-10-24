@@ -34,7 +34,7 @@ import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
 from patchwork.tests.utils import TestSeries
 from patchwork.models import (
-    Series, Patch, SeriesRevision, Test, TestResult, TestState, State
+    Series, Patch, SeriesRevision, Test, TestResult, TestState, State, Person
 )
 from patchwork.serializers import SeriesSerializer
 
@@ -280,6 +280,26 @@ class APITest(APITestBase):
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'since': after})
         self.assertEqual(events['count'], 0)
+
+    def testPullRequestEvent(self):
+        submitter = Person()
+        submitter.save()
+
+        patch = Patch(project=self.project,
+                      pull_url="git://foo.bar master",
+                      submitter=submitter)
+        patch.save()
+
+        # n events for n series, +1 for the pull request above
+        events = self.get_json('/projects/%(project_id)s/events/')
+        self.assertEqual(events['count'], self.n_series + 1)
+
+        prs = filter(lambda r: r['name'] == 'pull-request-new',
+                     events['results'])
+        self.assertEqual(len(prs), 1)
+
+        self.assertEqual(prs[0]['patch'], patch.id)
+        self.assertEqual(prs[0]['parameters']['pull_url'], patch.pull_url)
 
     def testEventNameFilter(self):
         event_names = ['series-new-revision', 'patch-state-change']
