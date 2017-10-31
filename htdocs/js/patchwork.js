@@ -266,15 +266,23 @@ var pw = (function() {
                                     [this, this.table]);
         };
 
-        o._select_row = function(row) {
+        o._select_row_no_refresh = function(row) {
            row.prop('checked', true);
            row.parent().parent().css('background-color', '#f5f5f5');
+        };
+
+        o._select_row = function(row) {
+           this._select_row_no_refresh(row);
            this._row_selection_changed();
         };
 
-        o._deselect_row = function(row) {
+        o._deselect_row_no_refresh = function(row) {
            row.prop('checked', false);
            row.parent().parent().css('background-color', 'transparent');
+        };
+
+        o._deselect_row = function(row) {
+           this._deselect_row_no_refresh(row);
            this._row_selection_changed();
         };
 
@@ -299,12 +307,13 @@ var pw = (function() {
         $(o.selector + '-select-all').click(function() {
             if ($(this).is(':checked'))
                 o._for_each_checkbox(function() {
-                    o._select_row($(this));
+                    o._select_row_no_refresh($(this));
                 });
             else
                 o._for_each_checkbox(function() {
-                    o._deselect_row($(this));
+                    o._deselect_row_no_refresh($(this));
                 });
+            o._row_selection_changed();
         });
 
         /* 'Show all' link */
