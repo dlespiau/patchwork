@@ -8,6 +8,37 @@
 $(function () {
     pw.setup_series({ patches: 'series-patchlist' });
 });
+
+$(document).ready(function() {
+    $("#retest-latest").click(function(e) {
+        e.preventDefault();
+        var button = $(this);
+
+        button.prop('disabled', true);
+
+        button.removeClass("btn-info");
+        button.addClass("btn-warning");
+        button.text("requesting retest");
+
+        var on_post_success = function() {
+            button.removeClass("btn-warning");
+            button.addClass("btn-success");
+            button.text("retest queued");
+        };
+
+        var on_post_failure = function() {
+            button.removeClass("btn-warning");
+            button.addClass("btn-failure");
+            button.text("failed!");
+        };
+
+        var series = button.data('series');
+        var revision = button.data('revision');
+        var url = '/series/' + series + '/revisions/' + revision + '/newrevision/';
+
+        pw.post_data(url, undefined, on_post_success, on_post_failure);
+    });
+});
 </script>
 {% endblock %}
 
@@ -57,6 +88,11 @@ $(function () {
 <h2>Revisions</h2>
 
 <div>
+
+  <button style="float: right;" class="btn btn-info" id="retest-latest"
+    data-series="{{ series.id }}" data-revision="{{ series.last_revision.version }}">
+      test latest revision again
+  </button>
 
   <ul class="nav nav-pills small-pills" data-tabs="tabs" role="tablist">
 {% for revision in revisions %}
