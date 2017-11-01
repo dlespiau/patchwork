@@ -250,13 +250,29 @@ var pw = (function() {
                     n_selected++;
             });
 
+            function fade_disable(selector) {
+                selector.fadeTo('slow', 0.2);
+                var start = '<div class="disable" ';
+                var reminder = '></div>';
+                var title = selector.data('disabled-title');
+                if (title)
+                    selector.append(start + 'title="' + title + '"' + reminder );
+                else
+                    selector.append(start + reminder);
+            }
+
+            function fade_enable(selector) {
+                selector.find('div.disable').remove();
+                selector.fadeTo('slow', 1);
+            }
+
             if (n_selected > 0) {
-                $(this.selector + '-filters').hide();
-                $(this.selector + '-actions').fadeIn();
+                fade_disable($(this.selector + '-filters'));
+                fade_enable($(this.selector + '-actions'));
 
             } else {
-                $(this.selector + '-actions').hide();
-                $(this.selector + '-filters').fadeIn();
+                fade_disable($(this.selector + '-actions'));
+                fade_enable($(this.selector + '-filters'));
             }
         };
 
