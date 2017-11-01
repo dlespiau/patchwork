@@ -190,11 +190,11 @@ var pw = (function() {
             var text, count = this.count();
             if (descriptions.length === 0) {
                 text = "Showing all " + count + " " + this.name;
-                $(this.selector + '-showall').hide();
+                $(this.selector + '-resetfilters').hide();
             } else {
                 text = "Showing " + count + " " + this.name + ' ';
                 text += descriptions.join(', ');
-                $(this.selector + '-showall').show();
+                $(this.selector + '-resetfilters').show();
             }
             this.set_info(text);
         };
@@ -316,8 +316,8 @@ var pw = (function() {
             o._row_selection_changed();
         });
 
-        /* 'Show all' link */
-        $(o.selector + '-showall').click(function() {
+        /* 'reset filters' link */
+        $(o.selector + '-resetfilters').click(function() {
             for (var i = 0; i < o.filters.length; i++) {
                 var filter = o.filters[i];
 
