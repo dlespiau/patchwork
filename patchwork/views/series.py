@@ -40,6 +40,7 @@ class SeriesView(View):
     def get(self, request, *args, **kwargs):
         series = get_object_or_404(Series, pk=kwargs['series'])
         revisions = get_list_or_404(SeriesRevision, series=series)
+        project = series.project
         for revision in revisions:
             revision.patch_list = revision.ordered_patches().\
                 select_related('state', 'submitter')
@@ -47,9 +48,12 @@ class SeriesView(View):
                     .filter(revision=revision, patch=None) \
                     .order_by('test__name').select_related('test')
 
+        is_editable = 'true' if project.is_editable(request.user) else 'false'
+
         return render(request, 'patchwork/series.html', {
             'series': series,
-            'project': series.project,
+            'project': project,
+            'is_editable': is_editable,
             'cover_letter': revision.cover_letter,
             'revisions': revisions,
         })

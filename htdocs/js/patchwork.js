@@ -73,6 +73,22 @@ var pw = (function() {
             table: null,
         };
 
+    exports.fade_disable = function(selector) {
+        selector.fadeTo('slow', 0.2);
+        var start = '<div class="disable" ';
+        var reminder = '></div>';
+        var title = selector.data('disabled-title');
+        if (title)
+            selector.append(start + 'title="' + title + '"' + reminder );
+        else
+            selector.append(start + reminder);
+    };
+
+    exports.fade_enable = function(selector) {
+        selector.find('div.disable').remove();
+        selector.fadeTo('slow', 1);
+    };
+
     exports.post_data = function(url, data, success_cb, error_cb, headers) {
         if (headers === undefined) {
             headers = {
@@ -250,29 +266,14 @@ var pw = (function() {
                     n_selected++;
             });
 
-            function fade_disable(selector) {
-                selector.fadeTo('slow', 0.2);
-                var start = '<div class="disable" ';
-                var reminder = '></div>';
-                var title = selector.data('disabled-title');
-                if (title)
-                    selector.append(start + 'title="' + title + '"' + reminder );
-                else
-                    selector.append(start + reminder);
-            }
-
-            function fade_enable(selector) {
-                selector.find('div.disable').remove();
-                selector.fadeTo('slow', 1);
-            }
 
             if (n_selected > 0) {
-                fade_disable($(this.selector + '-filters'));
-                fade_enable($(this.selector + '-actions'));
+                exports.fade_disable($(this.selector + '-filters'));
+                exports.fade_enable($(this.selector + '-actions'));
 
             } else {
-                fade_disable($(this.selector + '-actions'));
-                fade_enable($(this.selector + '-filters'));
+                exports.fade_disable($(this.selector + '-actions'));
+                exports.fade_enable($(this.selector + '-filters'));
             }
         };
 

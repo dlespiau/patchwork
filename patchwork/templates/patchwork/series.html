@@ -10,6 +10,12 @@ $(function () {
 });
 
 $(document).ready(function() {
+    if (!pw.project.is_editable) {
+        var retest_container = $("#retest-latest-container");
+        retest_container.fadeTo(0, 0.2); // immediate "transition"
+        pw.fade_disable(retest_container);
+    }
+
     $("#retest-latest").click(function(e) {
         e.preventDefault();
         var button = $(this);
@@ -89,10 +95,13 @@ $(document).ready(function() {
 
 <div>
 
-  <button style="float: right;" class="btn btn-info" id="retest-latest"
-    data-series="{{ series.id }}" data-revision="{{ series.last_revision.version }}">
-      test latest revision again
-  </button>
+  <div id="retest-latest-container" class="btn-group" style="float: right;"
+      data-disabled-title="You have to be logged in and be the project maintainer.">
+      <button class="btn btn-info" id="retest-latest"
+        data-series="{{ series.id }}" data-revision="{{ series.last_revision.version }}">
+          test latest revision again
+      </button>
+  </div>
 
   <ul class="nav nav-pills small-pills" data-tabs="tabs" role="tablist">
 {% for revision in revisions %}
