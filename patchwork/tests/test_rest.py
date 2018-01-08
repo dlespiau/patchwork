@@ -387,7 +387,7 @@ class TestResultTest(APITestBase):
                 'state': 'pending'
             }, user=self.maintainer)
             self.assertEqual(r.status_code, 401)
-            self.assertEqual(data['detail'], "Invalid username/password")
+            self.assertEqual(data['detail'], "Invalid username/password.")
         self.maintainer.password = old_password
 
     def testSubmitTestResultWrongUsername(self):
@@ -399,7 +399,7 @@ class TestResultTest(APITestBase):
                 'state': 'pending'
             }, user=self.maintainer)
             self.assertEqual(r.status_code, 401)
-            self.assertEqual(data['detail'], "Invalid username/password")
+            self.assertEqual(data['detail'], "Invalid username/password.")
         self.maintainer.username = old_username
 
     def testSubmitTestResultNotMaintainer(self):
@@ -438,8 +438,7 @@ class TestResultTest(APITestBase):
             }, user=self.maintainer)
             self.assertEqual(r.status_code, 400)
             self.assertEqual(data['state'],
-                 ['Select a valid choice. '
-                  'invalid is not one of the available choices.'])
+                 ['"invalid" is not a valid choice.'])
 
     def testSubmitPartialTestResult(self):
         for url in self.test_urls:

@@ -40,12 +40,8 @@ class Iso8601DateTimeField(fields.DateTimeField):
         super(Iso8601DateTimeField, self).__init__(format='iso-8601', **kwargs)
 
 
-class PatchworkModelSerializerOptions(serializers.ModelSerializerOptions):
-    """Meta class options for PatchworkModelSerializer"""
-
-    def __init__(self, meta):
-        super(PatchworkModelSerializerOptions, self).__init__(meta)
-        self.expand_serializers = getattr(meta, 'expand_serializers', {})
+serializers.ModelSerializer.serializer_field_mapping[models.DateTimeField] = \
+        Iso8601DateTimeField
 
 
 class PatchworkModelSerializer(serializers.ModelSerializer):
@@ -57,8 +53,6 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
        'related=expand' to the GET request will expand related fields.
     """
 
-    _options_class = PatchworkModelSerializerOptions
-
     def __init__(self, *args, **kwargs):
         super(PatchworkModelSerializer, self).__init__(*args, **kwargs)
 
@@ -67,12 +61,11 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
         # the timestamps string the API gives you back into queries and have
         # the gt (greater than) and gte (greater or equal) operators work
         # correctly.
-        self.field_mapping[models.DateTimeField] = Iso8601DateTimeField
 
         self._pw_related = RelatedMode.primary_key
         related = None
         if 'request' in self.context:
-            related = self.context['request'].QUERY_PARAMS.get('related')
+            related = self.context['request'].query_params.get('related')
         if not related:
             return
 
@@ -103,12 +96,12 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
 # See https://github.com/tomchristie/django-rest-framework/issues/1880
 
 
-class JSONField(serializers.WritableField):
+class JSONField(serializers.Field):
 
-    def to_native(self, obj):
+    def to_internal_value(self, obj):
         return obj
 
-    def from_native(self, value):
+    def to_representation(self, value):
         if value is not None and not isinstance(value, dict):
             raise ValidationError("This field must be a JSON object")
 
@@ -147,11 +140,11 @@ class StateSerializer(serializers.ModelSerializer):
 
 
 class SeriesSerializer(PatchworkModelSerializer):
-    version = serializers.SerializerMethodField('get_version')
-    n_patches = serializers.SerializerMethodField('get_n_patches')
-    test_state = serializers.SerializerMethodField('get_test_state')
-    state = serializers.SerializerMethodField('get_state')
-    state_summary = serializers.SerializerMethodField('get_state_summary')
+    version = serializers.SerializerMethodField()
+    n_patches = serializers.SerializerMethodField()
+    test_state = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    state_summary = serializers.SerializerMethodField()
     name = serializers.SerializerMethodField('get_human_name')
 
     def get_version(self, obj):
@@ -215,7 +208,7 @@ class PatchSerializer(PatchworkModelSerializer):
 
 
 class RevisionSerializer(PatchworkModelSerializer):
-    patches = serializers.SerializerMethodField('get_patches')
+    patches = serializers.SerializerMethodField()
 
     def get_patches(self, revision):
         queryset = revision.ordered_patches()
@@ -252,25 +245,30 @@ class EventLogSerializer(PatchworkModelSerializer):
 
 class ValueChoiceField(serializers.ChoiceField):
 
-    def to_native(self, value):
-        for k, v in self.choices:
-            if value == k:
+    def to_representation(self, data):
+        for k, v in self.choices.items():
+            if data == k:
                 return v
+        msg = self.error_messages['invalid_choice'].format(input=data)
+        raise ValidationError(msg)
 
-    def from_native(self, value):
-        for k, v in self.choices:
-            if value == v:
+    def to_internal_value(self, data):
+        for k, v in self.choices.items():
+            if data == v:
                 return k
-        msg = self.error_messages['invalid_choice'] % {'value': value}
+        msg = self.error_messages['invalid_choice'].format(input=data)
         raise ValidationError(msg)
 
 
 class TestResultSerializer(serializers.Serializer):
     test_name = serializers.CharField(source='test.name')
     state = ValueChoiceField(choices=TestState.STATE_CHOICES)
-    url = serializers.URLField(required=False, allow_none=True)
-    summary = serializers.CharField(required=False, allow_none=True)
-    date = serializers.CharField(required=False, allow_none=True)
+    url = serializers.URLField(required=False, allow_blank=True,
+                                               allow_null=True)
+    summary = serializers.CharField(required=False, allow_blank=True,
+                                                    allow_null=True)
+    date = serializers.CharField(required=False, allow_blank=True,
+                                                 allow_null=True)
 
     def resolve_fields(self, validated_data):
         project = self.context['project']
@@ -278,7 +276,7 @@ class TestResultSerializer(serializers.Serializer):
         user = self.context['user']
         assert user
 
-        test_name = validated_data.pop('test.name')
+        test_name = validated_data['test']['name']
         test, _ = Test.objects.get_or_create(project=project, name=test_name)
         validated_data['test'] = test
         validated_data['user'] = user
@@ -297,8 +295,3 @@ class TestResultSerializer(serializers.Serializer):
         instance.summary = validated_data.get('summary', instance.summary)
         instance.save()
         return instance
-
-    def restore_object(self, validated_data, instance=None):
-        if instance:
-            return self.update(instance, validated_data)
-        return self.create(validated_data)

@@ -19,12 +19,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-try:
-    # django 1.8+
-    from django.core.exceptions import FieldDoesNotExist
-except ImportError:
-    from django.db.models.fields import FieldDoesNotExist
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist
 from django.conf import settings
 from django.core import mail
 from django.db.models import Q
@@ -39,6 +34,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.generics import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
 from patchwork.serializers import (ProjectSerializer, SeriesSerializer,
                                    RevisionSerializer, PatchSerializer,
                                    EventLogSerializer, TestResultSerializer)
@@ -55,13 +51,15 @@ class RelatedOrderingFilter(filters.OrderingFilter):
     Extends OrderingFilter to support ordering by fields in related models.
     """
 
-    def get_ordering(self, request):
-        params = super(RelatedOrderingFilter, self).get_ordering(request)
+    def get_ordering(self, request, queryset, view):
+        params = super(RelatedOrderingFilter, self).get_ordering(request,
+                                                                 queryset,
+                                                                 view)
         if params:
             return [param.replace('.', '__') for param in params]
 
     def is_valid_field(self, model, field):
-        components = field.split('__', 1)
+        components = field.split('.', 1)
         try:
             field, parent_model, direct, m2m = \
                 model._meta.get_field_by_name(components[0])
@@ -99,48 +97,11 @@ class RequestDjangoFilterBackend(filters.DjangoFilterBackend):
         filter_class = self.get_filter_class(view, queryset)
 
         if filter_class:
-            filter = filter_class(request.QUERY_PARAMS, queryset=queryset)
+            filter = filter_class(request.query_params, queryset=queryset)
             filter.request = request
             return filter.qs
 
         return queryset
-
-
-class UpdateModelMixin(mixins.UpdateModelMixin):
-
-    # we unfortunately have to rewrite update() here to be handle notifications
-    # when certain fields in the series change. It's not possible to just do
-    # it with pre_save(). So, instead, we add an additional hook, pre_update()
-    # to inject some code before any modification is done on self.object.
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        self.object = self.get_object_or_none()
-
-        self.pre_update(self.object)
-
-        serializer = self.get_serializer(self.object, data=request.DATA,
-                                         files=request.FILES, partial=partial)
-
-        if not serializer.is_valid():
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            self.pre_save(serializer.object)
-        except ValidationError as err:
-            # full_clean on model instance may be called in pre_save,
-            # so we have to handle eventual errors.
-            return Response(err.message_dict,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        if self.object is None:
-            self.object = serializer.save(force_insert=True)
-            self.post_save(self.object, created=True)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        self.object = serializer.save(force_update=True)
-        self.post_save(self.object, created=False)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class API(views.APIView):
@@ -150,11 +111,15 @@ class API(views.APIView):
         return Response({'revision': API_REVISION})
 
 
-class ListMixin(object):
-    paginate_by = 20
+class ListPagination(PageNumberPagination):
+    page_size = 20
     paginate_by_param = 'perpage'
-    max_paginate_by = 100
+    max_page_size = 100
+
+
+class ListMixin(object):
     filter_backends = (RelatedOrderingFilter, )
+    pagination_class = ListPagination
 
 
 class SeriesFilter(django_filters.FilterSet):
@@ -237,7 +202,7 @@ class SelectRelatedMixin(object):
     def select_related(self, queryset):
         select_fields = getattr(self, 'select_fields', ())
 
-        related = self.request.QUERY_PARAMS.get('related')
+        related = self.request.query_params.get('related')
         if related:
             select_fields += getattr(self, 'select_fields__expand', ())
 
@@ -287,14 +252,16 @@ class SeriesListViewSet(mixins.ListModelMixin,
 
 class SeriesViewSet(mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
-                    UpdateModelMixin,
+                    mixins.UpdateModelMixin,
                     SeriesListMixin,
                     viewsets.GenericViewSet):
 
-    def pre_update(self, series):
+    def perform_update(self, serializer):
+        series = self.get_object()
         self._old_reviewer = series.reviewer
 
-    def post_save(self, series, created=False):
+        series = serializer.save()
+
         if self._old_reviewer != series.reviewer:
             old = self._old_reviewer.pk if self._old_reviewer else None
             new = series.reviewer.pk if series.reviewer else None
@@ -403,7 +370,7 @@ class ResultMixin(object):
 
     def handle_test_results(self, request, obj, check_obj, q, ctx):
         # auth
-        if 'test_name' not in request.DATA:
+        if 'test_name' not in request.data:
             return Response({'test_name': ['This field is required.', ]},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -411,7 +378,7 @@ class ResultMixin(object):
 
         # update test result and prepare the JSON response
         try:
-            test = request.DATA['test_name']
+            test = request.data['test_name']
             instance = TestResult.objects.get(q, test__name=test)
         except TestResult.DoesNotExist:
             instance = None
@@ -420,7 +387,7 @@ class ResultMixin(object):
             'project': check_obj.project,
             'user': request.user,
         })
-        result = TestResultSerializer(instance, data=request.DATA, context=ctx)
+        result = TestResultSerializer(instance, data=request.data, context=ctx)
         if not result.is_valid():
             return Response(result.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -546,6 +513,7 @@ class PatchListMixin(ListMixin):
     select_fields__expand = ('project', 'submitter', 'state', 'pull_url')
     filter_backends = (RequestDjangoFilterBackend, RelatedOrderingFilter)
     filter_class = PatchFilter
+    ordering_fields = '__all__'
     permission_classes = (MaintainerPermission, )
 
 
