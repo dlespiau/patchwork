@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='patch',
             name='state',
-            field=models.ForeignKey(to='patchwork.State', null=True),
+            field=models.ForeignKey(to='patchwork.State', null=True, on_delete=models.CASCADE),
         ),
     ]

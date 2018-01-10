@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=255)),
-                ('project', models.ForeignKey(to='patchwork.Project')),
+                ('project', models.ForeignKey(to='patchwork.Project', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -30,10 +30,10 @@ class Migration(migrations.Migration):
                 ('state', models.SmallIntegerField(choices=[(0, b'pending'), (1, b'success'), (2, b'warning'), (3, b'failure')])),
                 ('url', models.URLField(null=True, blank=True)),
                 ('summary', models.TextField(null=True, blank=True)),
-                ('patch', models.ForeignKey(blank=True, to='patchwork.Patch', null=True)),
-                ('revision', models.ForeignKey(blank=True, to='patchwork.SeriesRevision', null=True)),
-                ('test', models.ForeignKey(to='patchwork.Test')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('patch', models.ForeignKey(blank=True, to='patchwork.Patch', null=True, on_delete=models.CASCADE)),
+                ('revision', models.ForeignKey(blank=True, to='patchwork.SeriesRevision', null=True, on_delete=models.CASCADE)),
+                ('test', models.ForeignKey(to='patchwork.Test', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
         migrations.AlterUniqueTogether(

@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='series',
             name='last_revision',
-            field=models.OneToOneField(related_name='+', null=True, to='patchwork.SeriesRevision'),
+            field=models.OneToOneField(related_name='+', null=True, to='patchwork.SeriesRevision', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='seriesrevision',

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='eventlog',
             name='patch',
-            field=models.ForeignKey(to='patchwork.Patch', null=True),
+            field=models.ForeignKey(to='patchwork.Patch', null=True, on_delete=models.CASCADE),
         ),
     ]

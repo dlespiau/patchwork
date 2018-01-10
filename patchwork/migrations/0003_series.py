@@ -23,9 +23,9 @@ class Migration(migrations.Migration):
                 ('last_updated', models.DateTimeField(auto_now=True)),
                 ('version', models.IntegerField(default=1)),
                 ('n_patches', models.IntegerField(default=0)),
-                ('project', models.ForeignKey(to='patchwork.Project')),
-                ('reviewer', models.ForeignKey(related_name='reviewers', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
-                ('submitter', models.ForeignKey(related_name='submitters', to='patchwork.Person')),
+                ('project', models.ForeignKey(to='patchwork.Project', on_delete=models.CASCADE)),
+                ('reviewer', models.ForeignKey(related_name='reviewers', blank=True, to=settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)),
+                ('submitter', models.ForeignKey(related_name='submitters', to='patchwork.Person', on_delete=models.CASCADE)),
             ],
         ),
         migrations.CreateModel(
@@ -45,8 +45,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('order', models.IntegerField()),
-                ('patch', models.ForeignKey(to='patchwork.Patch')),
-                ('revision', models.ForeignKey(to='patchwork.SeriesRevision')),
+                ('patch', models.ForeignKey(to='patchwork.Patch', on_delete=models.CASCADE)),
+                ('revision', models.ForeignKey(to='patchwork.SeriesRevision', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['order'],
@@ -60,7 +60,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='seriesrevision',
             name='series',
-            field=models.ForeignKey(to='patchwork.Series'),
+            field=models.ForeignKey(to='patchwork.Series', on_delete=models.CASCADE),
         ),
         migrations.AlterUniqueTogether(
             name='seriesrevisionpatch',
