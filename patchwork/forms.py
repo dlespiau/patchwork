@@ -220,13 +220,14 @@ class MultipleBooleanField(forms.ChoiceField):
 
 class MultiplePatchForm(forms.Form):
     action = 'update'
-    state = OptionalModelChoiceField(queryset=State.objects.all())
     archived = MultipleBooleanField()
 
     def __init__(self, project, *args, **kwargs):
         super(MultiplePatchForm, self).__init__(*args, **kwargs)
         self.fields['delegate'] = OptionalDelegateField(project=project,
                                                         required=False)
+        self.fields['state'] = \
+                OptionalModelChoiceField(queryset=State.objects.all())
 
     def save(self, instance, commit=True):
         opts = instance.__class__._meta
