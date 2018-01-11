@@ -391,7 +391,7 @@ class Patch(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('patchwork.views.patch.patch', (), {'patch_id': self.id})
+        return ('patch', (), {'patch_id': self.id})
 
     def __str__(self):
         return self.name
@@ -467,7 +467,7 @@ class Bundle(models.Model):
             return None
         site = Site.objects.get_current()
         return 'http://%s%s' % (site.domain,
-                                reverse('patchwork.views.bundle.bundle',
+                                reverse('bundle',
                                         kwargs={
                                             'username': self.owner.username,
                                             'bundlename': self.name
@@ -475,7 +475,7 @@ class Bundle(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('patchwork.views.bundle.bundle', (), {
+        return ('bundle', (), {
             'username': self.owner.username,
             'bundlename': self.name,
         })

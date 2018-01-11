@@ -132,7 +132,7 @@ $(document).ready(function() {
         {% for patch in revision.patch_list %}
             <tr>
               <td></td>
-              <td><a href="{% url 'patchwork.views.patch.patch' patch_id=patch.id %}"
+              <td><a href="{% url 'patch' patch_id=patch.id %}"
                 >{{ patch.name|default:"[no subject]"|truncatechars:100 }}</a></td>
               <td>{{ patch.submitter|personify:project }}</td>
               <td>{{ patch.state }}</td>

@@ -19,8 +19,8 @@
 
 from __future__ import absolute_import
 
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-import django.core.urlresolvers
 from django.http import (HttpResponse, HttpResponseRedirect,
                          HttpResponseNotFound)
 from django.shortcuts import render_to_response, get_object_or_404
@@ -96,15 +96,11 @@ def setbundle(request):
 
     if bundle:
         return HttpResponseRedirect(
-            django.core.urlresolvers.reverse(
-                'patchwork.views.bundle.bundle',
-                kwargs={'bundle_id': bundle.id}
-            )
+            reverse('bundle', kwargs={'bundle_id': bundle.id})
         )
     else:
         return HttpResponseRedirect(
-            django.core.urlresolvers.reverse(
-                'patchwork.views.bundle.list')
+            reverse('bundle_list')
         )
 
 
@@ -153,10 +149,7 @@ def bundle(request, username, bundlename):
             action = request.POST.get('action', '').lower()
             if action == 'delete':
                 bundle.delete()
-                return HttpResponseRedirect(
-                    django.core.urlresolvers.reverse(
-                        'patchwork.views.user.profile')
-                )
+                return HttpResponseRedirect(reverse('user'))
             elif action == 'update':
                 form = BundleForm(request.POST, instance=bundle)
                 if form.is_valid():
@@ -189,8 +182,7 @@ def bundle(request, username, bundlename):
     else:
         form = None
 
-    context = generic_list(request, bundle.project,
-                           'patchwork.views.bundle.bundle',
+    context = generic_list(request, bundle.project, 'bundle',
                            view_args={'username': bundle.owner.username,
                                       'bundlename': bundle.name},
                            filter_settings=filter_settings,
@@ -230,8 +222,7 @@ def bundle_redir(request, bundle_id):
 @login_required
 def mbox_redir(request, bundle_id):
     bundle = get_object_or_404(Bundle, id=bundle_id, owner=request.user)
-    return HttpResponseRedirect(django.core.urlresolvers.reverse(
-                                'patchwork.views.bundle.mbox', kwargs={
+    return HttpResponseRedirect(reverse('bundle_mbox', kwargs={
                                     'username': request.user.username,
                                     'bundlename': bundle.name,
                                 }))

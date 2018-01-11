@@ -18,12 +18,20 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 from django.conf import settings
-from django.conf.urls import patterns, url, include
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from rest_framework_nested import routers
 from patchwork.views.series import SeriesListView, SeriesView
 import patchwork.views.api as api
+import patchwork.views
+import patchwork.views.bundle
+import patchwork.views.project
+import patchwork.views.patch
+import patchwork.views.user
+import patchwork.views.mail
+import patchwork.views.base
+import patchwork.views.xmlrpc
 
 # API
 
@@ -67,54 +75,67 @@ patch_results_router.register(r'test-results', api.PatchResultViewSet,
 
 admin.autodiscover()
 
-urlpatterns = patterns(
-    '',
-
+urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
 
     # API
     url(r'^api/1.0/$', api.API.as_view(), name='api-root'),
-    (r'^api/1.0/', include(project_router.urls)),
-    (r'^api/1.0/', include(patches_list_router.urls)),
-    (r'^api/1.0/', include(series_list_router.urls)),
-    (r'^api/1.0/', include(series_router.urls)),
-    (r'^api/1.0/', include(revisions_router.urls)),
-    (r'^api/1.0/', include(revision_results_router.urls)),
-    (r'^api/1.0/', include(patches_router.urls)),
-    (r'^api/1.0/', include(patch_results_router.urls)),
-    (r'^api/1.0/', include(event_router.urls)),
+    url(r'^api/1.0/', include(project_router.urls)),
+    url(r'^api/1.0/', include(patches_list_router.urls)),
+    url(r'^api/1.0/', include(series_list_router.urls)),
+    url(r'^api/1.0/', include(series_router.urls)),
+    url(r'^api/1.0/', include(revisions_router.urls)),
+    url(r'^api/1.0/', include(revision_results_router.urls)),
+    url(r'^api/1.0/', include(patches_router.urls)),
+    url(r'^api/1.0/', include(patch_results_router.urls)),
+    url(r'^api/1.0/', include(event_router.urls)),
 
     # project views:
-    url(r'^$', 'patchwork.views.projects', name='root'),
-    (r'^project/(?P<project_id>[^/]+)/list/$', 'patchwork.views.patch.list'),
+    url(r'^$', patchwork.views.base.projects,
+        name='root'),
+    url(r'^project/(?P<project_id>[^/]+)/list/$', patchwork.views.patch.list,
+        name='patch_list'),
     url(r'^project/(?P<project_id>[^/]+)/patches/$',
-        'patchwork.views.patch.list', name='patches_list'),
-    (r'^project/(?P<project_id>[^/]+)/$', 'patchwork.views.project.project'),
+        patchwork.views.patch.list,
+        name='patches_list'),
+    url(r'^project/(?P<project_id>[^/]+)/$', patchwork.views.project.project,
+        name='project'),
 
     # series views
     url(r'^project/(?P<project>[^/]+)/series/$', SeriesListView.as_view(),
         name='series_list'),
-    url(r'^series/(?P<series>\d+)/$', SeriesView.as_view(), name='series'),
+    url(r'^series/(?P<series>\d+)/$', SeriesView.as_view(),
+        name='series'),
 
     # patch views
-    (r'^patch/(?P<patch_id>\d+)/$', 'patchwork.views.patch.patch'),
-    (r'^patch/(?P<patch_id>\d+)/raw/$', 'patchwork.views.patch.content'),
-    (r'^patch/(?P<patch_id>\d+)/mbox/$', 'patchwork.views.patch.mbox'),
-    (r'^patch/msgid/(?P<msgid>[^/]+)/$', 'patchwork.views.patch.msgid'),
+    url(r'^patch/(?P<patch_id>\d+)/$', patchwork.views.patch.patch,
+        name='patch'),
+    url(r'^patch/(?P<patch_id>\d+)/raw/$', patchwork.views.patch.content,
+        name='patch_content'),
+    url(r'^patch/(?P<patch_id>\d+)/mbox/$', patchwork.views.patch.mbox,
+        name='patch_mbox'),
+    url(r'^patch/msgid/(?P<msgid>[^/]+)/$', patchwork.views.patch.msgid,
+        name='patch_msgid'),
 
     # project bundles
     url(r'^project/(?P<project_id>[^/]+)/bundles/$',
-        'patchwork.views.bundle.bundles', name='bundle_list'),
+        patchwork.views.bundle.bundles,
+        name='bundle_list'),
 
     # logged-in user stuff
-    url(r'^user/$', 'patchwork.views.user.profile', name='user'),
-    (r'^user/todo/$', 'patchwork.views.user.todo_lists'),
-    (r'^user/todo/(?P<project_id>[^/]+)/$', 'patchwork.views.user.todo_list'),
+    url(r'^user/$', patchwork.views.user.profile,
+        name='user'),
+    url(r'^user/todo/$', patchwork.views.user.todo_lists,
+        name='todo_list'),
+    url(r'^user/todo/(?P<project_id>[^/]+)/$', patchwork.views.user.todo_list),
 
-    (r'^user/bundles/$', 'patchwork.views.bundle.bundles'),
+    url(r'^user/bundles/$', patchwork.views.bundle.bundles,
+        name='bundle_list'),
 
-    (r'^user/link/$', 'patchwork.views.user.link'),
-    (r'^user/unlink/(?P<person_id>[^/]+)/$', 'patchwork.views.user.unlink'),
+    url(r'^user/link/$', patchwork.views.user.link,
+        name='user_link'),
+    url(r'^user/unlink/(?P<person_id>[^/]+)/$', patchwork.views.user.unlink,
+        name='user_unlink'),
 
     # password change
     url(r'^user/password-change/$', auth_views.password_change,
@@ -142,29 +163,35 @@ urlpatterns = patterns(
         name='auth_logout'),
 
     # registration
-    (r'^register/', 'patchwork.views.user.register'),
+    url(r'^register/', patchwork.views.user.register,
+        name='register'),
 
     # public view for bundles
-    (r'^bundle/(?P<username>[^/]*)/(?P<bundlename>[^/]*)/$',
-     'patchwork.views.bundle.bundle'),
-    (r'^bundle/(?P<username>[^/]*)/(?P<bundlename>[^/]*)/mbox/$',
-     'patchwork.views.bundle.mbox'),
+    url(r'^bundle/(?P<username>[^/]*)/(?P<bundlename>[^/]*)/$',
+     patchwork.views.bundle.bundle, name='bundle'),
+    url(r'^bundle/(?P<username>[^/]*)/(?P<bundlename>[^/]*)/mbox/$',
+     patchwork.views.bundle.mbox, name='bundle_mbox'),
 
-    (r'^confirm/(?P<key>[0-9a-f]+)/$', 'patchwork.views.confirm'),
+    url(r'^confirm/(?P<key>[0-9a-f]+)/$', patchwork.views.base.confirm,
+        name='confirm'),
 
     # submitter autocomplete
-    (r'^submitter/$', 'patchwork.views.submitter_complete'),
+    url(r'^submitter/$', patchwork.views.submitter_complete),
     # user autocomplete
-    (r'^complete_user/$', 'patchwork.views.user_complete'),
+    url(r'^complete_user/$', patchwork.views.user_complete),
 
     # email setup
-    (r'^mail/$', 'patchwork.views.mail.settings'),
-    (r'^mail/optout/$', 'patchwork.views.mail.optout'),
-    (r'^mail/optin/$', 'patchwork.views.mail.optin'),
+    url(r'^mail/$', patchwork.views.mail.settings,
+        name='mail_settings'),
+    url(r'^mail/optout/$', patchwork.views.mail.optout,
+        name='mail_optout'),
+    url(r'^mail/optin/$', patchwork.views.mail.optin,
+        name='mail_optin'),
 
     # help!
-    (r'^help/(?P<path>.*)$', 'patchwork.views.help'),
-)
+    url(r'^help/(?P<path>.*)$', patchwork.views.base.help,
+        name='help'),
+]
 
 if 'debug_toolbar' in settings.INSTALLED_APPS:
     import debug_toolbar
@@ -173,18 +200,21 @@ if 'debug_toolbar' in settings.INSTALLED_APPS:
     ]
 
 if settings.ENABLE_XMLRPC:
-    urlpatterns += patterns('',
-                            (r'xmlrpc/$', 'patchwork.views.xmlrpc.xmlrpc'),
-                            (r'^pwclient/$', 'patchwork.views.pwclient'),
-                            (r'^project/(?P<project_id>[^/]+)/pwclientrc/$',
-                                'patchwork.views.pwclientrc'),
-                            )
+    urlpatterns += [
+                   url(r'xmlrpc/$', patchwork.views.xmlrpc.xmlrpc,
+                       name='xmlrpc'),
+                   url(r'^pwclient/$', patchwork.views.pwclient,
+                       name='pwclient'),
+                   url(r'^project/(?P<project_id>[^/]+)/pwclientrc/$',
+                       patchwork.views.pwclientrc,
+                       name='pwclientrc'),
+                   ]
 
 # redirect from old urls
 if settings.COMPAT_REDIR:
-    urlpatterns += patterns('',
-                            (r'^user/bundle/(?P<bundle_id>[^/]+)/$',
-                             'patchwork.views.bundle.bundle_redir'),
-                            (r'^user/bundle/(?P<bundle_id>[^/]+)/mbox/$',
-                             'patchwork.views.bundle.mbox_redir'),
-                            )
+    urlpatterns += [
+                   url(r'^user/bundle/(?P<bundle_id>[^/]+)/$',
+                    patchwork.views.bundle.bundle_redir),
+                   url(r'^user/bundle/(?P<bundle_id>[^/]+)/mbox/$',
+                   patchwork.views.bundle.mbox_redir),
+                   ]

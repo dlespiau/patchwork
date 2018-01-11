@@ -184,7 +184,7 @@ def unlink(request, person_id):
             person.user = None
             person.save()
 
-    url = urlresolvers.reverse('patchwork.views.user.profile')
+    url = urlresolvers.reverse('user')
     return HttpResponseRedirect(url)
 
 
@@ -207,8 +207,7 @@ def todo_lists(request):
 
     if len(todo_lists) == 1:
         return HttpResponseRedirect(
-            urlresolvers.reverse(
-                'patchwork.views.user.todo_list',
+            urlresolvers.reverse('todo_list',
                 kwargs={'project_id': todo_lists[0]['project'].linkname}))
 
     context = PatchworkRequestContext(request)

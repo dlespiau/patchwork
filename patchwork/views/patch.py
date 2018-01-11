@@ -120,7 +120,7 @@ def mbox(request, patch_id):
 
 def list(request, project_id):
     project = get_object_or_404(Project, linkname=project_id)
-    context = generic_list(request, project, 'patchwork.views.patch.list',
+    context = generic_list(request, project, 'patch_list',
                            view_args={'project_id': project.linkname})
     return render_to_response('patchwork/list.html', context)
 

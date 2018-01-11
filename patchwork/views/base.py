@@ -39,7 +39,7 @@ def projects(request):
 
     if projects.count() == 1:
         return HttpResponseRedirect(
-            urlresolvers.reverse('patchwork.views.patch.list',
+            urlresolvers.reverse('patch_list',
                                  kwargs={'project_id': projects[0].linkname}))
 
     context['projects'] = projects

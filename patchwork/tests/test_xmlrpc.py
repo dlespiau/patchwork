@@ -66,14 +66,13 @@ class XMLRPCTest(LiveServerTestCase):
         p = urlparse.urlparse(self.live_server_url)
         self.url = (p.scheme + '://' + self.maintainer.username + ':' +
                     self.maintainer.password + '@' + p.netloc + p.path +
-                    reverse('patchwork.views.xmlrpc.xmlrpc'))
+                    reverse('xmlrpc'))
         self.rpc = xmlrpc_client.Server(self.url)
 
     def testGetRedirect(self):
         response = self.client.patch(self.url)
         self.assertRedirects(response,
-                             reverse('patchwork.views.help',
-                                     kwargs={'path': 'pwclient/'}))
+                             reverse('help', kwargs={'path': 'pwclient/'}))
 
     def testList(self):
         patch = self._insert_patch()

@@ -61,7 +61,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand"><a
-         href="{% url 'patchwork.views.projects' %}">
+         href="{% url 'root' %}">
          Patchwork{% if project %} {{project.name}}{% endif %}</a>
          {% block heading %}{% endblock %}
       </span>
@@ -86,12 +86,12 @@
             Bundles</a>
         </li>
         <li class="{% block info_active %}{% endblock %}">
-          <a href="{% url 'patchwork.views.project.project' project_id=project.linkname %}">
+          <a href="{% url 'project' project_id=project.linkname %}">
             <span class="glyphicon glyphicon-info-sign"></span>
             About this project</a>
         </li>
         <li>
-          <a href="{% url 'patchwork.views.projects' %}">
+          <a href="{% url 'root' %}">
             <span class="glyphicon glyphicon-home"></span>
             All projects</a>
         </li>
@@ -107,13 +107,13 @@
        </a>
        <ul class="dropdown-menu" role="menu">
          <li>
-           <a href="{% url 'patchwork.views.user.todo_lists' %}">
+           <a href="{% url 'todo_list' %}">
              Reviews pending
              <span class="badge">{{ user.profile.n_todo }}</span>
            </a>
          </li>
          <li>
-           <a href="{% url 'patchwork.views.bundle.bundles' %}">
+           <a href="{% url 'bundle_list' %}">
              Bundles
            </a>
          </li>
@@ -121,14 +121,14 @@
 {% if user.is_staff %}
          <li><a href="{% url 'admin:index' %}">Administration</a></li>
 {% endif %}
-         <li><a href="{% url 'patchwork.views.user.profile' %}">View profile</a></li>
+         <li><a href="{% url 'user' %}">View profile</a></li>
          <li><a href="{% url 'auth_logout' %}">Logout</a></li>
        </ul>
      </li>
 {% else %}
      <li><a href="{% url 'auth_login' %}">Login</a></li>
-     <li><a href="{% url 'patchwork.views.user.register' %}">Register</a></li>
-     <li><a href="{% url 'patchwork.views.mail.settings' %}">Mail settings</a></li>
+     <li><a href="{% url 'register' %}">Register</a></li>
+     <li><a href="{% url 'mail_settings' %}">Mail settings</a></li>
 {% endif %}
      </ul>
     </div>
@@ -148,7 +148,7 @@
   <div id="footer">
    <a href="http://jk.ozlabs.org/projects/patchwork/">patchwork</a>
    patch tracking system | <a
-   href="{% url 'patchwork.views.help' path="about/" %}">about patchwork</a>
+   href="{% url 'help' path="about/" %}">about patchwork</a>
   </div>
  </body>
 </html>

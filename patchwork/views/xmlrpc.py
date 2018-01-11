@@ -143,7 +143,7 @@ dispatcher = PatchworkXMLRPCDispatcher()
 def xmlrpc(request):
     if request.method not in ['POST', 'GET']:
         return HttpResponseRedirect(urlresolvers.reverse(
-            'patchwork.views.help', kwargs={'path': 'pwclient/'}))
+            'help', kwargs={'path': 'pwclient/'}))
 
     response = HttpResponse()
 
