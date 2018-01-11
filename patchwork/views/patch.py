@@ -20,20 +20,18 @@
 from __future__ import absolute_import
 
 from django.http import HttpResponse, HttpResponseForbidden, Http404
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import six
 
 from patchwork.forms import PatchForm, CreateBundleForm
 from patchwork.models import Patch, Project, Bundle, TestResult
-from patchwork.requestcontext import PatchworkRequestContext
 from patchwork.views import generic_list, patch_to_mbox
 
 
 def patch(request, patch_id):
-    context = PatchworkRequestContext(request)
     patch = get_object_or_404(Patch, id=patch_id)
-    context.project = patch.project
     editable = patch.is_editable(request.user)
+    messages = []
 
     form = None
     createbundleform = None
@@ -57,7 +55,7 @@ def patch(request, patch_id):
                 bundle.append_patch(patch)
                 bundle.save()
                 createbundleform = CreateBundleForm()
-                context.add_message('Bundle %s created' % bundle.name)
+                messages += ['Bundle %s created' % bundle.name]
 
         elif action == 'addtobundle':
             bundle = get_object_or_404(
@@ -65,10 +63,10 @@ def patch(request, patch_id):
             try:
                 bundle.append_patch(patch)
                 bundle.save()
-                context.add_message('Patch added to bundle "%s"' % bundle.name)
+                messages += ['Patch added to bundle "%s"' % bundle.name]
             except Exception as ex:
-                context.add_message("Couldn't add patch '%s' to bundle %s: %s"
-                                    % (patch.name, bundle.name, ex.message))
+                messages += ["Couldn't add patch '%s' to bundle %s: %s"
+                             % (patch.name, bundle.name, ex.message)]
 
         # all other actions require edit privs
         elif not editable:
@@ -78,18 +76,20 @@ def patch(request, patch_id):
             form = PatchForm(data=request.POST, instance=patch)
             if form.is_valid():
                 form.save()
-                context.add_message('Patch updated')
+                messages += ['Patch updated']
 
-    context['patch'] = patch
-    context['series'] = patch.series()
-    context['patchform'] = form
-    context['createbundleform'] = createbundleform
-    context['project'] = patch.project
-    context['test_results'] = TestResult.objects \
-        .filter(revision=None, patch=patch) \
-        .order_by('test__name').select_related('test')
+    context = {
+        'series': patch.series(),
+        'patch': patch,
+        'patchform': form,
+        'createbundleform': createbundleform,
+        'project': patch.project,
+        'messages': messages,
+        'test_results': TestResult.objects
+                        .filter(revision=None, patch=patch)
+                        .order_by('test__name').select_related('test')}
 
-    return render_to_response('patchwork/patch.html', context)
+    return render(request, 'patchwork/patch.html', context)
 
 
 def content(request, patch_id):
@@ -122,7 +122,7 @@ def list(request, project_id):
     project = get_object_or_404(Project, linkname=project_id)
     context = generic_list(request, project, 'patch_list',
                            view_args={'project_id': project.linkname})
-    return render_to_response('patchwork/list.html', context)
+    return render(request, 'patchwork/list.html', context)
 
 
 def _get_patch_or_404(request, msgid):

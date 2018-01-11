@@ -19,7 +19,6 @@
 
 from django.conf import settings
 from django.core import mail
-from django.template import Context
 from django.template.loader import render_to_string
 
 
@@ -50,10 +49,10 @@ class ReviewerNotification(NotificationEmail):
         self.series = series
         self.user = user
         self.reviewer = reviewer
-        self.ctx = Context({'series': series,
-                            'series_url': series_url,
-                            'user': user,
-                            'reviewer': reviewer})
+        self.ctx = {'series': series,
+                    'series_url': series_url,
+                    'user': user,
+                    'reviewer': reviewer}
 
     def send(self):
         # do not notify if the reviewer is the same person that has set this

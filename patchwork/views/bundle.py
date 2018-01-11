@@ -23,20 +23,17 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.http import (HttpResponse, HttpResponseRedirect,
                          HttpResponseNotFound)
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 from patchwork.filters import DelegateFilter
 from patchwork.forms import BundleForm, DeleteBundleForm
 from patchwork.models import Patch, Bundle, BundlePatch, Project
-from patchwork.requestcontext import PatchworkRequestContext
 from patchwork.utils import get_patch_ids
 from patchwork.views import generic_list, patch_to_mbox
 
 
 @login_required
 def setbundle(request):
-    context = PatchworkRequestContext(request)
-
     bundle = None
 
     if request.method == 'POST':
@@ -91,9 +88,6 @@ def setbundle(request):
         bundle = get_object_or_404(Bundle, owner=request.user,
                                    id=request.POST['bundle_id'])
 
-    if 'error' in context:
-        pass
-
     if bundle:
         return HttpResponseRedirect(
             reverse('bundle', kwargs={'bundle_id': bundle.id})
@@ -106,8 +100,6 @@ def setbundle(request):
 
 @login_required
 def bundles(request, project_id=None):
-    context = PatchworkRequestContext(request)
-
     if request.method == 'POST':
         form_name = request.POST.get('form_name', '')
 
@@ -128,10 +120,8 @@ def bundles(request, project_id=None):
         bundle.delete_form = DeleteBundleForm(auto_id=False,
                                               initial={'bundle_id': bundle.id})
 
-    context['bundles'] = bundles
-    context['project'] = project
-
-    return render_to_response('patchwork/bundles.html', context)
+    return render(request, 'patchwork/bundles.html',
+                  {'bundles': bundles, 'project': project})
 
 
 def bundle(request, username, bundlename):
@@ -192,7 +182,7 @@ def bundle(request, username, bundlename):
     context['bundle'] = bundle
     context['bundleform'] = form
 
-    return render_to_response('patchwork/bundle.html', context)
+    return render(request, 'patchwork/bundle.html', context)
 
 
 def mbox(request, username, bundlename):

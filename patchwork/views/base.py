@@ -25,16 +25,14 @@ from django.conf import settings
 from django.core import urlresolvers
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
 from patchwork.models import (Project, Person, EmailConfirmation, User,
                               user_name)
-from patchwork.requestcontext import PatchworkRequestContext
 
 
 def projects(request):
-    context = PatchworkRequestContext(request)
     projects = Project.objects.all()
 
     if projects.count() == 1:
@@ -42,29 +40,27 @@ def projects(request):
             urlresolvers.reverse('patch_list',
                                  kwargs={'project_id': projects[0].linkname}))
 
-    context['projects'] = projects
-    return render_to_response('patchwork/projects.html', context)
+    return render(request, 'patchwork/projects.html', {'projects': projects})
 
 
 def pwclientrc(request, project_id):
     project = get_object_or_404(Project, linkname=project_id)
-    context = PatchworkRequestContext(request)
-    context.project = project
+    context = {'project': project}
     if settings.FORCE_HTTPS_LINKS or request.is_secure():
         context['scheme'] = 'https'
     else:
         context['scheme'] = 'http'
     response = HttpResponse(content_type="text/plain")
     response['Content-Disposition'] = 'attachment; filename=.pwclientrc'
-    response.write(render_to_string('patchwork/pwclientrc', context))
+    response.write(render_to_string('patchwork/pwclientrc',
+                                    context, request=request))
     return response
 
 
 def pwclient(request):
-    context = PatchworkRequestContext(request)
     response = HttpResponse(content_type="text/x-python")
     response['Content-Disposition'] = 'attachment; filename=pwclient'
-    response.write(render_to_string('patchwork/pwclient', context))
+    response.write(render_to_string('patchwork/pwclient', {}, request=request))
     return response
 
 
@@ -85,14 +81,13 @@ def confirm(request, key):
     if conf.active and conf.is_valid():
         return views[conf.type](request, conf)
 
-    context = PatchworkRequestContext(request)
-    context['conf'] = conf
+    context = {'conf': conf}
     if not conf.active:
         context['error'] = 'inactive'
     elif not conf.is_valid():
         context['error'] = 'expired'
 
-    return render_to_response('patchwork/confirm-error.html', context)
+    return render(request, 'patchwork/confirm-error.html', context)
 
 
 def submitter_complete(request):
@@ -163,8 +158,6 @@ if settings.ENABLE_XMLRPC:
 
 
 def help(request, path):
-    context = PatchworkRequestContext(request)
     if path in help_pages:
-        return render_to_response(
-            'patchwork/help/' + help_pages[path], context)
+        return render(request, 'patchwork/help/' + help_pages[path], {})
     raise Http404

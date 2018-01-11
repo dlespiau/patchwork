@@ -23,36 +23,30 @@ from django.conf import settings as conf_settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template.loader import render_to_string
 
 from patchwork.forms import OptinoutRequestForm, EmailForm
 from patchwork.models import EmailOptout, EmailConfirmation
-from patchwork.requestcontext import PatchworkRequestContext
 
 
 def settings(request):
-    context = PatchworkRequestContext(request)
     if request.method == 'POST':
         form = EmailForm(data=request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             is_optout = EmailOptout.objects.filter(email=email).count() > 0
-            context.update({
-                'email': email,
-                'is_optout': is_optout,
-            })
-            return render_to_response('patchwork/mail-settings.html', context)
+            return render(request,
+                          'patchwork/mail-settings.html',
+                          {'email': email,
+                           'is_optout': is_optout})
 
     else:
         form = EmailForm()
-    context['form'] = form
-    return render_to_response('patchwork/mail-form.html', context)
+    return render(request, 'patchwork/mail-form.html', {'form': form})
 
 
 def optout_confirm(request, conf):
-    context = PatchworkRequestContext(request)
-
     email = conf.email.strip().lower()
     # silently ignore duplicated optouts
     if EmailOptout.objects.filter(email=email).count() == 0:
@@ -60,25 +54,21 @@ def optout_confirm(request, conf):
         optout.save()
 
     conf.deactivate()
-    context['email'] = conf.email
 
-    return render_to_response('patchwork/optout.html', context)
+    return render(request, 'patchwork/optout.html', {'email': conf.email})
 
 
 def optin_confirm(request, conf):
-    context = PatchworkRequestContext(request)
-
     email = conf.email.strip().lower()
     EmailOptout.objects.filter(email=email).delete()
 
     conf.deactivate()
-    context['email'] = conf.email
 
-    return render_to_response('patchwork/optin.html', context)
+    return render(request, 'patchwork/optin.html', {'email': conf.email})
 
 
 def optinout(request, action, description):
-    context = PatchworkRequestContext(request)
+    context = {}
 
     mail_template = 'patchwork/%s-request.mail' % action
     html_template = 'patchwork/%s-request.html' % action
@@ -92,7 +82,7 @@ def optinout(request, action, description):
                             'Please review the form and re-submit.') % \
             description
         context['form'] = form
-        return render_to_response(html_template, context)
+        return render(request, html_template, context)
 
     email = form.cleaned_data['email']
     if action == 'optin' and \
@@ -101,7 +91,7 @@ def optinout(request, action, description):
                             'patchwork opt-out list, so you don\'t ' +
                             'need to opt back in') % email
         context['form'] = form
-        return render_to_response(html_template, context)
+        return render(request, html_template, context)
 
     conf = EmailConfirmation(type=action, email=email)
     conf.save()
@@ -117,7 +107,7 @@ def optinout(request, action, description):
                             'Please try again later.')
         context['admins'] = conf_settings.ADMINS
 
-    return render_to_response(html_template, context)
+    return render(request, html_template, context)
 
 
 def optout(request):

@@ -127,6 +127,9 @@ bundle_actions = ['create', 'add', 'remove']
 def set_bundle(user, project, action, data, patches, context):
     # set up the bundle
     bundle = None
+    if 'messages' not in context:
+        context['messages'] = []
+
     if action == 'create':
         bundle_name = data['bundle_name'].strip()
         if '/' in bundle_name:
@@ -141,7 +144,7 @@ def set_bundle(user, project, action, data, patches, context):
         bundle = Bundle(owner=user, project=project,
                         name=bundle_name)
         bundle.save()
-        context.add_message("Bundle %s created" % bundle.name)
+        context['messages'] += ["Bundle %s created" % bundle.name]
 
     elif action == 'add':
         bundle = get_object_or_404(Bundle, id=data['bundle_id'])
@@ -158,18 +161,18 @@ def set_bundle(user, project, action, data, patches, context):
                                                            patch=patch).count()
             if bundlepatch_count == 0:
                 bundle.append_patch(patch)
-                context.add_message("Patch '%s' added to bundle %s" %
-                                    (patch.name, bundle.name))
+                context['messages'] += ["Patch '%s' added to bundle %s" %
+                        (patch.name, bundle.name)]
             else:
-                context.add_message("Patch '%s' already in bundle %s" %
-                                    (patch.name, bundle.name))
+                context['messages'] += ["Patch '%s' already in bundle %s" %
+                        (patch.name, bundle.name)]
 
         elif action == 'remove':
             try:
                 bp = BundlePatch.objects.get(bundle=bundle, patch=patch)
                 bp.delete()
-                context.add_message("Patch '%s' removed from bundle %s\n" %
-                                    (patch.name, bundle.name))
+                context['messages'] += ["Patch '%s' removed from bundle %s\n" %
+                        (patch.name, bundle.name)]
             except Exception:
                 pass
 

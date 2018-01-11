@@ -26,7 +26,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 from django.core import urlresolvers
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
 from patchwork.filters import DelegateFilter
@@ -34,12 +34,12 @@ from patchwork.forms import (UserProfileForm, UserPersonLinkForm,
                              RegistrationForm)
 from patchwork.models import (Project, Bundle, Person, EmailConfirmation,
                               State, EmailOptout)
-from patchwork.requestcontext import PatchworkRequestContext
 from patchwork.views import generic_list
 
 
 def register(request):
-    context = PatchworkRequestContext(request)
+    context = {}
+
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
@@ -78,9 +78,9 @@ def register(request):
     else:
         form = RegistrationForm()
 
-    return render_to_response('patchwork/registration_form.html',
-                              {'form': form},
-                              context_instance=context)
+    context['form'] = form
+
+    return render(request, 'patchwork/registration_form.html', context)
 
 
 def register_confirm(request, conf):
@@ -95,13 +95,11 @@ def register_confirm(request, conf):
     person.user = conf.user
     person.save()
 
-    return render_to_response('patchwork/registration-confirm.html')
+    return render(request, 'patchwork/registration-confirm.html')
 
 
 @login_required
 def profile(request):
-    context = PatchworkRequestContext(request)
-
     if request.method == 'POST':
         form = UserProfileForm(instance=request.user.profile,
                                data=request.POST)
@@ -110,9 +108,9 @@ def profile(request):
     else:
         form = UserProfileForm(instance=request.user.profile)
 
-    context.project = request.user.profile.primary_project
-    context['bundles'] = Bundle.objects.filter(owner=request.user)
-    context['profileform'] = form
+    context = {'project': request.user.profile.primary_project,
+               'bundles': Bundle.objects.filter(owner=request.user),
+               'profileform': form}
 
     optout_query = '%s.%s IN (SELECT %s FROM %s)' % (
         Person._meta.db_table,
@@ -124,12 +122,12 @@ def profile(request):
     context['linked_emails'] = people
     context['linkform'] = UserPersonLinkForm()
 
-    return render_to_response('patchwork/profile.html', context)
+    return render(request, 'patchwork/profile.html', context)
 
 
 @login_required
 def link(request):
-    context = PatchworkRequestContext(request)
+    context = {}
 
     if request.method == 'POST':
         form = UserPersonLinkForm(request.POST)
@@ -154,13 +152,11 @@ def link(request):
         form = UserPersonLinkForm()
     context['linkform'] = form
 
-    return render_to_response('patchwork/user-link.html', context)
+    return render(request, 'patchwork/user-link.html', context)
 
 
 @login_required
 def link_confirm(request, conf):
-    context = PatchworkRequestContext(request)
-
     try:
         person = Person.objects.get(email__iexact=conf.email)
     except Person.DoesNotExist:
@@ -170,9 +166,8 @@ def link_confirm(request, conf):
     person.save()
     conf.deactivate()
 
-    context['person'] = person
-
-    return render_to_response('patchwork/user-link-confirm.html', context)
+    return render(request, 'patchwork/user-link-confirm.html',
+                  {'person': person})
 
 
 @login_required
@@ -210,10 +205,9 @@ def todo_lists(request):
             urlresolvers.reverse('todo_list',
                 kwargs={'project_id': todo_lists[0]['project'].linkname}))
 
-    context = PatchworkRequestContext(request)
-    context['todo_lists'] = todo_lists
-    context.project = request.user.profile.primary_project
-    return render_to_response('patchwork/todo-lists.html', context)
+    context = {'todo_lists': todo_lists,
+               'project': request.user.profile.primary_project}
+    return render(request, 'patchwork/todo-lists.html', context)
 
 
 @login_required
@@ -224,8 +218,7 @@ def todo_list(request, project_id):
     filter_settings = [(DelegateFilter,
                         {'delegate': request.user})]
 
-    context = generic_list(request, project,
-                           'patchwork.views.user.todo_list',
+    context = generic_list(request, project, 'todo_list',
                            view_args={'project_id': project.linkname},
                            filter_settings=filter_settings,
                            patches=patches)
@@ -234,4 +227,4 @@ def todo_list(request, project_id):
         State.objects.filter(action_required=True).all()
     context['n_patches'] = patches.count()
     context['n_series'] = series.count()
-    return render_to_response('patchwork/todo-list.html', context)
+    return render(request, 'patchwork/todo-list.html', context)

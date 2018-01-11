@@ -32,17 +32,35 @@ from patchwork.utils import Order, get_patch_ids, bundle_actions, set_bundle
 from patchwork.paginator import Paginator
 from patchwork.forms import MultiplePatchForm
 from patchwork.models import Comment, Patch
+from patchwork.filters import Filters
 
 
 def generic_list(request, project, view,
                  view_args={}, filter_settings=[], patches=None,
                  editable_order=False):
 
-    context = PatchworkRequestContext(request,
-                                      list_view=view,
-                                      list_view_params=view_args)
+    filters = Filters(request)
 
-    context.project = project
+    params = filters.params()
+    for param in ['order', 'page']:
+        data = {}
+        if request.method == 'GET':
+            data = request.GET
+        elif request.method == 'POST':
+            data = request.POST
+
+        value = data.get(param, None)
+        if value:
+            params.append((param, value))
+
+    context = {
+      'messages': [],
+      'project': project,
+      'filters': filters,
+      'projects': Project.objects.all(),
+      'list_view': {'view': view, 'view_params': view_args, 'params': params},
+    }
+
     data = {}
     if request.method == 'GET':
         data = request.GET
@@ -92,11 +110,11 @@ def generic_list(request, project, view,
 
     for (filterclass, setting) in filter_settings:
         if isinstance(setting, dict):
-            context.filters.set_status(filterclass, **setting)
+            context['filters'].set_status(filterclass, **setting)
         elif isinstance(setting, list):
-            context.filters.set_status(filterclass, *setting)
+            context['filters'].set_status(filterclass, *setting)
         else:
-            context.filters.set_status(filterclass, setting)
+            context['filters'].set_status(filterclass, setting)
 
     if patches is None:
         patches = Patch.objects.filter(project=project)
@@ -104,7 +122,7 @@ def generic_list(request, project, view,
     # annotate with tag counts
     patches = patches.with_tag_counts(project)
 
-    patches = context.filters.apply(patches)
+    patches = context['filters'].apply(patches)
     if not editable_order:
         patches = order.apply(patches)
 
@@ -134,7 +152,7 @@ def process_multiplepatch_form(form, user, action, patches, context):
         return ['The submitted form data was invalid']
 
     if len(patches) == 0:
-        context.add_message("No patches selected; nothing updated")
+        context['messsages'] += ["No patches selected; nothing updated"]
         return errors
 
     changed_patches = 0
@@ -148,11 +166,11 @@ def process_multiplepatch_form(form, user, action, patches, context):
         form.save(patch)
 
     if changed_patches == 1:
-        context.add_message("1 patch updated")
+        context['messages'] += ["1 patch updated"]
     elif changed_patches > 1:
-        context.add_message("%d patches updated" % changed_patches)
+        context['messages'] += ["%d patches updated" % changed_patches]
     else:
-        context.add_message("No patches updated")
+        context['messages'] += ["No patches updated"]
 
     return errors
 
