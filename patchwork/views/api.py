@@ -124,7 +124,7 @@ class ListMixin(object):
 
 class SeriesFilter(django_filters.FilterSet):
 
-    def filter_submitter(self, queryset, submitter):
+    def filter_submitter(self, queryset, name, submitter):
         try:
             submitter = int(submitter)
             queryset = queryset.filter(submitter=submitter)
@@ -134,7 +134,7 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(submitter__in=people)
         return queryset
 
-    def filter_reviewer(self, queryset, reviewer):
+    def filter_reviewer(self, queryset, name, reviewer):
         try:
             reviewer = int(reviewer)
             queryset = queryset.filter(reviewer=reviewer)
@@ -143,7 +143,7 @@ class SeriesFilter(django_filters.FilterSet):
                 queryset = queryset.filter(reviewer__isnull=True)
         return queryset
 
-    def filter_test_state(self, queryset, test_states):
+    def filter_test_state(self, queryset, name, test_states):
         if not test_states:
             return queryset
 
@@ -158,7 +158,7 @@ class SeriesFilter(django_filters.FilterSet):
 
         return queryset
 
-    def filter_state(self, queryset, state_names):
+    def filter_state(self, queryset, name, state_names):
         if not state_names:
             return queryset
 
@@ -169,18 +169,18 @@ class SeriesFilter(django_filters.FilterSet):
             return queryset
 
     submitted_since = django_filters.CharFilter(name='submitted',
-                                                lookup_type='gt')
+                                                lookup_expr='gt')
     updated_since = django_filters.CharFilter(name='last_updated',
-                                              lookup_type='gt')
+                                              lookup_expr='gt')
     submitted_before = django_filters.CharFilter(name='submitted',
-                                                 lookup_type='lte')
+                                                 lookup_expr='lte')
     updated_before = django_filters.CharFilter(name='last_updated',
-                                              lookup_type='lte')
-    submitter = django_filters.MethodFilter()
-    reviewer = django_filters.MethodFilter()
-    test_state = django_filters.MethodFilter()
-    name = django_filters.CharFilter(lookup_type='icontains')
-    state = django_filters.MethodFilter()
+                                              lookup_expr='lte')
+    submitter = django_filters.CharFilter(method='filter_submitter')
+    reviewer = django_filters.CharFilter(method='filter_reviewer')
+    test_state = django_filters.CharFilter(method='filter_test_state')
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    state = django_filters.CharFilter(method='filter_state')
 
     class Meta:
         model = Series
@@ -470,7 +470,7 @@ class RevisionResultViewSet(viewsets.ViewSet, ResultMixin):
 
 class PatchFilter(django_filters.FilterSet):
 
-    def filter_submitter(self, queryset, submitter):
+    def filter_submitter(self, queryset, name, submitter):
         try:
             submitter = int(submitter)
             queryset = queryset.filter(submitter=submitter)
@@ -480,7 +480,7 @@ class PatchFilter(django_filters.FilterSet):
                 queryset = queryset.filter(submitter__in=people)
         return queryset
 
-    def filter_state(self, queryset, state_names):
+    def filter_state(self, queryset, name, state_names):
         if not state_names:
             return queryset
 
@@ -491,16 +491,16 @@ class PatchFilter(django_filters.FilterSet):
             return queryset
 
     submitted_since = django_filters.CharFilter(name='date',
-                                                lookup_type='gt')
+                                                lookup_expr='gt')
     updated_since = django_filters.CharFilter(name='last_updated',
-                                              lookup_type='gt')
+                                              lookup_expr='gt')
     submitted_before = django_filters.CharFilter(name='date',
-                                                 lookup_type='lte')
+                                                 lookup_expr='lte')
     updated_before = django_filters.CharFilter(name='last_updated',
-                                              lookup_type='lte')
-    submitter = django_filters.MethodFilter()
-    name = django_filters.CharFilter(lookup_type='icontains')
-    state = django_filters.MethodFilter()
+                                              lookup_expr='lte')
+    submitter = django_filters.CharFilter(method='filter_submitter')
+    name = django_filters.CharFilter(lookup_expr='icontains')
+    state = django_filters.CharFilter(method='filter_state')
 
     class Meta:
         model = Patch
@@ -554,15 +554,15 @@ class PatchResultViewSet(viewsets.ViewSet, ResultMixin):
 
 class EventFilter(django_filters.FilterSet):
 
-    def filter_name(self, queryset, event_names):
+    def filter_name(self, queryset, name, event_names):
         if not event_names:
             return queryset
 
         names = event_names.split(',')
         return queryset.filter(event__name__in=names)
 
-    since = django_filters.CharFilter(name='event_time', lookup_type='gt')
-    name = django_filters.MethodFilter()
+    since = django_filters.CharFilter(name='event_time', lookup_expr='gt')
+    name = django_filters.CharFilter(method='filter_name')
     series = django_filters.NumberFilter()
     patch = django_filters.NumberFilter()
 
