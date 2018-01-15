@@ -61,8 +61,7 @@ class RelatedOrderingFilter(filters.OrderingFilter):
     def is_valid_field(self, model, field):
         components = field.split('.', 1)
         try:
-            field, parent_model, direct, m2m = \
-                model._meta.get_field_by_name(components[0])
+            field = model._meta.get_field(components[0])
 
             # foreign key
             if field.rel and len(components) == 2:
