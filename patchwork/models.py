@@ -577,6 +577,7 @@ class Series(models.Model):
 
     class Meta:
         verbose_name_plural = 'Series'
+        ordering = ["-id"]
 
 
 # Signal one can listen to to know when a revision is complete (ie. has all of
