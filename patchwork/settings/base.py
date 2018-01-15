@@ -38,6 +38,7 @@ MIDDLEWARE_CLASSES = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'patchwork.threadlocalrequest.ThreadLocalRequestMiddleware',
     'patchwork.middleware.AccessControlAllowOriginMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 ]
 
 if django.VERSION >= (1, 7):
