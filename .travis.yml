@@ -1,4 +1,4 @@
-dist: precise # https://github.com/travis-ci/travis-ci/issues/8331
+dist: trusty
 language: python
 python:
     - 2.7
@@ -18,10 +18,11 @@ before_install:
     - firefox --version
 
 install:
-    - npm install jshint
-    - npm install karma
-    - npm install karma-jasmine
-    - npm install karma-firefox-launcher
+    - npm install -g jshint
+    - npm install -g jasmine-core
+    - npm install -g karma
+    - npm install -g karma-jasmine
+    - npm install -g karma-firefox-launcher
 
     - wget https://github.com/mozilla/geckodriver/releases/download/v0.17.0/geckodriver-v0.17.0-linux64.tar.gz
     - mkdir geckodriver
