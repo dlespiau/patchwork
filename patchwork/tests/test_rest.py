@@ -301,6 +301,7 @@ class APITest(APITestBase):
 
         prs = filter(lambda r: r['name'] == 'pull-request-new',
                      events['results'])
+        prs = list(prs)
         self.assertEqual(len(prs), 1)
 
         self.assertEqual(prs[0]['patch'], patch.id)
