@@ -44,8 +44,8 @@ class TestUser(object):
             self.username, self.email, self.password)
 
     def basic_auth_header(self):
-        userpass = "%s:%s" % (self.username, self.password)
-        return 'Basic ' + base64.b64encode(userpass)
+        userpass = ("%s:%s" % (self.username, self.password)).encode('utf-8')
+        return 'Basic ' + base64.b64encode(userpass).decode('utf-8')
 
     def add_to_maintainers(self, project):
         profile = self.user.profile

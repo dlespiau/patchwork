@@ -114,7 +114,8 @@ class MboxPatchworkLink(TestCase):
         response = self.client.get('/patch/%d/mbox/' % self.patch.id,
                                    {'link': 'Patchwork'})
 
-        m = re.search(r'^Patchwork:.*/%d/$' % self.patch.pk, response.content,
+        m = re.search(r'^Patchwork:.*/%d/$' % self.patch.pk,
+                      response.content.decode('utf-8'),
                       re.M)
         self.assertTrue(m)
 

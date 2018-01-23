@@ -143,9 +143,13 @@ class APITestBase(test_series.Series0010):
         # will depend on the previous tests run. Make sure to canonicalize
         # the mbox file so we can compare md5sums
         content = re.sub('^X-Patchwork-Id: .*$', 'X-Patchwork-Id: 1',
-                         response.content, flags=re.M)
+                         response.content.decode('utf-8'), flags=re.M)
+
+        with open("/tmp/python36", "w") as fi:
+            fi.write(content)
+
         content_hash = hashlib.md5()
-        content_hash.update(content)
+        content_hash.update(content.encode('utf-8'))
         self.assertEqual(content_hash.hexdigest(), md5sum)
 
     def get(self, url, params={}):
@@ -242,7 +246,8 @@ class APITest(APITestBase):
 
     def _check_mbox_link(self, url, n):
         response = self.client.get('/api/1.0' + url, {'link': 'Patchwork'})
-        m = re.findall('^Patchwork:.*http.*$', response.content, re.M)
+        m = re.findall('^Patchwork:.*http.*$',
+                       response.content.decode('utf-8'), re.M)
         self.assertEqual(len(m), n)
 
     def testSeriesMboxPatchworkLink(self):
