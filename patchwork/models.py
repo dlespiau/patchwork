@@ -23,7 +23,7 @@ import datetime
 import jsonfield
 import random
 import re
-import threadlocalrequest
+import patchwork.threadlocalrequest as threadlocalrequest
 
 from django.conf import settings
 from django.contrib import auth

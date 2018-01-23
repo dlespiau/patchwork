@@ -20,7 +20,7 @@
 import datetime
 from email.utils import make_msgid
 import unittest
-import urlparse
+from django.utils.six.moves.urllib.parse import urlparse
 
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -63,7 +63,7 @@ class XMLRPCTest(LiveServerTestCase):
         self.maintainer = TestUser(username='maintainer')
         self.maintainer.add_to_maintainers(defaults.project)
 
-        p = urlparse.urlparse(self.live_server_url)
+        p = urlparse(self.live_server_url)
         self.url = (p.scheme + '://' + self.maintainer.username + ':' +
                     self.maintainer.password + '@' + p.netloc + p.path +
                     reverse('xmlrpc'))

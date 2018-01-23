@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 import sys
-from cStringIO import StringIO
+from django.utils.six import StringIO
 from contextlib import contextmanager
 
 from django.core import management
