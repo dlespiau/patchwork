@@ -29,6 +29,7 @@ import time
 import dateutil.parser as dateparse
 from django.core import mail
 from django.test.utils import override_settings
+from django.utils import six
 
 import patchwork.tests.test_series as test_series
 from patchwork.tests.test_user import TestUser
@@ -240,9 +241,15 @@ class APITest(APITestBase):
             i += 1
 
     def testSeriesMbox(self):
-        self.check_mbox("/series/%s/revisions/1/mbox/" % self.series.pk,
-                        'for_each_-intel_-crtc-v2.mbox',
-                        '42e2b2c9eeccf912c998be41683f50d7')
+        # XXX: since Python 3 email module wrap header lines differently
+        if six.PY3:
+            self.check_mbox("/series/%s/revisions/1/mbox/" % self.series.pk,
+                            'for_each_-intel_-crtc-v2.mbox',
+                            '6d59b59dbf751064408249e18401275f')
+        else:
+            self.check_mbox("/series/%s/revisions/1/mbox/" % self.series.pk,
+                            'for_each_-intel_-crtc-v2.mbox',
+                            '42e2b2c9eeccf912c998be41683f50d7')
 
     def _check_mbox_link(self, url, n):
         response = self.client.get('/api/1.0' + url, {'link': 'Patchwork'})
