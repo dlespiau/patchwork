@@ -57,8 +57,7 @@ class lockwrapper(lock.lock):
 
 class teststate(object):
 
-    def __init__(self, testcase, dir, pidoffset=0):
-        self._testcase = testcase
+    def __init__(self, dir, pidoffset=0):
         self._acquirecalled = False
         self._releasecalled = False
         self._postreleasecalled = False
@@ -80,8 +79,8 @@ class teststate(object):
     def postreleasefn(self):
         self._postreleasecalled = True
 
-    def assertacquirecalled(self, called):
-        self._testcase.assertEqual(
+    def assertacquirecalled(self, testcase, called):
+        testcase.assertEqual(
             self._acquirecalled, called,
             'expected acquire to be %s but was actually %s' % (
                 self._tocalled(called),
@@ -91,25 +90,25 @@ class teststate(object):
     def resetacquirefn(self):
         self._acquirecalled = False
 
-    def assertreleasecalled(self, called):
-        self._testcase.assertEqual(
+    def assertreleasecalled(self, testcase, called):
+        testcase.assertEqual(
             self._releasecalled, called,
             'expected release to be %s but was actually %s' % (
                 self._tocalled(called),
                 self._tocalled(self._releasecalled),
             ))
 
-    def assertpostreleasecalled(self, called):
-        self._testcase.assertEqual(
+    def assertpostreleasecalled(self, testcase, called):
+        testcase.assertEqual(
             self._postreleasecalled, called,
             'expected postrelease to be %s but was actually %s' % (
                 self._tocalled(called),
                 self._tocalled(self._postreleasecalled),
             ))
 
-    def assertlockexists(self, exists):
+    def assertlockexists(self, testcase, exists):
         actual = os.path.lexists(testlockname)
-        self._testcase.assertEqual(
+        testcase.assertEqual(
             actual, exists,
             'expected lock to %s but actually did %s' % (
                 self._toexists(exists),
@@ -132,97 +131,97 @@ class teststate(object):
 class testlock(unittest.TestCase):
 
     def testlock(self):
-        state = teststate(self, tempfile.mkdtemp(dir=os.getcwd()))
+        state = teststate(tempfile.mkdtemp(dir=os.getcwd()))
         lock = state.makelock()
-        state.assertacquirecalled(True)
+        state.assertacquirecalled(self, True)
         lock.release()
-        state.assertreleasecalled(True)
-        state.assertpostreleasecalled(True)
-        state.assertlockexists(False)
+        state.assertreleasecalled(self, True)
+        state.assertpostreleasecalled(self, True)
+        state.assertlockexists(self, False)
 
     def testrecursivelock(self):
-        state = teststate(self, tempfile.mkdtemp(dir=os.getcwd()))
+        state = teststate(tempfile.mkdtemp(dir=os.getcwd()))
         lock = state.makelock()
-        state.assertacquirecalled(True)
+        state.assertacquirecalled(self, True)
 
         state.resetacquirefn()
         lock.lock()
         # recursive lock should not call acquirefn again
-        state.assertacquirecalled(False)
+        state.assertacquirecalled(self, False)
 
         lock.release()  # brings lock refcount down from 2 to 1
-        state.assertreleasecalled(False)
-        state.assertpostreleasecalled(False)
-        state.assertlockexists(True)
+        state.assertreleasecalled(self, False)
+        state.assertpostreleasecalled(self, False)
+        state.assertlockexists(self, True)
 
         lock.release()  # releases the lock
-        state.assertreleasecalled(True)
-        state.assertpostreleasecalled(True)
-        state.assertlockexists(False)
+        state.assertreleasecalled(self, True)
+        state.assertpostreleasecalled(self, True)
+        state.assertlockexists(self, False)
 
     def testlockfork(self):
-        state = teststate(self, tempfile.mkdtemp(dir=os.getcwd()))
+        state = teststate(tempfile.mkdtemp(dir=os.getcwd()))
         lock = state.makelock()
-        state.assertacquirecalled(True)
+        state.assertacquirecalled(self, True)
 
         # fake a fork
         forklock = copy.deepcopy(lock)
         forklock._pidoffset = 1
         forklock.release()
-        state.assertreleasecalled(False)
-        state.assertpostreleasecalled(False)
-        state.assertlockexists(True)
+        state.assertreleasecalled(self, False)
+        state.assertpostreleasecalled(self, False)
+        state.assertlockexists(self, True)
 
         # release the actual lock
         lock.release()
-        state.assertreleasecalled(True)
-        state.assertpostreleasecalled(True)
-        state.assertlockexists(False)
+        state.assertreleasecalled(self, True)
+        state.assertpostreleasecalled(self, True)
+        state.assertlockexists(self, False)
 
     def testinheritlock(self):
         d = tempfile.mkdtemp(dir=os.getcwd())
-        parentstate = teststate(self, d)
+        parentstate = teststate(d)
         parentlock = parentstate.makelock()
-        parentstate.assertacquirecalled(True)
+        parentstate.assertacquirecalled(self, True)
 
         # set up lock inheritance
         with parentlock.inherit() as lockname:
-            parentstate.assertreleasecalled(True)
-            parentstate.assertpostreleasecalled(False)
-            parentstate.assertlockexists(True)
+            parentstate.assertreleasecalled(self, True)
+            parentstate.assertpostreleasecalled(self, False)
+            parentstate.assertlockexists(self, True)
 
-            childstate = teststate(self, d, pidoffset=1)
+            childstate = teststate(d, pidoffset=1)
             childlock = childstate.makelock(parentlock=lockname)
-            childstate.assertacquirecalled(True)
+            childstate.assertacquirecalled(self, True)
 
             childlock.release()
-            childstate.assertreleasecalled(True)
-            childstate.assertpostreleasecalled(False)
-            childstate.assertlockexists(True)
+            childstate.assertreleasecalled(self, True)
+            childstate.assertpostreleasecalled(self, False)
+            childstate.assertlockexists(self, True)
 
             parentstate.resetacquirefn()
 
-        parentstate.assertacquirecalled(True)
+        parentstate.assertacquirecalled(self, True)
 
         parentlock.release()
-        parentstate.assertreleasecalled(True)
-        parentstate.assertpostreleasecalled(True)
-        parentstate.assertlockexists(False)
+        parentstate.assertreleasecalled(self, True)
+        parentstate.assertpostreleasecalled(self, True)
+        parentstate.assertlockexists(self, False)
 
     def testmultilock(self):
         d = tempfile.mkdtemp(dir=os.getcwd())
-        state0 = teststate(self, d)
+        state0 = teststate(d)
         lock0 = state0.makelock()
-        state0.assertacquirecalled(True)
+        state0.assertacquirecalled(self, True)
 
         with lock0.inherit() as lock0name:
-            state0.assertreleasecalled(True)
-            state0.assertpostreleasecalled(False)
-            state0.assertlockexists(True)
+            state0.assertreleasecalled(self, True)
+            state0.assertpostreleasecalled(self, False)
+            state0.assertlockexists(self, True)
 
-            state1 = teststate(self, d, pidoffset=1)
+            state1 = teststate(d, pidoffset=1)
             lock1 = state1.makelock(parentlock=lock0name)
-            state1.assertacquirecalled(True)
+            state1.assertacquirecalled(self, True)
 
             # from within lock1, acquire another lock
             with lock1.inherit() as lock1name:
@@ -230,62 +229,62 @@ class testlock(unittest.TestCase):
                 # name
                 self.assertEqual(lock0name, lock1name)
 
-                state2 = teststate(self, d, pidoffset=2)
+                state2 = teststate(d, pidoffset=2)
                 lock2 = state2.makelock(parentlock=lock1name)
-                state2.assertacquirecalled(True)
+                state2.assertacquirecalled(self, True)
 
                 lock2.release()
-                state2.assertreleasecalled(True)
-                state2.assertpostreleasecalled(False)
-                state2.assertlockexists(True)
+                state2.assertreleasecalled(self, True)
+                state2.assertpostreleasecalled(self, False)
+                state2.assertlockexists(self, True)
 
                 state1.resetacquirefn()
 
-            state1.assertacquirecalled(True)
+            state1.assertacquirecalled(self, True)
 
             lock1.release()
-            state1.assertreleasecalled(True)
-            state1.assertpostreleasecalled(False)
-            state1.assertlockexists(True)
+            state1.assertreleasecalled(self, True)
+            state1.assertpostreleasecalled(self, False)
+            state1.assertlockexists(self, True)
 
         lock0.release()
 
     def testinheritlockfork(self):
         d = tempfile.mkdtemp(dir=os.getcwd())
-        parentstate = teststate(self, d)
+        parentstate = teststate(d)
         parentlock = parentstate.makelock()
-        parentstate.assertacquirecalled(True)
+        parentstate.assertacquirecalled(self, True)
 
         # set up lock inheritance
         with parentlock.inherit() as lockname:
-            childstate = teststate(self, d, pidoffset=1)
+            childstate = teststate(d, pidoffset=1)
             childlock = childstate.makelock(parentlock=lockname)
-            childstate.assertacquirecalled(True)
+            childstate.assertacquirecalled(self, True)
 
             # fork the child lock
             forkchildlock = copy.deepcopy(childlock)
             forkchildlock._pidoffset += 1
             forkchildlock.release()
-            childstate.assertreleasecalled(False)
-            childstate.assertpostreleasecalled(False)
-            childstate.assertlockexists(True)
+            childstate.assertreleasecalled(self, False)
+            childstate.assertpostreleasecalled(self, False)
+            childstate.assertlockexists(self, True)
 
             # release the child lock
             childlock.release()
-            childstate.assertreleasecalled(True)
-            childstate.assertpostreleasecalled(False)
-            childstate.assertlockexists(True)
+            childstate.assertreleasecalled(self, True)
+            childstate.assertpostreleasecalled(self, False)
+            childstate.assertlockexists(self, True)
 
         parentlock.release()
 
     def testinheritcheck(self):
         d = tempfile.mkdtemp(dir=os.getcwd())
-        state = teststate(self, d)
+        state = teststate(d)
 
         def check():
             raise error.LockInheritanceContractViolation('check failed')
         lock = state.makelock(inheritchecker=check)
-        state.assertacquirecalled(True)
+        state.assertacquirecalled(self, True)
 
         def tryinherit():
             with lock.inherit():
