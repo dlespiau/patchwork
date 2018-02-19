@@ -36,7 +36,11 @@ import re
 import sys
 import weakref
 
+# we have to setup django before we import anything!
 import django
+if __name__ == '__main__':
+    django.setup()
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned
@@ -860,7 +864,6 @@ def lock():
 
 
 def main(args):
-    django.setup()
     logger = setup_error_handler()
     parser = argparse.ArgumentParser()
     parse_lock = None
