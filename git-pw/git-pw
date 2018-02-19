@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 #
 # git-pw - git subcommand to integrate with patchwork
 #
@@ -67,7 +67,7 @@ import requests
 
 
 def die(message):
-    print >>sys.stderr, 'fatal: ' + message
+    print('fatal: ' + message, file=sys.stderr)
     sys.exit(1)
 
 
@@ -153,7 +153,10 @@ class Command(object):
     }
 
     def __getattr__(self, name):
-        return self.meta[self.canonical_name()][name]
+        if name not in ['need_git_repo', 'need_project', 'need_auth']:
+            raise AttributeError()
+        elif self.canonical_name():
+            return self.meta[self.canonical_name()][name]
 
     def canonical_name(self):
         if self.name in self.aliases:
@@ -161,7 +164,8 @@ class Command(object):
         return self.name
 
     def method_name(self):
-        return self.canonical_name().replace('-', '_')
+        if self.canonical_name():
+            return self.canonical_name().replace('-', '_')
 
 
 class User(object):
@@ -404,11 +408,11 @@ class Table(object):
         last_column = list(columns)[-1]
 
         # horizontal width of each column
-        for key, column in columns.iteritems():
+        for (key, column) in list(columns.items()):
             layout[key] = {}
             layout[key]['width'] = len(column['header'])
 
-        for key, column in columns.iteritems():
+        for (key, column) in list(columns.items()):
             format = column.get('format', None)
             if format == 'date':
                 layout[key]['width'] = 10
@@ -423,7 +427,7 @@ class Table(object):
 
         # width of the table
         width = 0
-        for key, _ in columns.iteritems():
+        for (key, _) in list(columns.items()):
             width += layout[key]['width']
         width += self.config['column-spacing'] * (len(columns) - 1)
         layout['__table__']['width'] = width
@@ -433,7 +437,7 @@ class Table(object):
         shrinking_column = None
         if ('max_width' in self.config and
                 table_width > self.config['max_width']):
-            for key, column in columns.iteritems():
+            for (key, column) in list(columns.items()):
                 if 'can_shrink' in column:
                     shrinking_column = key
                     break
@@ -454,10 +458,10 @@ class Table(object):
                                            column_new_width
 
         item = items[0]
-        for key, column in columns.iteritems():
+        for (key, column) in list(columns.items()):
             # alignment of each column
             align = '>'
-            if isinstance(item[key], basestring):
+            if isinstance(item[key], str):
                 align = '<'
             layout[key]['align'] = align
 
@@ -479,7 +483,7 @@ class Table(object):
         last_column = list(columns)[-1]
 
         # print headers
-        for key, column in columns.iteritems():
+        for (key, column) in list(columns.items()):
             spacing = ' ' * self.config['column-spacing']
             if key == last_column:
                 spacing = ''
@@ -492,9 +496,9 @@ class Table(object):
 
         # print data
         for item in items:
-            for key, _ in columns.iteritems():
+            for (key, _) in list(columns.items()):
                 fmt = layout[key]['format']
-                sys.stdout.write(fmt.decode().format(item[key]))
+                sys.stdout.write(fmt.format(item[key]))
             sys.stdout.write("\n")
 
 
@@ -657,7 +661,7 @@ class GitPatchwork(object):
         r = requests.get(mailbox_url, params=params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
-        print r.content
+        print(r.content)
 
     def do_mbox(self):
         (series, revision) = self.cmd_get_series_revision()
@@ -732,7 +736,7 @@ class GitPatchwork(object):
 
         # Human readable
         filtered_fields = {key: Series.meta[key] for key in self.cmd.fields}
-        columns = OrderedDict(sorted(filtered_fields.items(),
+        columns = OrderedDict(sorted(list(filtered_fields.items()),
                                  key=lambda k: self.cmd.fields.index(k[0])))
         config = {
             'columns': columns,
@@ -929,6 +933,7 @@ if __name__ == '__main__':
         help="change to directory")
 
     subparsers = parser.add_subparsers(dest='name', metavar='command')
+    subparsers.required = True
 
     # apply
     apply_series_parser = subparsers.add_parser('apply', aliases=('as',),
