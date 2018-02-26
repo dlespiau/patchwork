@@ -25,13 +25,6 @@ from patchwork.models import (Project, Series, SeriesRevision, Patch, Person,
                               RevisionState)
 from rest_framework import serializers
 from rest_framework import fields
-from enum import Enum
-
-
-class RelatedMode(Enum):
-    """Select how to show related fields in the JSON responses."""
-    primary_key = 1
-    expand = 2
 
 
 class Iso8601DateTimeField(fields.DateTimeField):
@@ -60,38 +53,16 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
     def __init__(self, *args, **kwargs):
         super(PatchworkModelSerializer, self).__init__(*args, **kwargs)
 
-        self._pw_related = RelatedMode.primary_key
         related = None
         if 'request' in self.context:
             related = self.context['request'].query_params.get('related')
-        if not related:
-            return
 
-        try:
-            self._pw_related = RelatedMode[related]
-        except KeyError:
-            pass
+        self._expand_related = (related == 'expand')
 
-    def _pw_get_nested_field(self, model_field, related_model, to_many):
-        class NestedModelSerializer(serializers.ModelSerializer):
-
-            class Meta:
-                model = related_model
-
-        if model_field.name in self.opts.expand_serializers:
-            serializer_class = self.opts.expand_serializers[model_field.name]
-            return serializer_class(context=self.context, many=to_many)
-        return NestedModelSerializer(many=to_many)
-
-    def get_related_field(self, model_field, related_model, to_many):
-        if self._pw_related == RelatedMode.expand:
-            return self._pw_get_nested_field(model_field, related_model,
-                                             to_many)
-        else:
-            return super(PatchworkModelSerializer, self). \
-                get_related_field(model_field, related_model, to_many)
-
-# See https://github.com/tomchristie/django-rest-framework/issues/1880
+        if self._expand_related and self.Meta and self.Meta.expand_serializers:
+            # replace the default serialized with the expanding ones
+            for (field, serializer) in self.Meta.expand_serializers.items():
+                self.fields[field] = serializer()
 
 
 class JSONField(serializers.Field):
@@ -211,7 +182,7 @@ class RevisionSerializer(PatchworkModelSerializer):
     def get_patches(self, revision):
         queryset = revision.ordered_patches()
 
-        if self._pw_related == RelatedMode.expand:
+        if self._expand_related:
             serializer = PatchSerializer(instance=queryset, many=True,
                                          context=self.context)
             return serializer.data

@@ -343,6 +343,16 @@ class APITest(APITestBase):
             self.get('/projects/%(project_id)s/series/',
                      params={'related': 'expand'})
 
+    def testRelatedExpand(self):
+        # using the related=expand parameter should expand submmitters
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'related': 'expand'})
+
+        for result in json['results']:
+            submitter = result['submitter']
+            self.assertTrue('id' in submitter.keys())
+            self.assertTrue('name' in submitter.keys())
+
     def testSeriesFilters(self):
         filters = [
             ('submitted_since', '2015-06-01', self.n_series - 1),
