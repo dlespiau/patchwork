@@ -40,6 +40,10 @@ class Iso8601DateTimeField(fields.DateTimeField):
         super(Iso8601DateTimeField, self).__init__(format='iso-8601', **kwargs)
 
 
+# All DateTimeFields should be in ISO 8601 format so nano seconds aren't
+# truncated. This is important to be able to correctly re-inject the timestamps
+# string the API gives you back into queries and have the gt (greater than) and
+# gte (greater or equal) operators work correctly.
 serializers.ModelSerializer.serializer_field_mapping[models.DateTimeField] = \
         Iso8601DateTimeField
 
@@ -55,12 +59,6 @@ class PatchworkModelSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(PatchworkModelSerializer, self).__init__(*args, **kwargs)
-
-        # All DateTimeFields should be in ISO 8601 format so nano seconds
-        # aren't truncated. This is important to be able to correctly re-inject
-        # the timestamps string the API gives you back into queries and have
-        # the gt (greater than) and gte (greater or equal) operators work
-        # correctly.
 
         self._pw_related = RelatedMode.primary_key
         related = None
