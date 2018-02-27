@@ -112,7 +112,7 @@ class API(views.APIView):
 
 class ListPagination(PageNumberPagination):
     page_size = 20
-    paginate_by_param = 'perpage'
+    page_size_query_param = 'perpage'
     max_page_size = 100
 
 
