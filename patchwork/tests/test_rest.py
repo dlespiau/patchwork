@@ -353,6 +353,22 @@ class APITest(APITestBase):
             self.assertTrue('id' in submitter.keys())
             self.assertTrue('name' in submitter.keys())
 
+    def testPerPagePagination(self):
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'perpage': '1'})
+        self.assertEqual(1, len(json['results']))
+        self.assertTrue(json['next'] is not None)
+
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'perpage': '2'})
+        self.assertEqual(2, len(json['results']))
+        self.assertTrue(json['next'] is not None)
+
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'perpage': '3'})
+        self.assertEqual(3, len(json['results']))
+        self.assertTrue(json['next'] is None)
+
     def testSeriesFilters(self):
         filters = [
             ('submitted_since', '2015-06-01', self.n_series - 1),
