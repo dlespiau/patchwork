@@ -27,7 +27,7 @@ Contributor to
 <div class="box">
  <h2>Todo</h2>
 {% if user.profile.n_todo %}
- <p>Your <a href="{% url 'todo_lists' %}">todo
+ <p>Your <a href="{% url 'todo_list' %}">todo
   list</a> contains {{ user.profile.n_todo }}
   item{{ user.profile.n_todo|pluralize:"s" }}.</p>
 {% else %}

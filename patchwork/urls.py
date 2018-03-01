@@ -127,7 +127,8 @@ urlpatterns = [
         name='user'),
     url(r'^user/todo/$', patchwork.views.user.todo_lists,
         name='todo_list'),
-    url(r'^user/todo/(?P<project_id>[^/]+)/$', patchwork.views.user.todo_list),
+    url(r'^user/todo/(?P<project_id>[^/]+)/$', patchwork.views.user.todo_list,
+        name='todo_list'),
 
     url(r'^user/bundles/$', patchwork.views.bundle.bundles,
         name='bundle_list'),
