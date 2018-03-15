@@ -661,7 +661,7 @@ class GitPatchwork(object):
         r = requests.get(mailbox_url, params=params)
         if r.status_code is not 200:
             raise HttpError(r.status_code)
-        print(r.content)
+        print(r.content.decode())
 
     def do_mbox(self):
         (series, revision) = self.cmd_get_series_revision()
