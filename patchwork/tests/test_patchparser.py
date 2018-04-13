@@ -27,7 +27,8 @@ from patchwork.bin.parsemail import (find_content, find_author, find_project,
                                      parse_mail, split_prefixes, clean_subject,
                                      parse_series_marker)
 from patchwork.models import (Project, Person, Patch, Comment, State, EventLog,
-                              Event, get_default_initial_patch_state)
+                              Event, SeriesRevision,
+                              get_default_initial_patch_state)
 from patchwork.tests.utils import (read_patch, read_mail, create_email,
                                    defaults, create_user)
 
@@ -875,6 +876,68 @@ class ParseInitialTagsTest(PatchTest):
             tag__name='Reviewed-by').count, 1)
         self.assertEqual(patch.patchtag_set.get(
             tag__name='Tested-by').count, 1)
+
+
+class ReplyPatchTest(TestCase):
+    """ Test that replies to patches are handed correctly """
+
+    fixtures = ['default_states', 'default_events']
+    test_comment = 'Test Comment'
+    patch_filename = '0001-add-line.patch'
+
+    def setUp(self):
+        self.p = Project(linkname='test-project-1', name='Project 1',
+                         listid='1.example.com', listemail='1@example.com')
+
+        self.p.save()
+
+        patch = read_patch(self.patch_filename)
+        patch1 = create_email(self.test_comment + '\n' + patch,
+                              subject="[PATCH 1/2] Meep Meep]")
+
+        patch2 = create_email(self.test_comment + '\n' + patch,
+                              subject="[PATCH 2/2] Meep Meep2]",
+                              in_reply_to=patch1['Message-Id'])
+
+        self.patch_update = create_email(self.test_comment + '\n' + patch,
+                                         subject="[PATCH v2] Meep Meep2",
+                                         in_reply_to=patch2['Message-Id'])
+
+        self.comment = create_email(self.test_comment,
+                                   subject="Re: [PATCH] Meep Meep2",
+                                   in_reply_to=patch2['Message-Id'])
+
+        for email in [patch1, patch2, self.patch_update, self.comment]:
+            del email['List-ID']
+            email['List-ID'] = '<' + self.p.listid + '>'
+
+        parse_mail(patch1)
+        parse_mail(patch2)
+
+    def testPatchUpdateShouldCreateNewRevision(self):
+        revisions_num = SeriesRevision.objects.count()
+
+        parse_mail(self.patch_update)
+
+        self.assertEqual(revisions_num + 1, SeriesRevision.objects.count())
+
+    def testHintedCommentShouldNOTCreateNewRevision(self):
+        revisions_num = SeriesRevision.objects.count()
+
+        self.patch_update['X-Patchwork-Hint'] = 'comment'
+        parse_mail(self.patch_update)
+
+        self.assertEqual(revisions_num, SeriesRevision.objects.count())
+
+    def testNormalCommentShouldNOTCreateNewRevision(self):
+        revisions_num = SeriesRevision.objects.count()
+
+        parse_mail(self.comment)
+
+        self.assertEqual(revisions_num, SeriesRevision.objects.count())
+
+    def tearDown(self):
+        self.p.delete()
 
 
 class PrefixTest(TestCase):

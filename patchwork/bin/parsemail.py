@@ -332,7 +332,7 @@ def is_git_send_email(mail):
         'git-send-email' in mail.get('Message-ID', '')
 
 
-def find_content(project, mail):
+def find_content(project, mail, force_comment=False):
     patchbuf = None
     commentbuf = ''
     pullurl = None
@@ -388,6 +388,9 @@ def find_content(project, mail):
 
             if c is not None:
                 commentbuf += c.strip() + '\n'
+
+    if force_comment:
+        patchbuf = None
 
     ret = MailContent()
 
@@ -762,7 +765,8 @@ def parse_mail(mail):
 
     (author, save_required) = find_author(mail)
 
-    content = find_content(project, mail)
+    force_comment = (hint == "comment")
+    content = find_content(project, mail, force_comment)
     if not content:
         return 0
     patch = content.patch
