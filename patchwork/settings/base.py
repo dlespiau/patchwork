@@ -4,8 +4,6 @@ Base settings for patchwork project.
 
 import os
 
-import django
-
 ROOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                         os.pardir, os.pardir)
 
@@ -41,11 +39,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
 ]
 
-if django.VERSION >= (1, 7):
-    MIDDLEWARE_CLASSES.append(
-        'django.contrib.admindocs.middleware.XViewMiddleware')
-else:
-    MIDDLEWARE_CLASSES.append('django.middleware.doc.XViewMiddleware')
+MIDDLEWARE_CLASSES.append(
+    'django.contrib.admindocs.middleware.XViewMiddleware')
 
 # Globalization
 
@@ -65,34 +60,27 @@ ROOT_URLCONF = 'patchwork.urls'
 
 # Templates
 
-_TEMPLATE_DIRS = [
-    os.path.join(ROOT_DIR, 'templates'),
-]
-
-if django.VERSION >= (1, 8):
-    TEMPLATES = [
-        {
-            'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': _TEMPLATE_DIRS,
-            'APP_DIRS': True,
-            'OPTIONS': {
-                'context_processors': [
-                    'django.contrib.auth.context_processors.auth',
-                    'django.template.context_processors.debug',
-                    'django.template.context_processors.i18n',
-                    'django.template.context_processors.media',
-                    'django.template.context_processors.static',
-                    'django.template.context_processors.tz',
-                    'django.contrib.messages.context_processors.messages',
-                    'patchwork.context_processors.settings',
-                    'patchwork.context_processors.site',
-                    'patchwork.context_processors.bundle',
-                ],
-            },
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(ROOT_DIR, 'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'patchwork.context_processors.settings',
+                'patchwork.context_processors.site',
+                'patchwork.context_processors.bundle',
+            ],
         },
-    ]
-else:
-    TEMPLATE_DIRS = _TEMPLATE_DIRS
+    },
+]
 
 
 # Email

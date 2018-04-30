@@ -21,10 +21,7 @@ import errno
 import os
 import time
 
-try:  # django 1.7+
-    from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-except ImportError:
-    from django.test import LiveServerTestCase as StaticLiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import NoSuchElementException, \
