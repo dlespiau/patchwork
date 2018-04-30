@@ -204,7 +204,7 @@ def find_pull_request(content):
     git_re = re.compile(r'^The following changes since commit.*' +
                         r'^are available in the git repository at:\n'
                         r'^\s*([\S]+://[^\n]+)$',
-                        re.DOTALL | re.MULTILINE)
+                        re.DOTALL | re.MULTILINE | re.IGNORECASE)
     match = git_re.search(content)
     if match:
         return match.group(1)
