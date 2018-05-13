@@ -160,7 +160,10 @@ function toggle_headers(link_id, headers_id)
 </div>
 
 {% if patch.pull_url %}
-<h2>Pull-request</h2>
+<h2>Pull-request
+ <a href="{% url 'patch_mbox' patch_id=patch.id %}"
+   >download mbox</a>
+</h2>
 <a class="patch-pull-url" href="{{patch.pull_url}}"
  >{{ patch.pull_url }}</a>
 {% endif %}
