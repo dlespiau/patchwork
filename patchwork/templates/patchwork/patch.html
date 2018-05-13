@@ -164,8 +164,7 @@ function toggle_headers(link_id, headers_id)
  <a href="{% url 'patch_mbox' patch_id=patch.id %}"
    >download mbox</a>
 </h2>
-<a class="patch-pull-url" href="{{patch.pull_url}}"
- >{{ patch.pull_url }}</a>
+<tt>git pull {{ patch.pull_url }}</tt>
 {% endif %}
 
 {% for item in patch.commit_message %}
