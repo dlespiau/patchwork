@@ -127,7 +127,7 @@ def profile(request):
 
 @login_required
 def link(request):
-    context = {}
+    context = {'site': Site.objects.get_current()}
 
     if request.method == 'POST':
         form = UserPersonLinkForm(request.POST)

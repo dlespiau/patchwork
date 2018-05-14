@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from django.conf import settings as conf_settings
 from django.core.mail import send_mail
 from django.core.urlresolvers import reverse
+from django.contrib.sites.models import Site
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -68,7 +69,7 @@ def optin_confirm(request, conf):
 
 
 def optinout(request, action, description):
-    context = {}
+    context = {'site': Site.objects.get_current()}
 
     mail_template = 'patchwork/%s-request.mail' % action
     html_template = 'patchwork/%s-request.html' % action
