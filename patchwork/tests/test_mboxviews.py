@@ -62,6 +62,47 @@ class MboxPatchResponseTest(TestCase):
                             'Acked-by: 1\nAcked-by: 2\n')
 
 
+class MboxAuthorship(TestCase):
+    fixtures = ['default_states', 'default_events']
+
+    """ Test that the From in mbox is the same as in the original header """
+
+    def setUp(self):
+        defaults.project.save()
+
+        self.original_author = "Orignal Author <original@author.com>"
+
+        self.person = defaults.patch_author_person
+        self.person.name = "Changed Name"
+        self.person.email = "changed@name.com"
+        self.person.save()
+
+    def testWithChangedPersonName(self):
+        self.patch = Patch(project=defaults.project,
+                           msgid='p1', name='testpatch',
+                           submitter=self.person, content='',
+                           headers='From: {}'.format(self.original_author))
+        self.patch.save()
+
+        response = self.client.get('/patch/%d/mbox/' % self.patch.id)
+        self.assertContains(response, 'From: {}'.format(self.original_author))
+        self.assertNotContains(response, self.person.name)
+        self.assertNotContains(response, self.person.email)
+
+    def testWithoutTheHeaderFallback(self):
+        """ this should fallback to the Person """
+        self.patch = Patch(project=defaults.project,
+                           msgid='p1', name='testpatch',
+                           submitter=self.person, content='',
+                           headers='')
+        self.patch.save()
+
+        response = self.client.get('/patch/%d/mbox/' % self.patch.id)
+        self.assertContains(
+                response,
+                'From: {} <{}>'.format(self.person.name, self.person.email))
+
+
 class MboxPatchSplitResponseTest(TestCase):
     fixtures = ['default_states', 'default_events']
 

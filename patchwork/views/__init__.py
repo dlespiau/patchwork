@@ -185,6 +185,18 @@ class PatchMbox(MIMENonMultipart):
         encode_7or8bit(self)
 
 
+def get_from(patch, charset):
+    if patch.headers:
+        headers = HeaderParser().parsestr(patch.headers)
+        if 'From' in headers:
+            return headers['From']
+
+    # just in case we don't have headers in some old patches
+    return email.utils.formataddr(
+            (str(Header(patch.submitter.name, charset)),
+                patch.submitter.email))
+
+
 def patch_to_mbox(patch, mbox_options={}):
     postscript_re = re.compile('\n-{2,3} ?\n')
 
@@ -233,9 +245,7 @@ def patch_to_mbox(patch, mbox_options={}):
 
     mail = PatchMbox(body)
     mail['Subject'] = patch.name
-    mail['From'] = email.utils.formataddr((
-        str(Header(patch.submitter.name, mail.patch_charset)),
-        patch.submitter.email))
+    mail['From'] = get_from(patch, mail.patch_charset)
     mail['X-Patchwork-Id'] = str(patch.id)
     if patch.delegate:
         mail['X-Patchwork-Delegate'] = str(patch.delegate.email)
