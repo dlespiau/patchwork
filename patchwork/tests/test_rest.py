@@ -323,7 +323,13 @@ class APITest(APITestBase):
                 json = self.get_json(entry_point, params={f[0]: f[1]})
                 self.assertEqual(json['count'], f[2])
 
+
+NEW_REV_URL = '/series/%(series_id)s/revisions/%(version)s/newrevision/'
+GET_EVENTS_URL = '/projects/%(project_id)s/events/'
+
+
 class EventTest(APITestBase):
+
     def testSeriesNewRevisionEvent(self):
         # no 'since' parameter
         events = self.get_json('/projects/%(project_id)s/events/')
@@ -352,6 +358,30 @@ class EventTest(APITestBase):
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'since': after})
         self.assertEqual(events['count'], 0)
+
+    def testRetestApiEndpointAsMaintainer(self):
+        events_before = self.get_json(GET_EVENTS_URL)
+        ret = self.post(NEW_REV_URL, user=self.maintainer)
+        events_after = self.get_json(GET_EVENTS_URL)
+
+        self.assertEqual(200, ret.status_code)
+        self.assertEqual(events_before['count'] + 1, events_after['count'])
+
+    def testRetestApiEndpointAsRegularUser(self):
+        events_before = self.get_json(GET_EVENTS_URL)
+        ret = self.post(NEW_REV_URL, user=self.user)
+        events_after = self.get_json(GET_EVENTS_URL)
+
+        self.assertEqual(403, ret.status_code)
+        self.assertEqual(events_before['count'], events_after['count'])
+
+    def testRetestApiEndpointAnonnymously(self):
+        events_before = self.get_json(GET_EVENTS_URL)
+        ret = self.post(NEW_REV_URL)
+        events_after = self.get_json(GET_EVENTS_URL)
+
+        self.assertEqual(403, ret.status_code)
+        self.assertEqual(events_before['count'], events_after['count'])
 
     def testPullRequestEvent(self):
         submitter = Person()
