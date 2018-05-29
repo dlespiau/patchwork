@@ -264,6 +264,60 @@ class APITest(APITestBase):
     def testPatchMbox(self):
         self._check_mbox_link("/patches/%s/mbox/" % self.patch.pk, 1)
 
+    def testNumQueries(self):
+        # using the related=expand parameter shouldn't make the number of
+        # queries explode.
+        with self.assertNumQueries(3):
+            self.get('/projects/%(project_id)s/series/')
+        with self.assertNumQueries(3):
+            self.get('/projects/%(project_id)s/series/',
+                     params={'related': 'expand'})
+
+    def testRelatedExpand(self):
+        # using the related=expand parameter should expand submmitters
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'related': 'expand'})
+
+        for result in json['results']:
+            submitter = result['submitter']
+            self.assertTrue('id' in submitter.keys())
+            self.assertTrue('name' in submitter.keys())
+
+    def testPerPagePagination(self):
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'perpage': '1'})
+        self.assertEqual(1, len(json['results']))
+        self.assertTrue(json['next'] is not None)
+
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'perpage': '2'})
+        self.assertEqual(2, len(json['results']))
+        self.assertTrue(json['next'] is not None)
+
+        json = self.get_json('/projects/%(project_id)s/series/',
+                             params={'perpage': '3'})
+        self.assertEqual(3, len(json['results']))
+        self.assertTrue(json['next'] is None)
+
+    def testSeriesFilters(self):
+        filters = [
+            ('submitted_since', '2015-06-01', self.n_series - 1),
+            ('updated_since', self.last_inserted_series.last_updated, 0),
+            ('submitted_before', '2015-06-01', 1),
+            ('updated_before', self.last_inserted_series.last_updated,
+             self.n_series),
+        ]
+
+        for entry_point in entry_points:
+            meta = entry_points[entry_point]
+            if 'is_series_list' not in meta['flags']:
+                continue
+
+            for f in filters:
+                json = self.get_json(entry_point, params={f[0]: f[1]})
+                self.assertEqual(json['count'], f[2])
+
+class EventTest(APITestBase):
     def testSeriesNewRevisionEvent(self):
         # no 'since' parameter
         events = self.get_json('/projects/%(project_id)s/events/')
@@ -333,59 +387,6 @@ class APITest(APITestBase):
         events = self.get_json('/projects/%(project_id)s/events/',
                                params={'name': event_names[1]})
         self.assertEqual(events['count'], 1)
-
-    def testNumQueries(self):
-        # using the related=expand parameter shouldn't make the number of
-        # queries explode.
-        with self.assertNumQueries(3):
-            self.get('/projects/%(project_id)s/series/')
-        with self.assertNumQueries(3):
-            self.get('/projects/%(project_id)s/series/',
-                     params={'related': 'expand'})
-
-    def testRelatedExpand(self):
-        # using the related=expand parameter should expand submmitters
-        json = self.get_json('/projects/%(project_id)s/series/',
-                             params={'related': 'expand'})
-
-        for result in json['results']:
-            submitter = result['submitter']
-            self.assertTrue('id' in submitter.keys())
-            self.assertTrue('name' in submitter.keys())
-
-    def testPerPagePagination(self):
-        json = self.get_json('/projects/%(project_id)s/series/',
-                             params={'perpage': '1'})
-        self.assertEqual(1, len(json['results']))
-        self.assertTrue(json['next'] is not None)
-
-        json = self.get_json('/projects/%(project_id)s/series/',
-                             params={'perpage': '2'})
-        self.assertEqual(2, len(json['results']))
-        self.assertTrue(json['next'] is not None)
-
-        json = self.get_json('/projects/%(project_id)s/series/',
-                             params={'perpage': '3'})
-        self.assertEqual(3, len(json['results']))
-        self.assertTrue(json['next'] is None)
-
-    def testSeriesFilters(self):
-        filters = [
-            ('submitted_since', '2015-06-01', self.n_series - 1),
-            ('updated_since', self.last_inserted_series.last_updated, 0),
-            ('submitted_before', '2015-06-01', 1),
-            ('updated_before', self.last_inserted_series.last_updated,
-             self.n_series),
-        ]
-
-        for entry_point in entry_points:
-            meta = entry_points[entry_point]
-            if 'is_series_list' not in meta['flags']:
-                continue
-
-            for f in filters:
-                json = self.get_json(entry_point, params={f[0]: f[1]})
-                self.assertEqual(json['count'], f[2])
 
 
 class TestResultTest(APITestBase):
