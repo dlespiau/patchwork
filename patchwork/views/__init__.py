@@ -33,6 +33,7 @@ from patchwork.paginator import Paginator
 from patchwork.forms import MultiplePatchForm
 from patchwork.models import Comment, Patch
 from patchwork.filters import Filters
+from patchwork.permissions import Can
 
 
 def generic_list(request, project, view,
@@ -157,7 +158,7 @@ def process_multiplepatch_form(form, user, action, patches, context):
 
     changed_patches = 0
     for patch in patches:
-        if not patch.is_editable(user):
+        if not Can(user).edit(patch):
             errors.append("You don't have permissions to edit patch '%s'"
                           % patch.name)
             continue

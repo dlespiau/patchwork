@@ -21,16 +21,17 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views.generic import View
 from patchwork.models import Project, Series, SeriesRevision, TestResult
+from patchwork.permissions import Can
 
 
 class SeriesListView(View):
 
     def get(self, request, *args, **kwargs):
         project = get_object_or_404(Project, linkname=kwargs['project'])
-        is_editable = project.is_editable(request.user)
+
         return render(request, 'patchwork/series-list.html', {
             'project': project,
-            'is_editable': is_editable,
+            'is_editable': Can(request.user).edit(project),
             'default_patches_per_page': settings.DEFAULT_PATCHES_PER_PAGE,
         })
 
@@ -48,12 +49,10 @@ class SeriesView(View):
                     .filter(revision=revision, patch=None) \
                     .order_by('test__name').select_related('test')
 
-        is_editable = project.is_editable(request.user)
-
         return render(request, 'patchwork/series.html', {
             'series': series,
             'project': project,
-            'is_editable': is_editable,
+            'is_editable': Can(request.user).edit(project),
             'cover_letter': revision.cover_letter,
             'revisions': revisions,
         })

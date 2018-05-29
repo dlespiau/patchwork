@@ -40,6 +40,7 @@ from patchwork.serializers import (ProjectSerializer, SeriesSerializer,
                                    EventLogSerializer, TestResultSerializer)
 from patchwork.views import patch_to_mbox
 from patchwork.views.patch import mbox as patch_mbox
+from patchwork.permissions import Can
 import django_filters
 
 
@@ -82,11 +83,7 @@ class MaintainerPermission(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # editable for maintainers
-        user = request.user
-        if not user.is_authenticated():
-            return False
-        return obj.project.is_editable(user)
+        return Can(request.user).edit(obj.project)
 
 
 class RequestDjangoFilterBackend(filters.DjangoFilterBackend):

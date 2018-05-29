@@ -95,11 +95,6 @@ class Project(models.Model):
     subject_prefix_tags = models.CharField(max_length=255, blank=True,
                help_text='Comma separated list of tags')
 
-    def is_editable(self, user):
-        if not user.is_authenticated():
-            return False
-        return self in user.profile.maintainer_projects.all()
-
     @cached_property
     def tags(self):
         if not self.use_tags:
@@ -373,15 +368,6 @@ class Patch(models.Model):
             self.hash = hash_patch(self.content).hexdigest()
 
         super(Patch, self).save()
-
-    def is_editable(self, user):
-        if not user.is_authenticated():
-            return False
-
-        if self.submitter.user == user or self.delegate == user:
-            return True
-
-        return self.project.is_editable(user)
 
     def filename(self):
         return filename(self.name, '.patch')

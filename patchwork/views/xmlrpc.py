@@ -42,6 +42,7 @@ from django.utils.six.moves.xmlrpc_server import SimpleXMLRPCDispatcher
 from patchwork.models import Patch, Project, Person, State
 from patchwork.threadlocalrequest import ThreadLocalRequestMiddleware
 from patchwork.views import patch_to_mbox
+from patchwork.permissions import Can
 
 
 class PatchworkXMLRPCDispatcher(SimpleXMLRPCDispatcher,
@@ -737,7 +738,7 @@ def patch_set(user, patch_id, params):
 
         patch = Patch.objects.get(id=patch_id)
 
-        if not patch.is_editable(user):
+        if not Can(user).edit(patch):
             raise Exception('No permissions to edit this patch')
 
         for (k, v) in params.items():

@@ -26,11 +26,12 @@ from django.utils import six
 from patchwork.forms import PatchForm, CreateBundleForm
 from patchwork.models import Patch, Project, Bundle, TestResult
 from patchwork.views import generic_list, patch_to_mbox
+from patchwork.permissions import Can
 
 
 def patch(request, patch_id):
     patch = get_object_or_404(Patch, id=patch_id)
-    editable = patch.is_editable(request.user)
+    editable = Can(request.user).edit(patch)
     messages = []
 
     form = None
