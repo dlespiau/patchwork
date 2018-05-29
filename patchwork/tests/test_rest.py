@@ -153,31 +153,37 @@ class APITestBase(test_series.Series0010):
         content_hash.update(content.encode('utf-8'))
         self.assertEqual(content_hash.hexdigest(), md5sum)
 
-    def get(self, url, params={}):
-        return self.client.get('/api/1.0' + url % {
+    def _format_url(self, url):
+        return '/api/1.0' + url % {
             'project_id': self.project.pk,
             'project_linkname': self.project.linkname,
             'series_id': self.series.pk,
             'version': 1,
-            'patch_id': self.patch.pk,
-        }, params)
+            'patch_id': self.patch.pk}
+
+    def _auth_headers(self, user):
+        auth_headers = {}
+        if user:
+            auth_headers['HTTP_AUTHORIZATION'] = user.basic_auth_header()
+        return auth_headers
+
+    def get(self, url, params={}):
+        return self.client.get(self._format_url(url), params)
+
+    def post(self, url, user=None, params={}):
+        return self.client.post(self._format_url(url),
+                                params,
+                                **self._auth_headers(user))
 
     def get_json(self, url, params={}):
         return json.loads(self.get(url, params).content)
 
     # user: a TestUser instance
     def _send_json(self, method, url, data={}, user=None):
-        auth_headers = {}
-        if user:
-            auth_headers['HTTP_AUTHORIZATION'] = user.basic_auth_header()
-        response = method('/api/1.0' + url % {
-            'project_id': self.project.pk,
-            'project_linkname': self.project.linkname,
-            'series_id': self.series.pk,
-            'version': 1,
-            'patch_id': self.patch.pk,
-        }, content_type="application/json", data=json.dumps(data),
-            **auth_headers)
+        response = method(self._format_url(url),
+                          content_type="application/json",
+                          data=json.dumps(data),
+                          **self._auth_headers(user))
         return (response, json.loads(response.content))
 
     def post_json(self, url, data={}, user=None):
