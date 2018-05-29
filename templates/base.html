@@ -42,7 +42,7 @@
             , project: {
                 pk: {{ project.pk }},
                 name: '{{ project.linkname }}',
-                is_editable: {{ is_editable|default:"false" }},
+                is_editable: {{ is_editable|yesno:"true,false" }},
             },
 {% endif  %}
         });

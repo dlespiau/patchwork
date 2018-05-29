@@ -27,7 +27,7 @@ class SeriesListView(View):
 
     def get(self, request, *args, **kwargs):
         project = get_object_or_404(Project, linkname=kwargs['project'])
-        is_editable = 'true' if project.is_editable(request.user) else 'false'
+        is_editable = project.is_editable(request.user)
         return render(request, 'patchwork/series-list.html', {
             'project': project,
             'is_editable': is_editable,
@@ -48,7 +48,7 @@ class SeriesView(View):
                     .filter(revision=revision, patch=None) \
                     .order_by('test__name').select_related('test')
 
-        is_editable = 'true' if project.is_editable(request.user) else 'false'
+        is_editable = project.is_editable(request.user)
 
         return render(request, 'patchwork/series.html', {
             'series': series,
