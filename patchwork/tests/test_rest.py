@@ -359,6 +359,18 @@ class EventTest(APITestBase):
                                params={'since': after})
         self.assertEqual(events['count'], 0)
 
+    def testRetestApiEndpointAsSubmitter(self):
+        submitter = self.series.submitter
+        submitter.user = self.user.user
+        submitter.save()
+
+        events_before = self.get_json(GET_EVENTS_URL)
+        ret = self.post(NEW_REV_URL, user=self.user)
+        events_after = self.get_json(GET_EVENTS_URL)
+
+        self.assertEqual(200, ret.status_code)
+        self.assertEqual(events_before['count'] + 1, events_after['count'])
+
     def testRetestApiEndpointAsMaintainer(self):
         events_before = self.get_json(GET_EVENTS_URL)
         ret = self.post(NEW_REV_URL, user=self.maintainer)

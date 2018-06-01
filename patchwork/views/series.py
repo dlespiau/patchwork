@@ -53,6 +53,7 @@ class SeriesView(View):
             'series': series,
             'project': project,
             'is_editable': Can(request.user).edit(project),
+            'is_retestable': Can(request.user).retest(series),
             'cover_letter': revision.cover_letter,
             'revisions': revisions,
         })

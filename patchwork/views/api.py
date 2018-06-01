@@ -19,7 +19,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from django.core.exceptions import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist, PermissionDenied
 from django.conf import settings
 from django.core import mail
 from django.db.models import Q
@@ -307,8 +307,12 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
     def newrevision(self, request, series_pk=None, pk=None):
         rev = get_object_or_404(SeriesRevision, series=series_pk, version=pk)
 
-        # make sure the user is a maintainer
-        self.check_object_permissions(request, rev.series)
+        # we are not using the permissions from django-rest-framework
+        #
+        # they would make us to define a class, call check_object_permissions
+        # here and introduce a level of indirectness just for this single use
+        if not Can(request.user).retest(rev.series):
+            raise PermissionDenied
 
         # log event
         new_revision = Event.objects.get(name='series-new-revision')

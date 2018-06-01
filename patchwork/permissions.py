@@ -17,7 +17,7 @@
 # along with Patchwork; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from patchwork.models import Project, Patch
+from patchwork.models import Project, Patch, Series
 
 
 class Can:
@@ -36,5 +36,14 @@ class Can:
             return (self.user.is_authenticated and
                     (patch.submitter.user == self.user or
                      can.edit(patch.project)))
+
+        return False
+
+    def retest(self, obj):
+        can = self
+        if isinstance(obj, Series):
+            series = obj
+            return (can.edit(series.project) or
+                    series.submitter.user == self.user)
 
         return False

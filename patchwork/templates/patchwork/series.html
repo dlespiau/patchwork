@@ -10,12 +10,7 @@ $(function () {
 });
 
 $(document).ready(function() {
-    if (!pw.project.is_editable) {
-        var retest_container = $("#retest-latest-container");
-        retest_container.fadeTo(0, 0.2); // immediate "transition"
-        pw.fade_disable(retest_container);
-    }
-
+    {% if is_retestable %}
     $("#retest-latest").click(function(e) {
         e.preventDefault();
         var button = $(this);
@@ -44,6 +39,11 @@ $(document).ready(function() {
 
         pw.post_data(url, undefined, on_post_success, on_post_failure);
     });
+    {% else %}
+    var retest_container = $("#retest-latest-container");
+    retest_container.fadeTo(0, 0.2); // immediate "transition"
+    pw.fade_disable(retest_container);
+    {% endif %}
 });
 </script>
 {% endblock %}
@@ -96,7 +96,7 @@ $(document).ready(function() {
 <div>
 
   <div id="retest-latest-container" class="btn-group" style="float: right;"
-      data-disabled-title="You have to be logged in and be the project maintainer.">
+      data-disabled-title="You have to be logged in and be the submitter or the project maintainer.">
       <button class="btn btn-info" id="retest-latest"
         data-series="{{ series.id }}" data-revision="{{ series.last_revision.version }}">
           test latest revision again
