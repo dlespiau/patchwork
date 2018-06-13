@@ -1,0 +1,31 @@
+image: python:3.6
+
+services:
+  - mariadb:latest
+
+variables:
+  PW_TEST_DB_HOST: 'mariadb'
+  PW_TEST_DB_USER: 'root'
+  MYSQL_DATABASE: 'patchwork'
+  MYSQL_ROOT_PASSWORD: 'password'
+  DEBIAN_FRONTEND: 'noninteractive'
+  CHROME_BIN: '/usr/bin/chromium'
+
+before_script:
+  - apt-get -qq update
+  - apt-get -qq install libmariadbclient-dev
+  - apt-get -qq install python-virtualenv python3-virtualenv python-pip python3-pip
+  - apt-get -qq install chromium chromium-driver
+
+  - curl -sL https://deb.nodesource.com/setup_8.x | bash -
+  - apt-get -qq install nodejs
+  - npm install -g jshint jasmine-core karma karma-jasmine karma-chrome-launcher
+
+test:
+  script:
+   - python3 -V
+   - python2 -V
+   - npm --version
+   - chromium --version
+   - chromedriver --version
+   - ./tests/test_all.sh

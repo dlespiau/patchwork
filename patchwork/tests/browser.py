@@ -104,8 +104,12 @@ class SeleniumTestCase(StaticLiveServerTestCase):
         if self.browser == 'firefox':
             self.selenium = webdriver.Firefox()
         if self.browser == 'chrome':
+            options = webdriver.ChromeOptions()
+            options.add_argument("--no-sandbox")
+            options.set_headless(True)
             self.selenium = webdriver.Chrome(
-                service_args=["--verbose", "--log-path=selenium.log"]
+                service_args=["--verbose", "--log-path=selenium.log"],
+                options=options
             )
 
         mkdir(self._SCREENSHOT_DIR)

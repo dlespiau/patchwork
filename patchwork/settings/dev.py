@@ -28,7 +28,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'localhost',
+        'HOST': os.getenv('PW_TEST_DB_HOST', 'localhost'),
         'PORT': '',
         'USER': os.getenv('PW_TEST_DB_USER', 'patchwork'),
         'PASSWORD': os.getenv('PW_TEST_DB_PASS', 'password'),
