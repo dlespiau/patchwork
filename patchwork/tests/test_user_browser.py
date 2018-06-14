@@ -36,5 +36,6 @@ class LoginTestCase(SeleniumTestCase):
         self.enter_text('username', self.user.username)
         self.enter_text('password', self.user.password)
         self.click('input[value="Login"]')
-        dropdown = self.wait_until_visible('a.dropdown-toggle strong')
-        self.assertEqual(dropdown.text, 'testuser')
+        header = self.wait_until_visible('h1')
+        self.assertEqual(header.text, 'Your Profile')
+        self.assertTrue(self.user.username in self.selenium.title)
