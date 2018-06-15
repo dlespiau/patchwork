@@ -200,7 +200,7 @@ patchwork's checkout:
 
     $ ln -s $PWD/git-pw/git-pw ~/.local/bin/
 
-.. __: https://github.com/dlespiau/patchwork/blob/master/git-pw/git-pw
+.. __: https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo/blob/master/docs/examples/testing-checkpatch.py
 
 Setup
 ~~~~~

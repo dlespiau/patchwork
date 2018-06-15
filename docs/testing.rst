@@ -111,7 +111,7 @@ look at the `git-pw source code`__.
 :ref:`git-pw` also provides a couple of commands that can help with writing
 test scripts without resorting to using the REST API.
 
-.. __: https://github.com/dlespiau/patchwork/blob/master/git-pw/git-pw
+.. __: https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo/raw/master/git-pw/git-pw
 
 |git pw poll-events|
 ~~~~~~~~~~~~~~~~~~~~
@@ -196,6 +196,6 @@ There are a few improvements to make to have a nicer solution: for instance,
 one could make sure that the checkpatch.pl script is up-to-date by updating the
 Linux checkout before running the test.
 
-.. __: https://github.com/dlespiau/patchwork/blob/master/docs/examples/testing-checkpatch.py
+.. __: https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo/blob/master/docs/examples/testing-checkpatch.py
 
 .. include:: symbols

@@ -25,7 +25,7 @@ The latest version of Patchwork is available with git. To download:
 
 ::
 
-    $ git clone https://github.com/dlespiau/patchwork.git
+    $ git clone https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo.git
 
 Patchwork is distributed under the `GNU General Public
 License <http://www.gnu.org/licenses/gpl-2.0.html>`__.
@@ -71,5 +71,5 @@ guides for information on how to get to work with patchwork.
 Support
 -------
 
-For questions and contributions, please use the `GitHub project
-<https://github.com/dlespiau/patchwork>`__.
+For questions and contributions, please use the `GitLab project
+<https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo/>`__.

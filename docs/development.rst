@@ -8,8 +8,8 @@ Quick Start
 
 We have scripts that will get developers started in no time::
 
-    $ git clone https://github.com/dlespiau/patchwork/
-    $ cd patchwork
+    $ git clone https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo.git
+    $ cd patchwork-fdo
     $ ./tools/setup-devel.sh
     $ ./tools/run-devel.sh
 

@@ -8,5 +8,5 @@
 .. |pip| replace:: :command:`pip`
 
 .. _diff: https://en.wikipedia.org/wiki/Diff_utility
-.. _repository: https://github.com/dlespiau/patchwork
+.. _repository: https://gitlab.freedesktop.org/patchwork-fdo/patchwork-fdo/
 .. _requests: http://docs.python-requests.org/en/master/
