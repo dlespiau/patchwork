@@ -25,6 +25,9 @@ class Can:
         self.user = user
 
     def edit(self, obj):
+        if not self.user.is_authenticated():
+            return False
+
         can = self
         if isinstance(obj, Project):
             project = obj
