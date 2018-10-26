@@ -395,6 +395,14 @@ class EventTest(APITestBase):
         self.assertEqual(403, ret.status_code)
         self.assertEqual(events_before['count'], events_after['count'])
 
+    def testRetestApiEndpointCreatesNewRerunRevision(self):
+        revisions_before = list(self.series.revisions())
+        self.post(NEW_REV_URL, user=self.maintainer)
+        revisions_after = list(self.series.revisions())
+
+        self.assertEqual(len(revisions_before) + 1, len(revisions_after))
+        self.assertTrue(revisions_after[-1].is_rerun)
+
     def testPullRequestEvent(self):
         submitter = Person()
         submitter.save()

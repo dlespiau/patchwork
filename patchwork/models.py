@@ -611,6 +611,7 @@ class SeriesRevision(models.Model):
     state_summary = jsonfield.JSONField(null=True)
     test_state = models.SmallIntegerField(choices=TestState.STATE_CHOICES,
                                           null=True, blank=True)
+    is_rerun = models.BooleanField(default=False)
 
     class Meta:
         unique_together = [('series', 'version')]

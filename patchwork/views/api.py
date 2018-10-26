@@ -27,7 +27,7 @@ from django.http import HttpResponse
 from patchwork.tasks import send_reviewer_notification
 from patchwork.models import (Project, Series, SeriesRevision, Patch, EventLog,
                               State, Test, TestResult, TestState, Person,
-                              RevisionState, Event)
+                              RevisionState)
 from rest_framework import (views, viewsets, mixins, filters, permissions,
                             status)
 from rest_framework.authentication import BasicAuthentication
@@ -315,11 +315,9 @@ class RevisionViewSet(mixins.ListModelMixin, ListMixin,
             raise PermissionDenied
 
         # log event
-        new_revision = Event.objects.get(name='series-new-revision')
-        log = EventLog(event=new_revision, series=rev.series,
-                       user=request.user,
-                       parameters={'revision': rev.version})
-        log.save()
+        new_rev = rev.duplicate()
+        new_rev.is_rerun = True
+        new_rev.save()
         return HttpResponse()
 
 
