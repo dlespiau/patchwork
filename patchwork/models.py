@@ -630,9 +630,36 @@ class SeriesRevision(models.Model):
                                                 order=order)
         sp.save()
 
-        revision_complete = self.patches.count() == self.n_patches
-        if revision_complete:
+        if self.patches_count == self.n_patches:
             series_revision_complete.send(sender=self.__class__, revision=self)
+
+    @property
+    def patches_count(self):
+        return self.patches.count()
+
+    @property
+    def is_complete(self):
+        return self.patches_count >= self.n_patches
+
+    @property
+    def is_strange(self):
+        if self.patches_count > self.n_patches:
+            return True
+
+        names = [patch.name for patch in self.ordered_patches()]
+
+        # one patch "series", not much to break
+        if len(names) == 1:
+            return False
+
+        for index, name in enumerate(names):
+            match = re.search(r"\[(\d+)/(\d+)\]", name)
+            if not match:  # we have a patch without proper numbering
+                return True
+            if (index + 1) != int(match.group(1)):  # numbering is off
+                return True
+
+        return False
 
     def duplicate_meta(self):
         new = SeriesRevision.objects.get(pk=self.pk)
@@ -899,8 +926,7 @@ def _revision_update_state(revision):
     } for s in summary]
 
     # revision not yet complete
-    revision_complete = revision.patches.count() == revision.n_patches
-    if not revision_complete:
+    if not revision.is_complete:
         revision.state = RevisionState.INCOMPLETE
 
     # initial state

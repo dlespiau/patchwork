@@ -110,6 +110,61 @@ class GeneratedSeriesTest(SeriesTest):
         return (series, mails)
 
 
+class RevisionStatus(GeneratedSeriesTest):
+    @property
+    def series(self):
+        return Series.objects.all()[0]
+
+    @property
+    def last_revision(self):
+        return list(self.series.revisions())[-1]
+
+    def setUp(self):
+        (self.test_series, self.mails) = self._create_series(3)
+
+    def testFreshSeriesWithoutAllMailsShouldNotBeComple(self):
+        self.test_series.insert(self.mails[:-2])
+
+        self.assertFalse(self.last_revision.is_complete)
+        self.assertFalse(self.last_revision.is_strange)
+
+    def testSeriesWithAllMailsShouldBeComplete(self):
+        self.test_series.insert(self.mails)
+
+        self.assertTrue(self.last_revision.is_complete)
+        self.assertFalse(self.last_revision.is_strange)
+
+    def testSeriesWithExtraEmailShouldBeCompleteAndStrange(self):
+        extra = self.test_series.create_patch(self.test_series.n_patches + 1,
+                                              in_reply_to=self.mails[0])
+
+        self.test_series.insert(self.mails)
+        self.test_series.insert([extra])
+
+        self.assertTrue(self.last_revision.is_complete)
+        self.assertTrue(self.last_revision.is_strange)
+
+    def testSeriesWithExtraEmailShouldNotCreateNewCompletionEvent(self):
+        extra = self.test_series.create_patch(self.test_series.n_patches + 1,
+                                              in_reply_to=self.mails[0])
+
+        self.test_series.insert(self.mails)
+        event_count = EventLog.objects.all().count()
+        self.test_series.insert([extra])
+
+        self.assertEquals(EventLog.objects.all().count(), event_count)
+
+    def testSeriesWithWrongOrderingShouldBeCompleteAndStrange(self):
+        # replace patch 1/3 with a patch that is numbered 2/3
+        extra = self.test_series.create_patch(2, self.mails[1])
+
+        self.test_series.insert(self.mails)
+        self.test_series.insert([extra])
+
+        self.assertTrue(self.last_revision.is_complete)
+        self.assertTrue(self.last_revision.is_strange)
+
+
 class BasicGeneratedSeriesTests(GeneratedSeriesTest):
 
     def testInsertion(self):

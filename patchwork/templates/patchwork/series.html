@@ -50,7 +50,7 @@ $(document).ready(function() {
 
 {% block body %}
 <h1>{{ series.name }}</h1>
-
+=
 <div class="core-info">
   <span>Submitted by {{ series.submitter|personify:project }} on {{ series.submitted }}</span>
 </div>
@@ -97,10 +97,17 @@ $(document).ready(function() {
 
   <div id="retest-latest-container" class="btn-group" style="float: right;"
       data-disabled-title="You have to be logged in and be the submitter or the project maintainer.">
+      {% if series.last_revision %}
       <button class="btn btn-info" id="retest-latest"
         data-series="{{ series.id }}" data-revision="{{ series.last_revision.version }}">
-          test latest revision again
+          test revision {{ series.last_revision.version }} again
       </button>
+      {% else %}
+      <button class="btn btn-danger disabled" id="retest-latest"
+        data-series="{{ series.id }}" data-revision="{{ series.last_revision.version }}">
+          no complete revisions to test!
+      </button>
+  {% endif %}
   </div>
 
   <ul class="nav nav-pills small-pills" data-tabs="tabs" role="tablist">
@@ -119,6 +126,16 @@ $(document).ready(function() {
 {% if revision.is_rerun %}
 <div class="alert alert-info">
     <strong>THIS SERIES REVISION IS A RERUN.</strong> Please don't overuse the "test again" button.
+</div>
+{% endif %}
+
+{% if not revision.is_complete %}
+<div class="alert alert-danger">
+    <strong>SERIES REVISION IS NOT COMPLETE.</strong> We've got {{ revision.patches_count }} out of {{ revision.n_patches }} expected patches.
+</div>
+{% elif revision.is_strange %}
+<div class="alert alert-warning">
+    <strong>SERIES REVISION LOOKS STRANGE.</strong> Please double-check patch list and the ordering before proceeding.
 </div>
 {% endif %}
 
