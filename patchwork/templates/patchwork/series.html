@@ -116,6 +116,12 @@ $(document).ready(function() {
     <div role="tabpanel" id="rev{{ revision.version }}"
          class="tab-pane fade{% if forloop.last %} in active{% endif %}">
 
+{% if revision.is_rerun %}
+<div class="alert alert-info">
+    <strong>THIS SERIES REVISION IS A RERUN.</strong> Please don't overuse the "test again" button.
+</div>
+{% endif %}
+
     <h3>Patches <a href="{% url 'seriesrevision-mbox' series.pk revision.version %}" >download mbox</a></h3>
 
       <div class="well transparent">
