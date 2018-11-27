@@ -29,8 +29,8 @@ import re
 from django.utils.six.moves import map
 
 
-_hunk_re = re.compile('^\@\@ -\d+(?:,(\d+))? \+\d+(?:,(\d+))? \@\@')
-_filename_re = re.compile('^(---|\+\+\+) (\S+)')
+_hunk_re = re.compile(r'^\@\@ -\d+(?:,(\d+))? \+\d+(?:,(\d+))? \@\@')
+_filename_re = re.compile(r'^(---|\+\+\+) (\S+)')
 
 
 def parse_patch(text):
@@ -126,7 +126,7 @@ def parse_patch(text):
                 buf = ''
                 state = 2
 
-            elif hunk and line.startswith('\ No newline at end of file'):
+            elif hunk and line.startswith('\\ No newline at end of file'):
                 # If we had a hunk and now we see this, it's part of the patch,
                 # and we're still expecting another @@ line.
                 patchbuf += line
@@ -145,7 +145,7 @@ def parse_patch(text):
                 lc[0] -= 1
             elif line.startswith('+'):
                 lc[1] -= 1
-            elif line.startswith('\ No newline at end of file'):
+            elif line.startswith('\\ No newline at end of file'):
                 # Special case: Not included as part of the hunk's line count
                 pass
             else:

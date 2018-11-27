@@ -296,7 +296,7 @@ class PatchManager(models.Manager):
 
 
 def filename(name, ext):
-    fname_re = re.compile('[^-_A-Za-z0-9\.]+')
+    fname_re = re.compile(r'[^-_A-Za-z0-9\.]+')
     str = fname_re.sub('-', name)
     return str.strip('-') + ext
 

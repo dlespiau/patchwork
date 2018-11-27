@@ -761,7 +761,7 @@ class GitPatchwork(object):
         try:
             with open(ts_filename) as ts_file:
                 since = ts_file.read()
-        except IOError as e:
+        except IOError:
             pass
 
         if self.cmd.since:

@@ -258,9 +258,9 @@ class UserProfileOptoutFormTest(TestCase):
         self.url = reverse('user')
         self.optout_url = reverse('mail_optout')
         self.optin_url = reverse('mail_optin')
-        self.form_re_template = ('<form\s+[^>]*action="%(url)s"[^>]*>'
-                                 '.*?<input\s+[^>]*value="%(email)s"[^>]*>.*?'
-                                 '</form>')
+        self.form_re_template = (r'<form\s+[^>]*action="%(url)s"[^>]*>'
+                                 r'.*?<input\s+[^>]*value="%(email)s"[^>]*>.*?'
+                                 r'</form>')
         self.secondary_email = 'test2@example.com'
 
         self.user = create_user()

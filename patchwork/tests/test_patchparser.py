@@ -657,12 +657,13 @@ class NoNewlineAtEndOfFilePatchTest(MBoxPatchTest):
             'diff --git a/tools/testing/selftests/powerpc/Makefile'))
         # Confirm the trailing no newline marker doesn't end up in the comment
         self.assertFalse(comment.content.rstrip().endswith(
-            '\ No newline at end of file'))
+            '\\ No newline at end of file'))
         # Confirm it's instead at the bottom of the patch
         self.assertTrue(patch.content.rstrip().endswith(
-            '\ No newline at end of file'))
+            '\\ No newline at end of file'))
         # Confirm we got both markers
-        self.assertEqual(2, patch.content.count('\ No newline at end of file'))
+        self.assertEqual(2,
+            patch.content.count('\\ No newline at end of file'))
 
 
 class DelegateRequestTest(TestCase):
