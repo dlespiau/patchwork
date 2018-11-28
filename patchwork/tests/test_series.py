@@ -120,7 +120,8 @@ class RevisionStatus(GeneratedSeriesTest):
         return list(self.series.revisions())[-1]
 
     def setUp(self):
-        (self.test_series, self.mails) = self._create_series(3)
+        # 20 patches for multi-digit testing
+        (self.test_series, self.mails) = self._create_series(20)
 
     def testFreshSeriesWithoutAllMailsShouldNotBeComple(self):
         self.test_series.insert(self.mails[:-2])
@@ -163,6 +164,17 @@ class RevisionStatus(GeneratedSeriesTest):
 
         self.assertTrue(self.last_revision.is_complete)
         self.assertTrue(self.last_revision.is_strange)
+
+    def testCompleteSeriesWithExtraTagShouldNotBeStrange(self):
+        for mail in self.mails:
+            new_subject = mail['Subject'].replace('PATCH', 'PATCH extra')
+            del(mail['Subject'])
+            mail['Subject'] = new_subject
+
+        self.test_series.insert(self.mails)
+
+        self.assertTrue(self.last_revision.is_complete)
+        self.assertFalse(self.last_revision.is_strange)
 
 
 class BasicGeneratedSeriesTests(GeneratedSeriesTest):

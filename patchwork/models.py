@@ -653,7 +653,7 @@ class SeriesRevision(models.Model):
             return False
 
         for index, name in enumerate(names):
-            match = re.search(r"\[(\d+)/(\d+)\]", name)
+            match = re.search(r"\[[^]]*(\d+)/(\d+).*\]", name)
             if not match:  # we have a patch without proper numbering
                 return True
             if (index + 1) != int(match.group(1)):  # numbering is off
